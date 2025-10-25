@@ -1,0 +1,106 @@
+import { afterEach, describe, expect, it, vi } from "vitest";
+import {
+  defaultGetAllQueryObjectWithoutPopulate,
+  initializeReqResMocks,
+  mockedCatchError,
+} from "./utils";
+import { Author } from "../models/author";
+import { add, getAll, getById } from "../controllers/author";
+import {
+  fakeAuthor,
+  fakeAuthorsList,
+  getAuthorsPage,
+} from "./fake-data/author";
+
+vi.mock("../models/author.ts");
+
+describe("Author Controller", () => {
+  describe("Add Author Controller", async () => {
+    afterEach(() => {
+      vi.resetAllMocks();
+    });
+
+    it("should return 500 when adding an author", async () => {
+      const { req, res } = initializeReqResMocks();
+      vi.mocked(Author.create, true).mockImplementation(() => {
+        throw mockedCatchError;
+      });
+
+      await add(req, res);
+
+      expect(res.statusCode).toBe(500);
+      expect(res._getJSONData()).toEqual({ message: mockedCatchError.message });
+    });
+
+    it("should return 200 and the created author", async () => {
+      const { req, res } = initializeReqResMocks();
+      vi.mocked(Author.create, true).mockResolvedValue(fakeAuthor as any);
+
+      await add(req, res);
+
+      expect(res.statusCode).toBe(200);
+      expect(res._getJSONData()).toEqual(fakeAuthor);
+    });
+  });
+
+  describe("Get Author by ID", async () => {
+    afterEach(() => {
+      vi.resetAllMocks();
+    });
+
+    it("should return 500 when getting an author by id", async () => {
+      const { req, res } = initializeReqResMocks();
+      vi.mocked(Author.findById, true).mockImplementation(() => {
+        throw mockedCatchError;
+      });
+
+      await getById(req, res);
+
+      expect(res.statusCode).toBe(500);
+      expect(res._getJSONData()).toEqual({ message: mockedCatchError.message });
+    });
+
+    it("should return 200 and the selected author", async () => {
+      const { req, res } = initializeReqResMocks();
+      vi.mocked(Author.findById, true).mockResolvedValue(fakeAuthor as any);
+
+      await getById(req, res);
+
+      expect(res.statusCode).toBe(200);
+      expect(res._getJSONData()).toEqual(fakeAuthor);
+    });
+  });
+
+  describe("Get All Authors", async () => {
+    afterEach(() => {
+      vi.resetAllMocks();
+    });
+
+    it("should return 500 when getting all authors", async () => {
+      const { req, res } = initializeReqResMocks();
+      vi.mocked(Author.find, true).mockImplementation(() => {
+        throw mockedCatchError;
+      });
+
+      await getAll(req, res);
+
+      expect(res.statusCode).toBe(500);
+      expect(res._getJSONData()).toEqual({ message: mockedCatchError.message });
+    });
+
+    it("should return 200 and all authors list", async () => {
+      const { req, res } = initializeReqResMocks();
+
+      const result = getAuthorsPage();
+      //@ts-expect-error Unsolved error with mockImplementation function
+      vi.mocked(Author.find, true).mockImplementation(() => {
+        return defaultGetAllQueryObjectWithoutPopulate(result);
+      });
+
+      await getAll(req, res);
+
+      expect(res.statusCode).toBe(200);
+      expect(res._getJSONData()).toEqual(fakeAuthorsList);
+    });
+  });
+});

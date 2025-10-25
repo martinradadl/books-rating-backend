@@ -3,6 +3,7 @@ import express from "express";
 import http from "http";
 import cors from "cors";
 import { initMongo } from "./mongo-setup";
+import author from "./routes/author";
 
 const jsonParser = bodyParser.json();
 
@@ -17,6 +18,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors()); // APP_URL pending
 
 app.get("/", (_, res) => res.send("Server is running"));
+
+app.use("/author", author);
 
 // Start the server and listen on the specified port
 httpServer.listen(port, () => {
