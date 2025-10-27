@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import * as bookModel from "../models/book";
 import * as authorModel from "../models/author";
+import { MONGO_ERRORS } from "../helpers/constants";
 
 export const add = async (req: Request, res: Response) => {
   try {
@@ -15,16 +16,6 @@ export const add = async (req: Request, res: Response) => {
       });
     }
 
-    // TODO find an alernative for searching originalTitle and authorId, instead using directly an schema function
-    const book = await bookModel.Book.findOne({ originalTitle, authorId });
-
-    if (book) {
-      return res.status(409).json({
-        message: "Add not successful",
-        error: "Book already exists",
-      });
-    }
-
     const newBook = await bookModel.Book.create({
       originalTitle,
       authorId,
@@ -35,6 +26,14 @@ export const add = async (req: Request, res: Response) => {
     res.status(200).json(newBook);
   } catch (err: unknown) {
     if (err instanceof Error) {
+      if (err.message.includes(MONGO_ERRORS.DuplicateKey)) {
+        const title = err.message.split(`\"`)[1];
+        res.status(409).json({
+          message: `Adding not successful, title ${title} from this author already exists`,
+        });
+        return;
+      }
+
       res.status(500).json({ message: err.message });
     }
   }
