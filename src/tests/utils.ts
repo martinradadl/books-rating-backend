@@ -2,6 +2,9 @@ import { createRequest, createResponse } from "node-mocks-http";
 import mongoose from "mongoose";
 
 export const mockedCatchError = new Error("Error");
+export const mockedCatchDuplicateAuthorError = new Error(
+  `E11000 duplicate key error\"fakeName`
+);
 
 export const fakeObjectId = new mongoose.mongo.ObjectId();
 

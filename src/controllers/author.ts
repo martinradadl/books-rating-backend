@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import * as authorModel from "../models/author";
+import { MONGO_ERRORS } from "../helpers/constants";
 
 export const add = async (req: Request, res: Response) => {
   try {
@@ -12,6 +13,14 @@ export const add = async (req: Request, res: Response) => {
     res.status(200).json(newAuthor);
   } catch (err: unknown) {
     if (err instanceof Error) {
+      if (err.message.includes(MONGO_ERRORS.DuplicateKey)) {
+        const authorName = err.message.split(`\"`)[1];
+        res.status(409).json({
+          message: `Adding not successful, author ${authorName} already exists`,
+        });
+        return;
+      }
+
       res.status(500).json({ message: err.message });
     }
   }

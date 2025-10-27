@@ -2,6 +2,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   defaultGetAllQueryObjectWithoutPopulate,
   initializeReqResMocks,
+  mockedCatchDuplicateAuthorError,
   mockedCatchError,
 } from "./utils";
 import { Author } from "../models/author";
@@ -30,6 +31,22 @@ describe("Author Controller", () => {
 
       expect(res.statusCode).toBe(500);
       expect(res._getJSONData()).toEqual({ message: mockedCatchError.message });
+    });
+
+    it("should return 409 when author already exists", async () => {
+      const { req, res } = initializeReqResMocks();
+      req.body = fakeAuthor;
+
+      vi.mocked(Author.create).mockImplementation(() => {
+        throw mockedCatchDuplicateAuthorError;
+      });
+
+      await add(req, res);
+
+      expect(res.statusCode).toBe(409);
+      expect(res._getJSONData()).toEqual({
+        message: `Adding not successful, author ${fakeAuthor.name} already exists`,
+      });
     });
 
     it("should return 200 and the created author", async () => {

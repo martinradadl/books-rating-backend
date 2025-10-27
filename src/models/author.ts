@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 const schema = new mongoose.Schema({
-  name: String,
+  name: { type: String, unique: true },
   profilePic: String,
   description: String,
 });
