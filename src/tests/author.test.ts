@@ -2,7 +2,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   defaultGetAllQueryObjectWithoutPopulate,
   initializeReqResMocks,
-  mockedCatchDuplicateAuthorError,
+  mockedCatchDuplicateKeyError,
   mockedCatchError,
 } from "./utils";
 import { Author } from "../models/author";
@@ -38,7 +38,7 @@ describe("Author Controller", () => {
       req.body = fakeAuthor;
 
       vi.mocked(Author.create).mockImplementation(() => {
-        throw mockedCatchDuplicateAuthorError;
+        throw mockedCatchDuplicateKeyError(fakeAuthor.name);
       });
 
       await add(req, res);

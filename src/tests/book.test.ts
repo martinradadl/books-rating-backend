@@ -2,6 +2,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   defaultGetAllQueryObjectWithoutPopulate,
   initializeReqResMocks,
+  mockedCatchDuplicateKeyError,
   mockedCatchError,
 } from "./utils";
 import { Book } from "../models/book";
@@ -49,14 +50,15 @@ describe("Book Controller", () => {
     it("should return 409 when book already exists", async () => {
       const { req, res } = initializeReqResMocks();
       vi.mocked(Author.findById, true).mockResolvedValue(fakeAuthor);
-      vi.mocked(Book.findOne, true).mockResolvedValue(fakeBook);
+      vi.mocked(Book.create).mockImplementation(() => {
+        throw mockedCatchDuplicateKeyError(fakeBook.originalTitle);
+      });
 
       await add(req, res);
 
       expect(res.statusCode).toBe(409);
       expect(res._getJSONData()).toEqual({
-        message: "Add not successful",
-        error: "Book already exists",
+        message: `Adding not successful, title ${fakeBook.originalTitle} from this author already exists`,
       });
     });
 
