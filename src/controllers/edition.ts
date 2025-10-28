@@ -20,7 +20,7 @@ export const add = async (req: Request, res: Response) => {
     if (err instanceof Error) {
       if (err.message.includes(MONGO_ERRORS.DuplicateKey)) {
         const value = err.message.split(`\"`)[1];
-        const isASIN = /[a-zA-Z]/.test(value);
+        const isASIN = /^[A-Z0-9]{10}$/.test(value);
         res.status(409).json({
           message: `Adding not successful, an edition with ${
             isASIN ? "ASIN" : "ISBN"
