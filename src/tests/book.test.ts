@@ -20,7 +20,7 @@ describe("Book Controller", () => {
       vi.resetAllMocks();
     });
 
-    it("should return 500 when adding an book", async () => {
+    it("should return 500 when error is thrown adding an book", async () => {
       const { req, res } = initializeReqResMocks();
 
       vi.mocked(Author.findById, true).mockResolvedValue(fakeBook);
@@ -80,7 +80,7 @@ describe("Book Controller", () => {
       vi.resetAllMocks();
     });
 
-    it("should return 500 when getting an book by id", async () => {
+    it("should return 500 when error is thrown getting a book by id", async () => {
       const { req, res } = initializeReqResMocks();
       vi.mocked(Book.findById, true).mockImplementation(() => {
         throw mockedCatchError;
@@ -108,7 +108,7 @@ describe("Book Controller", () => {
       vi.resetAllMocks();
     });
 
-    it("should return 500 when getting all books", async () => {
+    it("should return 500 when error is thrown getting all books", async () => {
       const { req, res } = initializeReqResMocks();
       vi.mocked(Book.find, true).mockImplementation(() => {
         throw mockedCatchError;
