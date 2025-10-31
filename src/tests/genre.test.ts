@@ -72,7 +72,7 @@ describe("Genre Controller", () => {
       expect(res._getJSONData()).toEqual({ message: mockedCatchError.message });
     });
 
-    it("should return 200 and the selected author", async () => {
+    it("should return 200 and the selected genre", async () => {
       const { req, res } = initializeReqResMocks();
       vi.mocked(Genre.findById, true).mockResolvedValue(fakeGenre as any);
 
@@ -83,12 +83,12 @@ describe("Genre Controller", () => {
     });
   });
 
-  describe("Get All Authors", async () => {
+  describe("Get All Genres", async () => {
     afterEach(() => {
       vi.resetAllMocks();
     });
 
-    it("should return 500 when error is thrown getting all authors", async () => {
+    it("should return 500 when error is thrown getting all genres", async () => {
       const { req, res } = initializeReqResMocks();
       vi.mocked(Genre.find, true).mockImplementation(() => {
         throw mockedCatchError;
@@ -100,7 +100,7 @@ describe("Genre Controller", () => {
       expect(res._getJSONData()).toEqual({ message: mockedCatchError.message });
     });
 
-    it("should return 200 and all authors list", async () => {
+    it("should return 200 and all genres list", async () => {
       const { req, res } = initializeReqResMocks();
 
       vi.mocked(Genre.find, true).mockResolvedValue(fakeGenresList);
