@@ -11,8 +11,6 @@ const schema = new mongoose.Schema({
   ISBN: { type: String, unique: true, sparse: true },
   ASIN: { type: String, unique: true, sparse: true },
   language: String,
-  setting: [{ type: mongoose.Types.ObjectId, ref: "Setting" }],
-  characters: [{ type: mongoose.Types.ObjectId, ref: "Character" }],
 });
 
 schema.pre("validate", function (next) {

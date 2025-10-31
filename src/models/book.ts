@@ -9,6 +9,8 @@ const schema = new mongoose.Schema({
   },
   relatedGenres: [{ type: mongoose.Types.ObjectId, ref: "Genre" }],
   firstPublished: Date,
+  setting: [{ type: mongoose.Types.ObjectId, ref: "Setting" }],
+  characters: [{ type: mongoose.Types.ObjectId, ref: "Character" }],
 });
 
 schema.index({ originalTitle: 1, authorId: 1 }, { unique: true });
