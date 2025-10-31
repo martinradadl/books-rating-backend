@@ -5,26 +5,30 @@ import {
   mockedCatchDuplicateKeyError,
   mockedCatchError,
 } from "./utils";
+import { Edition } from "../models/edition";
 import { Book } from "../models/book";
-import { Author } from "../models/author";
-import { add, getAll, getById } from "../controllers/book";
-import { fakeBook, fakeBooksList, getBooksPage } from "./fake-data/book";
-import { fakeAuthor } from "./fake-data/author";
+import { add, getAll, getById } from "../controllers/edition";
+import {
+  fakeEdition,
+  fakeEditionsList,
+  getEditionsPage,
+} from "./fake-data/edition";
+import { fakeBook } from "./fake-data/book";
 
+vi.mock("../models/edition.ts");
 vi.mock("../models/book.ts");
-vi.mock("../models/author.ts");
 
-describe("Book Controller", () => {
-  describe("Add Book Controller", async () => {
+describe("Edition Controller", () => {
+  describe("Add Edition Controller", async () => {
     afterEach(() => {
       vi.resetAllMocks();
     });
 
-    it("should return 500 when error is thrown adding an book", async () => {
+    it("should return 500 when error is thrown adding an edition", async () => {
       const { req, res } = initializeReqResMocks();
 
-      vi.mocked(Author.findById, true).mockResolvedValue(fakeBook);
-      vi.mocked(Book.create, true).mockImplementation(() => {
+      vi.mocked(Book.findById, true).mockResolvedValue(fakeEdition);
+      vi.mocked(Edition.create, true).mockImplementation(() => {
         throw mockedCatchError;
       });
 
@@ -34,55 +38,55 @@ describe("Book Controller", () => {
       expect(res._getJSONData()).toEqual({ message: mockedCatchError.message });
     });
 
-    it("should return 404 when author is not found", async () => {
+    it("should return 404 when book is not found", async () => {
       const { req, res } = initializeReqResMocks();
-      vi.mocked(Author.findById, true).mockResolvedValue(null);
+      vi.mocked(Book.findById, true).mockResolvedValue(null);
 
       await add(req, res);
 
       expect(res.statusCode).toBe(404);
       expect(res._getJSONData()).toEqual({
         message: "Add not successful",
-        error: "Author not found",
+        error: "Book not found",
       });
     });
 
-    it("should return 409 when book already exists", async () => {
+    it("should return 409 when edition already exists", async () => {
       const { req, res } = initializeReqResMocks();
-      vi.mocked(Author.findById, true).mockResolvedValue(fakeAuthor);
-      vi.mocked(Book.create).mockImplementation(() => {
-        throw mockedCatchDuplicateKeyError(fakeBook.originalTitle);
+      vi.mocked(Book.findById, true).mockResolvedValue(fakeBook);
+      vi.mocked(Edition.create).mockImplementation(() => {
+        throw mockedCatchDuplicateKeyError(fakeEdition.ISBN);
       });
 
       await add(req, res);
 
       expect(res.statusCode).toBe(409);
       expect(res._getJSONData()).toEqual({
-        message: `Adding not successful, title ${fakeBook.originalTitle} from this author already exists`,
+        message: `Adding not successful, an edition with ISBN ${fakeEdition.ISBN} already exists`,
       });
     });
 
-    it("should return 200 and the created book", async () => {
+    it("should return 200 and the created edition", async () => {
       const { req, res } = initializeReqResMocks();
 
-      vi.mocked(Author.findById, true).mockResolvedValue(fakeAuthor);
-      vi.mocked(Book.create, true).mockResolvedValue(fakeBook as any);
+      vi.mocked(Book.findById, true).mockResolvedValue(fakeBook);
+      vi.mocked(Edition.create, true).mockResolvedValue(fakeEdition as any);
 
       await add(req, res);
 
       expect(res.statusCode).toBe(200);
-      expect(res._getJSONData()).toEqual(fakeBook);
+      expect(res._getJSONData()).toEqual(fakeEdition);
     });
   });
 
-  describe("Get Book by ID", async () => {
+  describe("Get Edition by ID", async () => {
     afterEach(() => {
       vi.resetAllMocks();
     });
 
-    it("should return 500 when error is thrown getting a book by id", async () => {
+    it("should return 500 when getting an edition by id", async () => {
       const { req, res } = initializeReqResMocks();
-      vi.mocked(Book.findById, true).mockImplementation(() => {
+      vi.mocked(Edition.findById, true).mockImplementation(() => {
         throw mockedCatchError;
       });
 
@@ -92,25 +96,25 @@ describe("Book Controller", () => {
       expect(res._getJSONData()).toEqual({ message: mockedCatchError.message });
     });
 
-    it("should return 200 and the selected book", async () => {
+    it("should return 200 and the selected edition", async () => {
       const { req, res } = initializeReqResMocks();
-      vi.mocked(Book.findById, true).mockResolvedValue(fakeBook as any);
+      vi.mocked(Edition.findById, true).mockResolvedValue(fakeEdition as any);
 
       await getById(req, res);
 
       expect(res.statusCode).toBe(200);
-      expect(res._getJSONData()).toEqual(fakeBook);
+      expect(res._getJSONData()).toEqual(fakeEdition);
     });
   });
 
-  describe("Get All Books", async () => {
+  describe("Get All Editions", async () => {
     afterEach(() => {
       vi.resetAllMocks();
     });
 
-    it("should return 500 when error is thrown getting all books", async () => {
+    it("should return 500 when getting all editions", async () => {
       const { req, res } = initializeReqResMocks();
-      vi.mocked(Book.find, true).mockImplementation(() => {
+      vi.mocked(Edition.find, true).mockImplementation(() => {
         throw mockedCatchError;
       });
 
@@ -120,19 +124,19 @@ describe("Book Controller", () => {
       expect(res._getJSONData()).toEqual({ message: mockedCatchError.message });
     });
 
-    it("should return 200 and all books list", async () => {
+    it("should return 200 and all editions list", async () => {
       const { req, res } = initializeReqResMocks();
 
-      const result = getBooksPage();
+      const result = getEditionsPage();
       //@ts-expect-error Unsolved error with mockImplementation function
-      vi.mocked(Book.find, true).mockImplementation(() => {
+      vi.mocked(Edition.find, true).mockImplementation(() => {
         return defaultGetAllQueryObjectWithoutPopulate(result);
       });
 
       await getAll(req, res);
 
       expect(res.statusCode).toBe(200);
-      expect(res._getJSONData()).toEqual(fakeBooksList);
+      expect(res._getJSONData()).toEqual(fakeEditionsList);
     });
   });
 });

@@ -21,7 +21,7 @@ describe("Author Controller", () => {
       vi.resetAllMocks();
     });
 
-    it("should return 500 when adding an author", async () => {
+    it("should return 500 when error is thrown adding an author", async () => {
       const { req, res } = initializeReqResMocks();
       vi.mocked(Author.create, true).mockImplementation(() => {
         throw mockedCatchError;
@@ -65,7 +65,7 @@ describe("Author Controller", () => {
       vi.resetAllMocks();
     });
 
-    it("should return 500 when getting an author by id", async () => {
+    it("should return 500 when error is thrown getting an author by id", async () => {
       const { req, res } = initializeReqResMocks();
       vi.mocked(Author.findById, true).mockImplementation(() => {
         throw mockedCatchError;
@@ -93,7 +93,7 @@ describe("Author Controller", () => {
       vi.resetAllMocks();
     });
 
-    it("should return 500 when getting all authors", async () => {
+    it("should return 500 when error is thrown getting all authors", async () => {
       const { req, res } = initializeReqResMocks();
       vi.mocked(Author.find, true).mockImplementation(() => {
         throw mockedCatchError;
