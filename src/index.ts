@@ -7,6 +7,7 @@ import author from "./routes/author";
 import book from "./routes/book";
 import edition from "./routes/edition";
 import genre from "./routes/genre";
+import setting from "./routes/setting";
 
 const jsonParser = bodyParser.json();
 
@@ -26,6 +27,7 @@ app.use("/author", author);
 app.use("/book", book);
 app.use("/edition", edition);
 app.use("/genre", genre);
+app.use("/setting", setting);
 
 // Start the server and listen on the specified port
 httpServer.listen(port, () => {
