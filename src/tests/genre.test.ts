@@ -54,4 +54,61 @@ describe("Genre Controller", () => {
       expect(res._getJSONData()).toEqual(fakeGenre);
     });
   });
+
+  describe("Get Genre by ID", async () => {
+    afterEach(() => {
+      vi.resetAllMocks();
+    });
+
+    it("should return 500 when error is thrown getting a genre by id", async () => {
+      const { req, res } = initializeReqResMocks();
+      vi.mocked(Genre.findById, true).mockImplementation(() => {
+        throw mockedCatchError;
+      });
+
+      await getById(req, res);
+
+      expect(res.statusCode).toBe(500);
+      expect(res._getJSONData()).toEqual({ message: mockedCatchError.message });
+    });
+
+    it("should return 200 and the selected author", async () => {
+      const { req, res } = initializeReqResMocks();
+      vi.mocked(Genre.findById, true).mockResolvedValue(fakeGenre as any);
+
+      await getById(req, res);
+
+      expect(res.statusCode).toBe(200);
+      expect(res._getJSONData()).toEqual(fakeGenre);
+    });
+  });
+
+  describe("Get All Authors", async () => {
+    afterEach(() => {
+      vi.resetAllMocks();
+    });
+
+    it("should return 500 when error is thrown getting all authors", async () => {
+      const { req, res } = initializeReqResMocks();
+      vi.mocked(Genre.find, true).mockImplementation(() => {
+        throw mockedCatchError;
+      });
+
+      await getAll(req, res);
+
+      expect(res.statusCode).toBe(500);
+      expect(res._getJSONData()).toEqual({ message: mockedCatchError.message });
+    });
+
+    it("should return 200 and all authors list", async () => {
+      const { req, res } = initializeReqResMocks();
+
+      vi.mocked(Genre.find, true).mockResolvedValue(fakeGenresList);
+
+      await getAll(req, res);
+
+      expect(res.statusCode).toBe(200);
+      expect(res._getJSONData()).toEqual(fakeGenresList);
+    });
+  });
 });
