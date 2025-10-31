@@ -5,7 +5,14 @@ import { MONGO_ERRORS } from "../helpers/constants";
 
 export const add = async (req: Request, res: Response) => {
   try {
-    const { originalTitle, authorId, relatedGenres, firstPublished } = req.body;
+    const {
+      originalTitle,
+      authorId,
+      relatedGenres,
+      firstPublishedsetting,
+      characters,
+      setting,
+    } = req.body;
 
     const author = await authorModel.Author.findById(authorId);
 
@@ -20,7 +27,9 @@ export const add = async (req: Request, res: Response) => {
       originalTitle,
       authorId,
       relatedGenres,
-      firstPublished,
+      firstPublishedsetting,
+      characters,
+      setting,
     });
 
     res.status(200).json(newBook);

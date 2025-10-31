@@ -6,6 +6,7 @@ import { initMongo } from "./mongo-setup";
 import author from "./routes/author";
 import book from "./routes/book";
 import edition from "./routes/edition";
+import genre from "./routes/genre";
 
 const jsonParser = bodyParser.json();
 
@@ -24,6 +25,7 @@ app.get("/", (_, res) => res.send("Server is running"));
 app.use("/author", author);
 app.use("/book", book);
 app.use("/edition", edition);
+app.use("/genre", genre);
 
 // Start the server and listen on the specified port
 httpServer.listen(port, () => {
