@@ -1,0 +1,443 @@
+[
+  {
+    "originalTitle": "1984",
+    "authorName": "George Orwell",
+    "relatedGenresNames": [
+      "Classics",
+      "Fiction",
+      "Science Fiction",
+      "Dystopia",
+      "Politics"
+    ],
+    "firstPublished": "June 8, 1949",
+    "charactersNames": [
+      "Big Brother",
+      "O'Brien",
+      "Emmanuel Goldstein",
+      "Tom Parsons",
+      "Syme",
+      "Julia",
+      "Mr. Charrington",
+      "Winston Smith"
+    ],
+    "settingsNames": []
+  },
+  {
+    "originalTitle": "To Kill a Mockingbird",
+    "authorName": "Harper Lee",
+    "relatedGenresNames": [
+      "Classics",
+      "Fiction",
+      "Historical Fiction",
+      "School",
+      "Young Adult"
+    ],
+    "firstPublished": "July 11, 1960",
+    "charactersNames": [
+      "Scout Finch",
+      "Atticus Finch",
+      "Jem Finch",
+      "Arthur Radley",
+      "Mayella Ewell",
+      "Alexandra Hancock",
+      "Bob Ewell",
+      "Calpurnia (To Kill a Mockingbird)",
+      "Tom Robinson",
+      "Miss Maudie Atkinson",
+      "Dill Harris"
+    ],
+    "settingsNames": [
+      "Maycomb, Alabama",
+      "Alabama",
+      "The United States of America"
+    ]
+  },
+  {
+    "originalTitle": "The Hunger Games",
+    "authorName": "Suzanne Collins",
+    "relatedGenresNames": [
+      "Young Adult",
+      "Dystopia",
+      "Fiction",
+      "Fantasy",
+      "Science Fiction",
+      "Romance",
+      "Adventure"
+    ],
+    "firstPublished": "September 14, 2008",
+    "charactersNames": [
+      "Katniss Everdeen",
+      "Peeta Mellark",
+      "Cato (Hunger Games)",
+      "Primrose Everdeen",
+      "Gale Hawthorne",
+      "Effie Trinket",
+      "Haymitch Abernathy",
+      "Cinna",
+      "Rue",
+      "Flavius",
+      "Lavinia (Hunger Games)",
+      "Marvel",
+      "Glimmer",
+      "Clove",
+      "Foxface",
+      "Thresh",
+      "Greasy Sae",
+      "Madge Undersee",
+      "Caesar Flickerman",
+      "Claudius Templesmith",
+      "Octavia (Hunger Games)",
+      "Portia (hunger Games)",
+      "Coriolanus Snow"
+    ],
+    "settingsNames": ["District 12, Panem", "Capitol, Panem", "Panem"]
+  },
+  {
+    "originalTitle": "Catching Fire",
+    "authorName": "Suzanne Collins",
+    "relatedGenresNames": [
+      "Young Adult",
+      "Dystopia",
+      "Fiction",
+      "Fantasy",
+      "Science Fiction",
+      "Romance",
+      "Adventure"
+    ],
+    "firstPublished": "September 1, 2009",
+    "charactersNames": [
+      "Katniss Everdeen",
+      "Peeta Mellark",
+      "Primrose Everdeen",
+      "Gale Hawthorne",
+      "Effie Trinket",
+      "Haymitch Abernathy",
+      "Cinna",
+      "Finnick Odair",
+      "Johanna Mason",
+      "Madge Undersee",
+      "Caesar Flickerman",
+      "Twill",
+      "Cashmere",
+      "Gloss",
+      "Enobaria",
+      "Beetee Latier",
+      "Wiress",
+      "Mags Flanagan",
+      "Blight",
+      "Woof",
+      "Cecilia",
+      "Chaff",
+      "Seeder",
+      "Plutarch Heavensbee",
+      "Octavia (Hunger Games)",
+      "Portia (hunger Games)",
+      "Coriolanus Snow"
+    ],
+    "settingsNames": ["District 12, Panem", "Capitol, Panem", "Panem"]
+  },
+  {
+    "originalTitle": "Pride and Prejudice",
+    "authorName": "Jane Austen",
+    "relatedGenresNames": [
+      "Classics",
+      "Fiction",
+      "Historical Fiction",
+      "Romance"
+    ],
+    "firstPublished": "January 28, 1813",
+    "charactersNames": [
+      "Mr. Bennet",
+      "Mrs. Bennet",
+      "Jane Bennet",
+      "Mary Bennet",
+      "Kitty Bennet",
+      "Lydia Bennet",
+      "Caroline Bingley",
+      "Fitzwilliam Darcy",
+      "Georgiana Darcy",
+      "Lady Catherine de Bourgh",
+      "Anne de Bourgh",
+      "Colonel Fitzwilliam",
+      "Mr. Gardiner",
+      "Mrs. Gardiner",
+      "Sir William Lucas",
+      "Lady Lucas",
+      "Charlotte Lucas",
+      "Maria Lucas",
+      "Charles Bingley",
+      "George Wickham",
+      "Mr. William Collins",
+      "Elizabeth Bennet"
+    ],
+    "settingsNames": []
+  },
+  {
+    "originalTitle": "Le Petit Prince",
+    "authorName": "Antoine de Saint-Exupéry",
+    "relatedGenresNames": [
+      "Classics",
+      "Fiction",
+      "Fantasy",
+      "Childrens",
+      "Philosophy",
+      "Young Adult"
+    ],
+    "firstPublished": "April 6, 1943",
+    "charactersNames": [],
+    "settingsNames": []
+  },
+  {
+    "originalTitle": "And Then There Were None",
+    "authorName": "Agatha Christie",
+    "relatedGenresNames": [
+      "Mystery",
+      "Classics",
+      "Fiction",
+      "Thriller",
+      "Crime",
+      "Mystery Thriller"
+    ],
+    "firstPublished": "November 6, 1939",
+    "charactersNames": [
+      "Justice Lawrence John Wargrave",
+      "Vera Elizabeth Claythorne",
+      "Philip Lombard",
+      "General John Gordon Macarthur",
+      "Dr Edward George Armstrong",
+      "Anthony James Marston",
+      "William Henry Blore",
+      "Mr Thomas Rogers",
+      "Mrs Ethel Rogers",
+      "Emily Caroline Brent",
+      "Isaac Morris",
+      "Fred Narracott"
+    ],
+    "settingsNames": ["Devon, England", "England"]
+  },
+  {
+    "originalTitle": "Harry Potter and the Sorcerer's Stone",
+    "authorName": "J.K. Rowling",
+    "relatedGenresNames": [
+      "Fantasy",
+      "Fiction",
+      "Young Adult",
+      "Magic",
+      "Childrens"
+    ],
+    "firstPublished": "June 26, 1997",
+    "charactersNames": [
+      "Ron Weasley",
+      "Petunia Dursley",
+      "Vernon Dursley",
+      "Dudley Dursley",
+      "Severus Snape",
+      "Quirinus Quirrell",
+      "Rubeus Hagrid",
+      "Lord Voldemort",
+      "Minerva McGonagall",
+      "Neville Longbottom",
+      "Fred Weasley",
+      "George Weasley",
+      "Percy Weasley",
+      "Filius Flitwick",
+      "Pomona Sprout",
+      "Molly Weasley",
+      "Poppy Pomfrey",
+      "Oliver Wood",
+      "Parvati Patil",
+      "Dean Thomas",
+      "James Potter",
+      "Lily Potter",
+      "Seamus Finnigan",
+      "Garrick Ollivander",
+      "Rolanda Hooch",
+      "Katie Bell",
+      "Draco Malfoy",
+      "Albus Dumbledore",
+      "Dedalus Diggle",
+      "Harry Potter",
+      "Hermione Granger",
+      "Lavender Brown"
+    ],
+    "settingsNames": [
+      "London, England",
+      "Hogwarts School of Witchcraft and Wizardry",
+      "England"
+    ]
+  },
+  {
+    "originalTitle": "Harry Potter and the Chamber of Secrets",
+    "authorName": "J.K. Rowling",
+    "relatedGenresNames": [
+      "Fantasy",
+      "Fiction",
+      "Young Adult",
+      "Magic",
+      "Childrens"
+    ],
+    "firstPublished": "July 2, 1998",
+    "charactersNames": [
+      "Ron Weasley",
+      "Petunia Dursley",
+      "Vernon Dursley",
+      "Dudley Dursley",
+      "Severus Snape",
+      "Rubeus Hagrid",
+      "Lord Voldemort",
+      "Minerva McGonagall",
+      "Neville Longbottom",
+      "Fred Weasley",
+      "George Weasley",
+      "Percy Weasley",
+      "Ginny Weasley",
+      "Colin Creevey",
+      "Filius Flitwick",
+      "Gilderoy Lockhart",
+      "Lucius Malfoy",
+      "Pomona Sprout",
+      "Arthur Weasley",
+      "Molly Weasley",
+      "Cornelius Fudge",
+      "Poppy Pomfrey",
+      "Oliver Wood",
+      "Dobby",
+      "Parvati Patil",
+      "Dean Thomas",
+      "James Potter",
+      "Seamus Finnigan",
+      "Rolanda Hooch",
+      "Katie Bell",
+      "Draco Malfoy",
+      "Albus Dumbledore",
+      "Harry Potter",
+      "Hermione Granger"
+    ],
+    "settingsNames": ["Hogwarts School of Witchcraft and Wizardry", "England"]
+  },
+  {
+    "originalTitle": "A Court of Thorns and Roses",
+    "authorName": "Sarah J. Maas",
+    "relatedGenresNames": ["Fantasy", "Fiction", "Young Adult", "Romance"],
+    "firstPublished": "May 5, 2015",
+    "charactersNames": [
+      "Amarantha",
+      "Rhysand",
+      "Elain Archeron",
+      "Lucien Vanserra",
+      "Feyre Archeron",
+      "Tamlin (A Court of Thorns and Roses)",
+      "Nesta Archeron"
+    ],
+    "settingsNames": ["Prythian"]
+  },
+  {
+    "originalTitle": "The Kite Runner",
+    "authorName": "Khaled Hosseini",
+    "relatedGenresNames": [
+      "Fiction",
+      "Historical Fiction",
+      "Classics",
+      "Contemporary"
+    ],
+    "firstPublished": "May 29, 2003",
+    "charactersNames": [
+      "Assef",
+      "Rahim Khan",
+      "Amir (The Kite Runner)",
+      "Hassan (The Kite Runner)",
+      "Baba (The Kite Runner)",
+      "Sohrab (The Kite Runner)",
+      "Soraya Taheri",
+      "Farid (The Kite Runner)"
+    ],
+    "settingsNames": ["Kabul", "Fremont, California", "Afghanistan", "Pakistan"]
+  },
+  {
+    "originalTitle": "The Picture of Dorian Gray",
+    "authorName": "Oscar Wilde",
+    "relatedGenresNames": [
+      "Classics",
+      "Fiction",
+      "Gothic",
+      "Horror",
+      "Fantasy"
+    ],
+    "firstPublished": "June 20, 1890",
+    "charactersNames": [
+      "Basil Hallward",
+      "Lord Henry Wotton",
+      "Sibyl Vane",
+      "James Vane",
+      "Lady Victoria Wotton",
+      "Alan Campbell",
+      "Henry Ashton",
+      "Adrian Singleton",
+      "Lord Staveley",
+      "Lady Gwendolen",
+      "Lady Narborough",
+      "Duchess of Monmouth",
+      "Dorian Gray"
+    ],
+    "settingsNames": ["England", "London, England"]
+  },
+  {
+    "originalTitle": "Het Achterhuis",
+    "authorName": "Anne Frank",
+    "relatedGenresNames": [
+      "Classics",
+      "Nonfiction",
+      "History",
+      "Biography",
+      "Memoir",
+      "Holocaust"
+    ],
+    "firstPublished": "June 25, 1947",
+    "charactersNames": [
+      "Anne Frank",
+      "Otto Frank",
+      "Petronella van Daan",
+      "Hermann van Daan",
+      "Margot Frank",
+      "Peter van Daan",
+      "Edith Frank",
+      "Miep Gies",
+      "Albert Dussel"
+    ],
+    "settingsNames": ["Amsterdam", "Netherlands"]
+  },
+  {
+    "originalTitle": "Un di Velt Hot Geshvign",
+    "authorName": "Elie Wiesel",
+    "relatedGenresNames": [
+      "Nonfiction",
+      "Classics",
+      "History",
+      "Memoir",
+      "Holocaust",
+      "Biography"
+    ],
+    "firstPublished": "January 1, 1956",
+    "charactersNames": ["Elie Wiesel", "Shlomo Wiesel"],
+    "settingsNames": ["Auschwitz", "Poland"]
+  },
+  {
+    "originalTitle": "Into the Wild",
+    "authorName": "Jon Krakauer",
+    "relatedGenresNames": [
+      "Nonfiction",
+      "Biography",
+      "Adventure",
+      "Travel",
+      "Classics",
+      "Memoir"
+    ],
+    "firstPublished": "January 13, 1996",
+    "charactersNames": ["Christopher McCandless"],
+    "settingsNames": [
+      "Mexico, Virginia",
+      "The Slabs, Mojave Desert, California",
+      "Alaska"
+    ]
+  }
+]

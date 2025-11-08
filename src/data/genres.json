@@ -1,0 +1,110 @@
+[
+  {
+    "name": "Classics",
+    "description": "A classic stands the test of time. The work is usually considered to be a representation of the period in which it was written; and the work merits lasting recognition. In other words, if the book was published in the recent past, the work is not a classic.\n\nA classic has a certain universal appeal. Great works of literature touch us to our very core beings--partly because they integrate themes that are understood by readers from a wide range of backgrounds and levels of experience. Themes of love, hate, death, life, and faith touch upon some of our most basic emotional responses."
+  },
+  {
+    "name": "Mystery",
+    "description": "Mystery fiction is a genre of fiction that deals with the solution of a crime or the unraveling of secrets. The central character is often a detective who eventually solves the mystery by logical deduction from facts fairly presented to the reader. Mystery fiction is often equated with detective fiction, but while the two share many elements, they are not synonymous. Mystery fiction may include a broader range of stories that involve suspense, intrigue, and the unknown, whereas detective fiction specifically focuses on the investigative process of solving a crime."
+  },
+  {
+    "name": "Thriller",
+    "description": "Thriller is a broad genre of literature, film, and television that uses suspense, tension, and excitement as its main elements. Thrillers heavily stimulate the viewer's moods, giving them heightened feelings of suspense, excitement, surprise, anticipation, and anxiety. Thrillers often involve a high-stakes situation, such as a crime, espionage, or a chase, where the protagonist must overcome significant obstacles to achieve their goal. The genre is characterized by fast pacing, frequent action, and a sense of urgency."
+  },
+  {
+    "name": "Crime",
+    "description": "Crime fiction is a literary genre that fictionalises crimes, their detection, criminals, and their motives. It is usually distinguished from mainstream fiction and other genres such as historical fiction or science fiction, but the boundaries are indistinct. Crime fiction has multiple subgenres, including detective fiction, legal thriller, and hard-boiled fiction."
+  },
+  {
+    "name": "Mystery Thriller",
+    "description": "Mystery thriller is a hybrid genre that combines the suspenseful elements of thrillers with the puzzle-solving aspects of mysteries. These stories often involve a crime or series of crimes, with the protagonist racing against time to solve the mystery and prevent further harm."
+  },
+  {
+    "name": "Fiction",
+    "description": "Fiction is the telling of stories which are not real. More specifically, fiction is an imaginative form of narrative, one of the four basic rhetorical modes. Although the word fiction is derived from the Latin fingo, fingere, finxi, fictum, \"to form, create\", works of fiction need not be entirely imaginary and may include real people, places, and events. Fiction may be either written or oral. Although not all fiction is necessarily artistic, fiction is largely perceived as a form of art or entertainment. The ability to create fiction and other artistic works is considered to be a fundamental aspect of human culture, one of the defining characteristics of humanity."
+  },
+  {
+    "name": "Science Fiction",
+    "description": "Science fiction (abbreviated SF or sci-fi with varying punctuation and capitalization) is a broad genre of fiction that often involves speculations based on current or future science or technology. Science fiction is found in books, art, television, films, games, theatre, and other media. In organizational or marketing contexts, science fiction can be synonymous with the broader definition of speculative fiction, encompassing creative works incorporating imaginative elements not found in contemporary reality; this includes fantasy, horror and related genres.\n\nAlthough the two genres are often conflated as science fiction/fantasy, science fiction differs from fantasy in that, within the context of the story, its imaginary elements are largely possible within scientifically established or scientifically postulated laws of nature (though some elements in a story might still be pure imaginative speculation). Exploring the consequences of such differences is the traditional purpose of science fiction, making it a \"literature of ideas\". Science fantasy is largely based on writing entertainingly and rationally about alternate possibilities in settings that are contrary to known reality."
+  },
+  {
+    "name": "Dystopia",
+    "description": "Dystopia is a form of literature that explores social and political structures. It is a creation of a nightmare world - unlike its opposite, Utopia, which is an ideal world.\n\nDystopia is often characterized by an authoritarian or totalitarian form of government. It often features multiple kinds of repressive social control systems, a lack or total absence of individual freedoms and expressions, and a state of constant warfare or violence.\n\nMany novels combine Dystopia and Utopia, often as a metaphor for the different directions humanity can take in its choices, ending up with one of the two possible futures."
+  },
+  {
+    "name": "Politics",
+    "description": "Politics (from Greek πολιτικός, \"of, for, or relating to citizens\"), is a process by which groups of people make collective decisions. The term is generally applied to the art or science of running governmental or state affairs. It also refers to behavior within civil governments. However, politics can be observed in other group interactions, including corporate, academic, and religious institutions. It consists of \"social relations involving authority or power\" and refers to the regulation of public affairs within a political unit, and to the methods and tactics used to formulate and apply policy."
+  },
+  {
+    "name": "Historical Fiction",
+    "description": "Historical fiction presents a story set in the past, often during a significant time period. In historical fiction, the time period is an important part of the setting and often of the story itself.\n\nHistorical fiction may include fictional characters, well-known historical figures or a mixture of the two. Authors of historical fiction usually pay close attention to the details of their stories (settings, clothing, dialogue, etc.) to ensure that they fit the time periods in which the narratives take place.\n\nIn some historical fiction, famous events appear from points of view not recorded in history, showing historical figures dealing with actual events while depicting them in a way that is not recorded in history. Other times, the historical event or time period complements a story's narrative, forming a framework and background for the characters' lives. Sometimes, historical fiction can be for the most part true, but the names of people and places have been in some way altered.\n\nAs this is fiction, artistic license is permitted in regard to presentation and subject matter, so long as it does not deviate in significant ways from established history. If events should deviate significantly, the story may then fall into the genre of alternate history, which is known for speculating on what could have happened if a significant historical event had gone differently. On a similar note, events occurring in historical fiction must adhere to the laws of physics. Stories that extend into the magical or fantastic are often considered historical fantasy."
+  },
+  {
+    "name": "School",
+    "description": "School stories are a genre of literature that focuses on the lives and experiences of students within educational institutions. These stories often explore themes such as friendship, rivalry, personal growth, academic challenges, and the social dynamics of school life. School stories can be set in various types of schools, including primary schools, secondary schools, boarding schools, and universities.\n\nThe genre often highlights the unique challenges and adventures that students face, both inside and outside the classroom. This can include navigating relationships with peers and teachers, dealing with academic pressures, and participating in extracurricular activities. School stories may also address broader social issues, such as bullying, identity, and societal expectations.\n\nFamous examples of school stories include J.K. Rowling's \"Harry Potter\" series, which is set in a magical boarding school"
+  },
+  {
+    "name": "Young Adult",
+    "description": "Young adult fiction (YA) is a category of fiction written for readers from 12 to 18 years of age. Although the genre is targeted at teenagers, approximately half of YA readers are adults.\n\nThe subject matter and genres of YA correlate with the age and experience of the protagonist. The stories often focus on challenges and issues relevant to teenagers, such as identity, relationships, family dynamics, and personal growth. YA novels can encompass a wide range of genres, including romance, fantasy, science fiction, dystopian, contemporary fiction, and more.\n\nYA fiction is characterized by its accessible writing style, fast-paced plots, and relatable characters. The protagonists are typically adolescents or young adults who are navigating the complexities of growing up and finding their place in the world."
+  },
+  {
+    "name": "Fantasy",
+    "description": "Fantasy is a genre of speculative fiction set in a fictional universe, often inspired by real world myth and folklore. Its roots are in oral traditions, which then became literature and drama. The genre has expanded further into various media, including film, television, graphic novels, and video games.\n\nFantasy is distinguished from the genres of science fiction and horror by the absence of scientific or macabre themes, though these genres may overlap. In popular culture, the fantasy genre is often associated with swords and sorcery, magic, and mythical creatures."
+  },
+  {
+    "name": "Romance",
+    "description": "Romance novels are a genre of fiction that primarily focuses on the romantic relationship between two people. The central plot revolves around the development of this relationship, often culminating in an emotionally satisfying and optimistic ending. Romance novels can encompass a wide range of sub-genres, including historical romance, contemporary romance, paranormal romance, romantic suspense, and more.\n\nKey elements of romance novels typically include well-developed characters, emotional conflicts, and themes of love, passion, and intimacy. The protagonists often face obstacles that challenge their relationship, such as misunderstandings, external threats, or personal growth issues. Despite these challenges, the narrative usually leads to a resolution that affirms the power of love and connection."
+  },
+  {
+    "name": "Adventure",
+    "description": "Adventure fiction is a genre of fiction that typically features stories of exciting and often risky undertakings, exploration, and heroic deeds. The genre is characterized by fast-paced plots, action-packed sequences, and a sense of danger and excitement. Adventure fiction often involves protagonists who embark on journeys or quests, facing various challenges and obstacles along the way.\n\nCommon themes in adventure fiction include exploration of unknown territories, survival against the odds, battles with villains or natural forces, and the pursuit of treasure or other valuable goals. The settings for adventure stories can vary widely, from exotic locations and uncharted lands to historical periods and fantastical worlds.\n\nAdventure fiction has a long history, with roots in ancient myths and legends, and has evolved over time to include a wide range of styles and sub-genres. Notable examples of adventure fiction include works by authors such as Jules Verne, Robert Louis Stevenson, and H. Rider Haggard."
+  },
+  {
+    "name": "Childrens",
+    "description": "Children's literature is a genre of literature that is specifically written for children and young readers. It encompasses a wide range of literary forms, including picture books, fairy tales, fables, poetry, and novels. The primary purpose of children's literature is to entertain, educate, and inspire young minds while also fostering a love for reading.\n\nChildren's literature often features themes and topics that are relevant to the experiences and interests of children, such as friendship, family, adventure, imagination, and moral lessons. The language used in children's literature is typically simple and accessible, making it easy for young readers to understand and engage with the stories.\n\nIllustrations play a significant role in children's literature, especially in picture books, where they complement the text and help bring the story to life. Children's literature has a rich history, with classic works by authors such as Lewis Carroll, Beatrix Potter, Dr. Seuss, and Roald Dahl continuing to captivate young readers across generations."
+  },
+  {
+    "name": "Magic",
+    "description": "Magic fiction is a genre where supernatural forces, spells, magical beings, and mystical phenomena play a central role in the story. These works often explore worlds where magic is real and influences the characters, plot, and setting."
+  },
+  {
+    "name": "Philosophy",
+    "description": "Philosophy is the study of general and fundamental questions about existence, knowledge, values, reason, mind, and language. Such questions are often posed as problems to be studied or resolved. The term was probably coined by Pythagoras (c. 570 – c. 495 BCE)."
+  },
+  {
+    "name": "Contemporary",
+    "description": "Contemporary fiction is literature set in modern times, typically reflecting current issues, themes, and society. These stories often focus on realistic characters, settings, and events, and explore the complexities of present-day life."
+  },
+  {
+    "name": "Gothic",
+    "description": "Gothic fiction is a genre characterized by elements of horror, death, and romance, often set in gloomy castles or mysterious locations. It explores the darker side of human nature and frequently features supernatural events, psychological terror, and a brooding atmosphere."
+  },
+  {
+    "name": "Horror",
+    "description": "Horror fiction is intended to frighten, scare, or disgust the reader by invoking feelings of fear, dread, or terror. It often features supernatural elements, monsters, or psychological thrills, and explores the boundaries of human experience and emotion."
+  },
+  {
+    "name": "Nonfiction",
+    "description": "Nonfiction is a genre of literature that presents factual information about real events, people, and subjects. It includes biographies, memoirs, history, essays, journalism, and more, aiming to inform, educate, or document reality."
+  },
+  {
+    "name": "History",
+    "description": "History is a genre that explores past events, societies, and cultures. Historical works can be factual or interpretive, providing insight into how past events have shaped the present and future."
+  },
+  {
+    "name": "Biography",
+    "description": "Biography is a genre that tells the life story of a real person, detailing their experiences, achievements, and impact. Biographies can be written about historical figures, celebrities, or ordinary individuals."
+  },
+  {
+    "name": "Memoir",
+    "description": "Memoir is a subgenre of autobiography that focuses on specific experiences or periods in the author's life. Memoirs are personal, reflective, and often explore themes of growth, identity, and memory."
+  },
+  {
+    "name": "Holocaust",
+    "description": "Holocaust literature documents and reflects on the events, experiences, and aftermath of the Holocaust. This genre includes survivor testimonies, historical accounts, fiction, and memoirs that bear witness to this period in history."
+  },
+  {
+    "name": "Travel",
+    "description": "Travel literature is a genre that describes the experiences of travelers as they explore different places, cultures, and landscapes. It often combines personal narrative with factual information about geography, history, and culture."
+  }
+]
