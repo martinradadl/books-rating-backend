@@ -11,7 +11,8 @@
     "test": "vitest --run",
     "test:dev": "vitest --run --printConsoleTrace --coverage",
     "build": "tsc",
-    "lint": "oxlint --max-warnings 0"
+    "lint": "oxlint --max-warnings 0",
+    "db-helpers": "ts-node src/data/index.ts"
   },
   "dependencies": {
     "bcryptjs": "^3.0.2",
