@@ -9,9 +9,9 @@ export const add = async (req: Request, res: Response) => {
       originalTitle,
       authorId,
       relatedGenres,
-      firstPublishedsetting,
+      firstPublished,
       characters,
-      setting,
+      settings,
     } = req.body;
 
     const author = await authorModel.Author.findById(authorId);
@@ -27,9 +27,9 @@ export const add = async (req: Request, res: Response) => {
       originalTitle,
       authorId,
       relatedGenres,
-      firstPublishedsetting,
+      firstPublished,
       characters,
-      setting,
+      settings,
     });
 
     res.status(200).json(newBook);
