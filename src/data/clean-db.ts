@@ -92,6 +92,6 @@ export const cleanUpDB = async () => {
     console.info("All collections have been cleaned");
   } catch (err: unknown) {
     if (err instanceof Error)
-      console.error("Process have failed: ", err.message);
+      console.error("Process has failed: ", err.message);
   }
 };

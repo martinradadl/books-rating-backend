@@ -12,7 +12,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "lts/*"
-      - name: Install Dependecies
+      - name: Install Dependencies
         run: npm i
       - name: Run Linter
         run: npm run lint

@@ -114,6 +114,6 @@ export const seedDB = async () => {
     console.info("All data has been added");
   } catch (err: unknown) {
     if (err instanceof Error)
-      console.error("Process have failed: ", err.message);
+      console.error("Process has failed: ", err.message);
   }
 };
