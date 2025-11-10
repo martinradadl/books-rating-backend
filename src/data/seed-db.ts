@@ -57,7 +57,7 @@ const addBooks = async () => {
     return acc;
   }, {});
 
-  const addedCharactersIds = addedCharacters.reduce<{
+  const addedcharacters = addedCharacters.reduce<{
     [key: string]: Types.ObjectId;
   }>((acc, character) => {
     acc[character.name] = character._id;
@@ -74,12 +74,10 @@ const addBooks = async () => {
   const parsedBooks = books.map((book) => ({
     originalTitle: book.originalTitle,
     authorId: addedAuthorsIds[book.authorName],
-    relatedGenresIds: book.relatedGenresNames.map(
-      (name) => addedGenresIds[name]
-    ),
+    relatedGenres: book.relatedGenresNames.map((name) => addedGenresIds[name]),
     firstPublished: book.firstPublished,
-    charactersIds: book.charactersNames.map((name) => addedCharactersIds[name]),
-    settingIds: book.settingsNames.map((name) => addedSettingsIds[name]),
+    characters: book.charactersNames.map((name) => addedcharacters[name]),
+    setting: book.settingsNames.map((name) => addedSettingsIds[name]),
   }));
 
   const addedBooks = await bookModel.Book.insertMany(parsedBooks);

@@ -7,10 +7,10 @@ const schema = new mongoose.Schema({
     ref: "Author",
     required: true,
   },
-  relatedGenresIds: [{ type: mongoose.Types.ObjectId, ref: "Genre" }],
+  relatedGenres: [{ type: mongoose.Types.ObjectId, ref: "Genre" }],
   firstPublished: Date,
-  charactersIds: [{ type: mongoose.Types.ObjectId, ref: "Character" }],
-  settingIds: [{ type: mongoose.Types.ObjectId, ref: "Setting" }],
+  characters: [{ type: mongoose.Types.ObjectId, ref: "Character" }],
+  settings: [{ type: mongoose.Types.ObjectId, ref: "Setting" }],
 });
 
 schema.index({ originalTitle: 1, authorId: 1 }, { unique: true });

@@ -3,7 +3,7 @@ export const fakeBook = {
   authorId: "fakeAuthorId",
   relatedGenres: ["fakeGenre1Id", "fakeGenre2Id"],
   firstPublished: new Date("2020-01-01").toISOString(),
-  setting: ["fakeSetting1", "fakeSetting2"],
+  settings: ["fakeSetting1", "fakeSetting2"],
   characters: ["fakeCharacter1", "fakeCharacter2"],
 };
 
@@ -12,7 +12,7 @@ export const fakeBook2 = {
   authorId: "fakeAuthorId",
   relatedGenres: ["fakeGenre3Id", "fakeGenre4Id"],
   firstPublished: new Date("2020-02-02").toISOString(),
-  setting: ["fakeSetting3", "fakeSetting4"],
+  settings: ["fakeSetting3", "fakeSetting4"],
   characters: ["fakeCharacter3", "fakeCharacter4"],
 };
 
