@@ -3,12 +3,12 @@ import express from "express";
 import http from "http";
 import cors from "cors";
 import { initMongo } from "./mongo-setup";
-import author from "./routes/author";
-import book from "./routes/book";
-import edition from "./routes/edition";
-import genre from "./routes/genre";
-import setting from "./routes/setting";
-import character from "./routes/character";
+import authors from "./routes/author";
+import books from "./routes/book";
+import editions from "./routes/edition";
+import genres from "./routes/genre";
+import settings from "./routes/setting";
+import characters from "./routes/character";
 
 const jsonParser = bodyParser.json();
 
@@ -24,12 +24,12 @@ app.use(cors()); // APP_URL pending
 
 app.get("/", (_, res) => res.send("Server is running"));
 
-app.use("/author", author);
-app.use("/book", book);
-app.use("/edition", edition);
-app.use("/genre", genre);
-app.use("/setting", setting);
-app.use("/character", character);
+app.use("/authors", authors);
+app.use("/books", books);
+app.use("/editions", editions);
+app.use("/genres", genres);
+app.use("/settings", settings);
+app.use("/characters", characters);
 
 // Start the server and listen on the specified port
 httpServer.listen(port, () => {
