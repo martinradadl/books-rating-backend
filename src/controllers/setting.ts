@@ -10,7 +10,7 @@ export const add = async (req: Request, res: Response) => {
   } catch (err: unknown) {
     if (err instanceof Error) {
       if (err.message.includes(MONGO_ERRORS.DuplicateKey)) {
-        const name = err.message.split(`\"`)[1];
+        const name = err.message.split(`"`)[1];
         res.status(409).json({
           message: `Adding not successful, setting ${name} already exists`,
         });
