@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 const schema = new mongoose.Schema({
   title: { type: String, required: true },
   cover: String,
-  bookId: { type: mongoose.Types.ObjectId, ref: "Book", required: true },
+  book: { type: mongoose.Types.ObjectId, ref: "Book", required: true },
   description: String,
   published: Date,
   pagesCount: Number,

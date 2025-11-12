@@ -73,7 +73,7 @@ const addBooks = async () => {
 
   const parsedBooks = books.map((book) => ({
     originalTitle: book.originalTitle,
-    authorId: addedAuthorsIds[book.authorName],
+    author: addedAuthorsIds[book.authorName],
     relatedGenres: book.relatedGenresNames.map((name) => addedGenresIds[name]),
     firstPublished: book.firstPublished,
     characters: book.charactersNames.map((name) => addedcharacters[name]),
@@ -97,7 +97,7 @@ const addEditions = async () => {
 
   const parsedEditions = editions.map((edition) => ({
     ...edition,
-    bookId: addedBooksIds[edition.bookOriginalTitle],
+    book: addedBooksIds[edition.bookOriginalTitle],
     bookOriginalTitle: undefined,
   }));
 
