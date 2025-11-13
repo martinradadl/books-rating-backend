@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 
 export const mockedCatchError = new Error("Error");
 export const mockedCatchDuplicateKeyError = (key: string) =>
-  new Error(`E11000 duplicate key error\"${key}\"`);
+  new Error(`E11000 duplicate key error"${key}"`);
 
 export const fakeObjectId = new mongoose.mongo.ObjectId();
 
