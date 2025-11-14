@@ -1,0 +1,3 @@
+tsc --noEmit
+npm run lint
+npm run test:dev
