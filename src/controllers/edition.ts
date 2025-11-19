@@ -36,8 +36,17 @@ export const add = async (req: Request, res: Response) => {
 
 export const getById = async (req: Request, res: Response) => {
   try {
-    const editionId = req.params.editionId;
-    const edition = await editionModel.Edition.findById(editionId);
+    const editionId = req.params.id;
+    const edition = await editionModel.Edition.findById(editionId).populate({
+      path: "book",
+      populate: [
+        { path: "author" },
+        { path: "relatedGenres" },
+        { path: "characters" },
+        { path: "settings" },
+      ],
+    });
+
     res.status(200).json(edition);
   } catch (err: unknown) {
     if (err instanceof Error) {
@@ -53,7 +62,16 @@ export const getAll = async (req: Request, res: Response) => {
 
     const editionsList = await editionModel.Edition.find()
       .limit(limit)
-      .skip((page - 1) * limit);
+      .skip((page - 1) * limit)
+      .populate({
+        path: "book",
+        populate: [
+          { path: "author" },
+          { path: "relatedGenres" },
+          { path: "characters" },
+          { path: "settings" },
+        ],
+      });
 
     res.status(200).json(editionsList);
   } catch (err: unknown) {

@@ -51,7 +51,11 @@ export const add = async (req: Request, res: Response) => {
 export const getById = async (req: Request, res: Response) => {
   try {
     const bookId = req.params.bookId;
-    const book = await bookModel.Book.findById(bookId);
+    const book = await bookModel.Book.findById(bookId)
+      .populate("author")
+      .populate("relatedGenres")
+      .populate("characters")
+      .populate("settings");
     res.status(200).json(book);
   } catch (err: unknown) {
     if (err instanceof Error) {
@@ -67,7 +71,11 @@ export const getAll = async (req: Request, res: Response) => {
 
     const booksList = await bookModel.Book.find()
       .limit(limit)
-      .skip((page - 1) * limit);
+      .skip((page - 1) * limit)
+      .populate("author")
+      .populate("relatedGenres")
+      .populate("characters")
+      .populate("settings");
 
     res.status(200).json(booksList);
   } catch (err: unknown) {
