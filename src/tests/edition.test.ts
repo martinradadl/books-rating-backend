@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import {
-  defaultGetAllQueryObjectWithoutPopulate,
+  defaultGetAllQueryObject,
+  defaultGetByIdQueryObject,
   initializeReqResMocks,
   mockedCatchDuplicateKeyError,
   mockedCatchError,
@@ -98,7 +99,11 @@ describe("Edition Controller", () => {
 
     it("should return 200 and the selected edition", async () => {
       const { req, res } = initializeReqResMocks();
-      vi.mocked(Edition.findById, true).mockResolvedValue(fakeEdition as any);
+
+      //@ts-expect-error Unsolved error with mockImplementation function
+      vi.mocked(Edition.findById, true).mockImplementation(() => {
+        return defaultGetByIdQueryObject(fakeEdition);
+      });
 
       await getById(req, res);
 
@@ -130,7 +135,7 @@ describe("Edition Controller", () => {
       const result = getEditionsPage();
       //@ts-expect-error Unsolved error with mockImplementation function
       vi.mocked(Edition.find, true).mockImplementation(() => {
-        return defaultGetAllQueryObjectWithoutPopulate(result);
+        return defaultGetAllQueryObject(result);
       });
 
       await getAll(req, res);

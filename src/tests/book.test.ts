@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import {
-  defaultGetAllQueryObjectWithoutPopulate,
+  defaultGetAllQueryObject,
+  defaultGetByIdQueryObject,
   initializeReqResMocks,
   mockedCatchDuplicateKeyError,
   mockedCatchError,
@@ -94,7 +95,10 @@ describe("Book Controller", () => {
 
     it("should return 200 and the selected book", async () => {
       const { req, res } = initializeReqResMocks();
-      vi.mocked(Book.findById, true).mockResolvedValue(fakeBook as any);
+      //@ts-expect-error Unsolved error with mockImplementation function
+      vi.mocked(Book.findById, true).mockImplementation(() => {
+        return defaultGetByIdQueryObject(fakeBook, 4);
+      });
 
       await getById(req, res);
 
@@ -126,7 +130,7 @@ describe("Book Controller", () => {
       const result = getBooksPage();
       //@ts-expect-error Unsolved error with mockImplementation function
       vi.mocked(Book.find, true).mockImplementation(() => {
-        return defaultGetAllQueryObjectWithoutPopulate(result);
+        return defaultGetAllQueryObject(result, 4);
       });
 
       await getAll(req, res);
