@@ -26,3 +26,35 @@ export const defaultGetAllQueryObjectWithoutPopulate = (
     },
   };
 };
+
+const applyPopulate = (
+  result: Record<string, unknown> | Array<Record<string, unknown>>,
+  depth: number
+) => {
+  if (depth <= 0) return result;
+  return {
+    populate: () => applyPopulate(result, depth - 1),
+  };
+};
+
+export const defaultGetAllQueryObject = (
+  result: Array<Record<string, unknown>>,
+  populateDepth: number = 1
+) => {
+  return {
+    limit: () => {
+      return {
+        skip: () => {
+          return applyPopulate(result, populateDepth);
+        },
+      };
+    },
+  };
+};
+
+export const defaultGetByIdQueryObject = (
+  result: Record<string, unknown>,
+  populateDepth: number = 1
+) => {
+  return applyPopulate(result, populateDepth);
+};

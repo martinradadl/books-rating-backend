@@ -1,7 +1,7 @@
 export const fakeEdition = {
   title: "fakeTitle1",
   cover: "fakeCover1",
-  bookId: "fakeBookId",
+  book: "fakeBookId",
   description: "fakeDescription1",
   published: new Date("2020-01-01").toISOString(),
   pagesCount: 100,
@@ -14,7 +14,7 @@ export const fakeEdition = {
 export const fakeEdition2 = {
   title: "fakeTitle2",
   cover: "fakeCover2",
-  bookId: "fakeBookId",
+  book: "fakeBookId",
   description: "fakeDescription2",
   published: new Date("2020-02-02").toISOString(),
   pagesCount: 200,
