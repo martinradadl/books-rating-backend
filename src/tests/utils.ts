@@ -27,7 +27,7 @@ export const defaultGetAllQueryObjectWithoutPopulate = (
   };
 };
 
-const applyPopulate = (
+export const applyPopulate = (
   result: Record<string, unknown> | Array<Record<string, unknown>>,
   depth: number
 ) => {
@@ -50,11 +50,4 @@ export const defaultGetAllQueryObject = (
       };
     },
   };
-};
-
-export const defaultGetByIdQueryObject = (
-  result: Record<string, unknown>,
-  populateDepth: number = 1
-) => {
-  return applyPopulate(result, populateDepth);
 };
