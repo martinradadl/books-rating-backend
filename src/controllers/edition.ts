@@ -86,14 +86,17 @@ export const getMoreEditions = async (req: Request, res: Response) => {
   try {
     const editionId = req.query?.editionId;
     const bookId = req.query?.bookId;
+    const limit = 20;
 
     const editionsList = await editionModel.Edition.find({
       book: bookId,
       _id: { $ne: new mongoose.Types.ObjectId(editionId as string) },
-    }).populate({
-      path: "book",
-      populate: [{ path: "author" }],
-    });
+    })
+      .limit(limit)
+      .populate({
+        path: "book",
+        populate: [{ path: "author" }],
+      });
 
     res.status(200).json(editionsList);
   } catch (err: unknown) {
@@ -107,6 +110,7 @@ export const getBooksBySameAuthor = async (req: Request, res: Response) => {
   try {
     const authorId = req.query?.authorId;
     const bookId = req.query?.bookId;
+    const limit = 20;
 
     const editionsList = await editionModel.Edition.aggregate([
       {
@@ -142,7 +146,7 @@ export const getBooksBySameAuthor = async (req: Request, res: Response) => {
       {
         $replaceRoot: { newRoot: "$edition" },
       },
-    ]);
+    ]).limit(limit);
 
     res.status(200).json(editionsList);
   } catch (err: unknown) {
@@ -156,6 +160,7 @@ export const getRelatedBooks = async (req: Request, res: Response) => {
   try {
     const authorId = req.query?.authorId;
     const bookId = req.query?.bookId;
+    const limit = 20;
 
     const baseBook = await bookModel.Book.findById(bookId)
       .select("relatedGenres")
@@ -208,7 +213,7 @@ export const getRelatedBooks = async (req: Request, res: Response) => {
       {
         $replaceRoot: { newRoot: "$edition" },
       },
-    ]);
+    ]).limit(limit);
 
     res.status(200).json(editionsList);
   } catch (err: unknown) {
