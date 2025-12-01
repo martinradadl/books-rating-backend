@@ -1,5 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import {
+  applyLimit,
+  applyLimitAndPopulate,
   applyPopulate,
   defaultGetAllQueryObject,
   initializeReqResMocks,
@@ -174,7 +176,7 @@ describe("Edition Controller", () => {
 
       //@ts-expect-error Unsolved error with mockImplementation function
       vi.mocked(Edition.find, true).mockImplementation(() => {
-        return applyPopulate(fakeEditionsList, 1);
+        return applyLimitAndPopulate(fakeEditionsList, 1);
       });
 
       await getMoreEditions(req, res);
@@ -204,7 +206,10 @@ describe("Edition Controller", () => {
     it("should return 200 and books by same author list", async () => {
       const { req, res } = initializeReqResMocks();
 
-      vi.mocked(Edition.aggregate, true).mockResolvedValue(fakeEditionsList);
+      //@ts-expect-error Unsolved error with mockImplementation function
+      vi.mocked(Edition.aggregate, true).mockImplementation(() => {
+        return applyLimit(fakeEditionsList, 1);
+      });
 
       await getBooksBySameAuthor(req, res);
 
@@ -245,7 +250,10 @@ describe("Edition Controller", () => {
         //@ts-expect-error Unsolved error with mockImplementation function
         select: mockSelect,
       }));
-      vi.mocked(Edition.aggregate, true).mockResolvedValue(fakeEditionsList);
+      //@ts-expect-error Unsolved error with mockImplementation function
+      vi.mocked(Edition.aggregate, true).mockImplementation(() => {
+        return applyLimit(fakeEditionsList, 1);
+      });
 
       await getRelatedBooks(req, res);
 

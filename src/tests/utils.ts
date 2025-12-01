@@ -37,6 +37,32 @@ export const applyPopulate = (
   };
 };
 
+export const applyLimit = (
+  result: Record<string, unknown> | Array<Record<string, unknown>>,
+  depth: number
+) => {
+  if (depth <= 0) return result;
+  return {
+    limit: () => {
+      return result;
+    },
+  };
+};
+
+export const applyLimitAndPopulate = (
+  result: Record<string, unknown> | Array<Record<string, unknown>>,
+  depth: number
+) => {
+  if (depth <= 0) return result;
+  return {
+    limit: () => {
+      return {
+        populate: () => applyPopulate(result, depth - 1),
+      };
+    },
+  };
+};
+
 export const defaultGetAllQueryObject = (
   result: Array<Record<string, unknown>>,
   populateDepth: number = 1
