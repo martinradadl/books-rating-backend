@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import * as editionModel from "../models/edition";
 import * as bookModel from "../models/book";
 import { CAROUSEL_LENGTH_LIMIT, MONGO_ERRORS } from "../helpers/constants";
-import { objectId } from "../helpers/utils";
+import { parseToObjectId } from "../helpers/utils";
 
 export const add = async (req: Request, res: Response) => {
   try {
@@ -90,7 +90,7 @@ export const getMoreEditions = async (req: Request, res: Response) => {
 
     const editionsList = await editionModel.Edition.find({
       book: bookId,
-      _id: { $ne: objectId(editionId) },
+      _id: { $ne: parseToObjectId(editionId) },
     })
       .limit(limit)
       .populate({
@@ -133,8 +133,8 @@ export const getBooksBySameAuthor = async (req: Request, res: Response) => {
       { $unwind: "$book.author" },
       {
         $match: {
-          "book.author._id": objectId(authorId),
-          "book._id": { $ne: objectId(bookId) },
+          "book.author._id": parseToObjectId(authorId),
+          "book._id": { $ne: parseToObjectId(bookId) },
         },
       },
       {
@@ -189,7 +189,7 @@ export const getRelatedBooks = async (req: Request, res: Response) => {
       {
         $match: {
           "book.author._id": {
-            $ne: objectId(authorId),
+            $ne: parseToObjectId(authorId),
           },
         },
       },
