@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
 import * as editionModel from "../models/edition";
 import * as bookModel from "../models/book";
-import { MONGO_ERRORS } from "../helpers/constants";
-import mongoose from "mongoose";
+import { CAROUSEL_LENGTH_LIMIT, MONGO_ERRORS } from "../helpers/constants";
+import { objectId } from "../helpers/utils";
 
 export const add = async (req: Request, res: Response) => {
   try {
@@ -84,13 +84,13 @@ export const getAll = async (req: Request, res: Response) => {
 
 export const getMoreEditions = async (req: Request, res: Response) => {
   try {
-    const editionId = req.query?.editionId;
+    const editionId = req.query?.editionId as string;
     const bookId = req.query?.bookId;
-    const limit = 20;
+    const limit = parseInt(req.query?.limit as string) || CAROUSEL_LENGTH_LIMIT;
 
     const editionsList = await editionModel.Edition.find({
       book: bookId,
-      _id: { $ne: new mongoose.Types.ObjectId(editionId as string) },
+      _id: { $ne: objectId(editionId) },
     })
       .limit(limit)
       .populate({
@@ -108,9 +108,9 @@ export const getMoreEditions = async (req: Request, res: Response) => {
 
 export const getBooksBySameAuthor = async (req: Request, res: Response) => {
   try {
-    const authorId = req.query?.authorId;
-    const bookId = req.query?.bookId;
-    const limit = 20;
+    const authorId = req.query?.authorId as string;
+    const bookId = req.query?.bookId as string;
+    const limit = parseInt(req.query?.limit as string) || CAROUSEL_LENGTH_LIMIT;
 
     const editionsList = await editionModel.Edition.aggregate([
       {
@@ -133,8 +133,8 @@ export const getBooksBySameAuthor = async (req: Request, res: Response) => {
       { $unwind: "$book.author" },
       {
         $match: {
-          "book.author._id": new mongoose.Types.ObjectId(authorId as string),
-          "book._id": { $ne: new mongoose.Types.ObjectId(bookId as string) },
+          "book.author._id": objectId(authorId),
+          "book._id": { $ne: objectId(bookId) },
         },
       },
       {
@@ -158,9 +158,9 @@ export const getBooksBySameAuthor = async (req: Request, res: Response) => {
 
 export const getRelatedBooks = async (req: Request, res: Response) => {
   try {
-    const authorId = req.query?.authorId;
+    const authorId = req.query?.authorId as string;
     const bookId = req.query?.bookId;
-    const limit = 20;
+    const limit = parseInt(req.query?.limit as string) || CAROUSEL_LENGTH_LIMIT;
 
     const baseBook = await bookModel.Book.findById(bookId)
       .select("relatedGenres")
@@ -189,7 +189,7 @@ export const getRelatedBooks = async (req: Request, res: Response) => {
       {
         $match: {
           "book.author._id": {
-            $ne: new mongoose.Types.ObjectId(authorId as string),
+            $ne: objectId(authorId),
           },
         },
       },
