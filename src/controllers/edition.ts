@@ -1,7 +1,8 @@
 import { Request, Response } from "express";
 import * as editionModel from "../models/edition";
 import * as bookModel from "../models/book";
-import { MONGO_ERRORS } from "../helpers/constants";
+import { CAROUSEL_LENGTH_LIMIT, MONGO_ERRORS } from "../helpers/constants";
+import { parseToObjectId } from "../helpers/utils";
 
 export const add = async (req: Request, res: Response) => {
   try {
@@ -72,6 +73,147 @@ export const getAll = async (req: Request, res: Response) => {
           { path: "settings" },
         ],
       });
+
+    res.status(200).json(editionsList);
+  } catch (err: unknown) {
+    if (err instanceof Error) {
+      res.status(500).json({ message: err.message });
+    }
+  }
+};
+
+export const getMoreEditions = async (req: Request, res: Response) => {
+  try {
+    const editionId = req.query?.editionId as string;
+    const bookId = req.query?.bookId;
+    const limit = parseInt(req.query?.limit as string) || CAROUSEL_LENGTH_LIMIT;
+
+    const editionsList = await editionModel.Edition.find({
+      book: bookId,
+      _id: { $ne: parseToObjectId(editionId) },
+    })
+      .limit(limit)
+      .populate({
+        path: "book",
+        populate: [{ path: "author" }],
+      });
+
+    res.status(200).json(editionsList);
+  } catch (err: unknown) {
+    if (err instanceof Error) {
+      res.status(500).json({ message: err.message });
+    }
+  }
+};
+
+export const getBooksBySameAuthor = async (req: Request, res: Response) => {
+  try {
+    const authorId = req.query?.authorId as string;
+    const bookId = req.query?.bookId as string;
+    const limit = parseInt(req.query?.limit as string) || CAROUSEL_LENGTH_LIMIT;
+
+    const editionsList = await editionModel.Edition.aggregate([
+      {
+        $lookup: {
+          from: "books",
+          localField: "book",
+          foreignField: "_id",
+          as: "book",
+        },
+      },
+      { $unwind: "$book" },
+      {
+        $lookup: {
+          from: "authors",
+          localField: "book.author",
+          foreignField: "_id",
+          as: "book.author",
+        },
+      },
+      { $unwind: "$book.author" },
+      {
+        $match: {
+          "book.author._id": parseToObjectId(authorId),
+          "book._id": { $ne: parseToObjectId(bookId) },
+        },
+      },
+      {
+        $group: {
+          _id: "$book",
+          edition: { $first: "$$ROOT" },
+        },
+      },
+      {
+        $replaceRoot: { newRoot: "$edition" },
+      },
+    ]).limit(limit);
+
+    res.status(200).json(editionsList);
+  } catch (err: unknown) {
+    if (err instanceof Error) {
+      res.status(500).json({ message: err.message });
+    }
+  }
+};
+
+export const getRelatedBooks = async (req: Request, res: Response) => {
+  try {
+    const authorId = req.query?.authorId as string;
+    const bookId = req.query?.bookId;
+    const limit = parseInt(req.query?.limit as string) || CAROUSEL_LENGTH_LIMIT;
+
+    const baseBook = await bookModel.Book.findById(bookId)
+      .select("relatedGenres")
+      .lean();
+    const relatedGenres = baseBook?.relatedGenres;
+
+    const editionsList = await editionModel.Edition.aggregate([
+      {
+        $lookup: {
+          from: "books",
+          localField: "book",
+          foreignField: "_id",
+          as: "book",
+        },
+      },
+      { $unwind: "$book" },
+      {
+        $lookup: {
+          from: "authors",
+          localField: "book.author",
+          foreignField: "_id",
+          as: "book.author",
+        },
+      },
+      { $unwind: "$book.author" },
+      {
+        $match: {
+          "book.author._id": {
+            $ne: parseToObjectId(authorId),
+          },
+        },
+      },
+      {
+        $addFields: {
+          genreOverlap: {
+            $size: { $setIntersection: ["$book.relatedGenres", relatedGenres] },
+          },
+        },
+      },
+      { $match: { genreOverlap: { $gt: 0 } } },
+      {
+        $sort: { genreOverlap: -1 },
+      },
+      {
+        $group: {
+          _id: "$book",
+          edition: { $first: "$$ROOT" },
+        },
+      },
+      {
+        $replaceRoot: { newRoot: "$edition" },
+      },
+    ]).limit(limit);
 
     res.status(200).json(editionsList);
   } catch (err: unknown) {

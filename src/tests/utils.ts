@@ -27,13 +27,39 @@ export const defaultGetAllQueryObjectWithoutPopulate = (
   };
 };
 
-const applyPopulate = (
+export const applyPopulate = (
   result: Record<string, unknown> | Array<Record<string, unknown>>,
   depth: number
 ) => {
   if (depth <= 0) return result;
   return {
     populate: () => applyPopulate(result, depth - 1),
+  };
+};
+
+export const applyLimit = (
+  result: Record<string, unknown> | Array<Record<string, unknown>>,
+  depth: number
+) => {
+  if (depth <= 0) return result;
+  return {
+    limit: () => {
+      return result;
+    },
+  };
+};
+
+export const applyLimitAndPopulate = (
+  result: Record<string, unknown> | Array<Record<string, unknown>>,
+  depth: number
+) => {
+  if (depth <= 0) return result;
+  return {
+    limit: () => {
+      return {
+        populate: () => applyPopulate(result, depth - 1),
+      };
+    },
   };
 };
 
@@ -50,11 +76,4 @@ export const defaultGetAllQueryObject = (
       };
     },
   };
-};
-
-export const defaultGetByIdQueryObject = (
-  result: Record<string, unknown>,
-  populateDepth: number = 1
-) => {
-  return applyPopulate(result, populateDepth);
 };

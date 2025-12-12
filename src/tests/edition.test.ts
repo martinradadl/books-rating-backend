@@ -1,14 +1,23 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import {
+  applyLimit,
+  applyLimitAndPopulate,
+  applyPopulate,
   defaultGetAllQueryObject,
-  defaultGetByIdQueryObject,
   initializeReqResMocks,
   mockedCatchDuplicateKeyError,
   mockedCatchError,
 } from "./utils";
 import { Edition } from "../models/edition";
 import { Book } from "../models/book";
-import { add, getAll, getById } from "../controllers/edition";
+import {
+  add,
+  getAll,
+  getBooksBySameAuthor,
+  getById,
+  getMoreEditions,
+  getRelatedBooks,
+} from "../controllers/edition";
 import {
   fakeEdition,
   fakeEditionsList,
@@ -102,7 +111,7 @@ describe("Edition Controller", () => {
 
       //@ts-expect-error Unsolved error with mockImplementation function
       vi.mocked(Edition.findById, true).mockImplementation(() => {
-        return defaultGetByIdQueryObject(fakeEdition);
+        return applyPopulate(fakeEdition, 1);
       });
 
       await getById(req, res);
@@ -139,6 +148,114 @@ describe("Edition Controller", () => {
       });
 
       await getAll(req, res);
+
+      expect(res.statusCode).toBe(200);
+      expect(res._getJSONData()).toEqual(fakeEditionsList);
+    });
+  });
+
+  describe("Get More Editions", async () => {
+    afterEach(() => {
+      vi.resetAllMocks();
+    });
+
+    it("should return 500 when getting more editions", async () => {
+      const { req, res } = initializeReqResMocks();
+      vi.mocked(Edition.find, true).mockImplementation(() => {
+        throw mockedCatchError;
+      });
+
+      await getMoreEditions(req, res);
+
+      expect(res.statusCode).toBe(500);
+      expect(res._getJSONData()).toEqual({ message: mockedCatchError.message });
+    });
+
+    it("should return 200 and more editions list", async () => {
+      const { req, res } = initializeReqResMocks();
+
+      //@ts-expect-error Unsolved error with mockImplementation function
+      vi.mocked(Edition.find, true).mockImplementation(() => {
+        return applyLimitAndPopulate(fakeEditionsList, 1);
+      });
+
+      await getMoreEditions(req, res);
+
+      expect(res.statusCode).toBe(200);
+      expect(res._getJSONData()).toEqual(fakeEditionsList);
+    });
+  });
+
+  describe("Get Books By Same Author", async () => {
+    afterEach(() => {
+      vi.resetAllMocks();
+    });
+
+    it("should return 500 when getting books by same author", async () => {
+      const { req, res } = initializeReqResMocks();
+      vi.mocked(Edition.aggregate, true).mockImplementation(() => {
+        throw mockedCatchError;
+      });
+
+      await getBooksBySameAuthor(req, res);
+
+      expect(res.statusCode).toBe(500);
+      expect(res._getJSONData()).toEqual({ message: mockedCatchError.message });
+    });
+
+    it("should return 200 and books by same author list", async () => {
+      const { req, res } = initializeReqResMocks();
+
+      //@ts-expect-error Unsolved error with mockImplementation function
+      vi.mocked(Edition.aggregate, true).mockImplementation(() => {
+        return applyLimit(fakeEditionsList, 1);
+      });
+
+      await getBooksBySameAuthor(req, res);
+
+      expect(res.statusCode).toBe(200);
+      expect(res._getJSONData()).toEqual(fakeEditionsList);
+    });
+  });
+
+  describe("Get Books By Same Author", async () => {
+    afterEach(() => {
+      vi.resetAllMocks();
+    });
+
+    it("should return 500 when getting related books", async () => {
+      const { req, res } = initializeReqResMocks();
+      vi.mocked(Book.findById, true).mockImplementation(() => {
+        throw mockedCatchError;
+      });
+
+      await getRelatedBooks(req, res);
+
+      expect(res.statusCode).toBe(500);
+      expect(res._getJSONData()).toEqual({ message: mockedCatchError.message });
+    });
+
+    it("should return 200 and related books list", async () => {
+      const { req, res } = initializeReqResMocks();
+
+      const mockLean = vi.fn().mockResolvedValue({
+        relatedGenres: ["fakeGenre1", "fakeGenre2"],
+      });
+
+      const mockSelect = vi.fn(() => ({
+        lean: mockLean,
+      }));
+
+      vi.mocked(Book.findById, true).mockImplementation(() => ({
+        //@ts-expect-error Unsolved error with mockImplementation function
+        select: mockSelect,
+      }));
+      //@ts-expect-error Unsolved error with mockImplementation function
+      vi.mocked(Edition.aggregate, true).mockImplementation(() => {
+        return applyLimit(fakeEditionsList, 1);
+      });
+
+      await getRelatedBooks(req, res);
 
       expect(res.statusCode).toBe(200);
       expect(res._getJSONData()).toEqual(fakeEditionsList);
