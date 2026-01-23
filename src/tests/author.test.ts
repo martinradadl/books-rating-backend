@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import {
-  defaultGetAllQueryObjectWithoutPopulate,
+  defaultGetAllQueryObject,
   initializeReqResMocks,
   mockedCatchDuplicateKeyError,
   mockedCatchError,
@@ -111,7 +111,7 @@ describe("Author Controller", () => {
       const result = getAuthorsPage();
       //@ts-expect-error Unsolved error with mockImplementation function
       vi.mocked(Author.find, true).mockImplementation(() => {
-        return defaultGetAllQueryObjectWithoutPopulate(result);
+        return defaultGetAllQueryObject(result);
       });
 
       await getAll(req, res);

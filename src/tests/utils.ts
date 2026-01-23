@@ -13,7 +13,7 @@ export const initializeReqResMocks = () => {
   return { req, res };
 };
 
-export const defaultGetAllQueryObjectWithoutPopulate = (
+export const defaultGetAllQueryObject = (
   result: Array<Record<string, unknown>>
 ) => {
   return {
@@ -21,6 +21,24 @@ export const defaultGetAllQueryObjectWithoutPopulate = (
       return {
         skip: () => {
           return result;
+        },
+      };
+    },
+  };
+};
+
+export const defaultGetAllQueryObjectAndSort = (
+  result: Array<Record<string, unknown>>
+) => {
+  return {
+    sort: () => {
+      return {
+        limit: () => {
+          return {
+            skip: () => {
+              return result;
+            },
+          };
         },
       };
     },
@@ -63,7 +81,7 @@ export const applyLimitAndPopulate = (
   };
 };
 
-export const defaultGetAllQueryObject = (
+export const defaultGetAllQueryObjectAndPopulate = (
   result: Array<Record<string, unknown>>,
   populateDepth: number = 1
 ) => {
