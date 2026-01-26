@@ -122,6 +122,20 @@ describe("Genre Controller", () => {
       expect(res._getJSONData()).toEqual(fakeGenresListWithURL);
     });
 
+    it("should return 500 when error is thrown getting all genres sorted by occurrence", async () => {
+      const { req, res } = initializeReqResMocks();
+      req.query = { sortBy: "occurrence" };
+
+      vi.mocked(Book.aggregate, true).mockImplementation(() => {
+        throw mockedCatchError;
+      });
+
+      await getAll(req, res);
+
+      expect(res.statusCode).toBe(500);
+      expect(res._getJSONData()).toEqual({ message: mockedCatchError.message });
+    });
+
     it("should return 200 and all genres list when sorted by occurrence", async () => {
       const { req, res } = initializeReqResMocks();
       req.query = { sortBy: "occurrence" };
