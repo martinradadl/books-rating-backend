@@ -6,6 +6,7 @@ import {
   mockedCatchError,
 } from "./utils";
 import { Genre } from "../models/genre";
+import { Book } from "../models/book";
 import { add, getAll, getById } from "../controllers/genre";
 import {
   fakeGenre,
@@ -14,6 +15,7 @@ import {
 } from "./fake-data/genre";
 
 vi.mock("../models/genre.ts");
+vi.mock("../models/book.ts");
 
 describe("Genre Controller", () => {
   describe("Add Genre Controller", async () => {
@@ -113,6 +115,18 @@ describe("Genre Controller", () => {
       vi.mocked(Genre.find, true).mockImplementation(() => {
         return defaultGetAllQueryObjectAndSort(result);
       });
+
+      await getAll(req, res);
+
+      expect(res.statusCode).toBe(200);
+      expect(res._getJSONData()).toEqual(fakeGenresListWithURL);
+    });
+
+    it("should return 200 and all genres list when sorted by occurrence", async () => {
+      const { req, res } = initializeReqResMocks();
+      req.query = { sortBy: "occurrence" };
+
+      vi.mocked(Book.aggregate, true).mockResolvedValue(fakeGenresListWithURL);
 
       await getAll(req, res);
 
