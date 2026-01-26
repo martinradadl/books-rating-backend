@@ -3,7 +3,7 @@ import {
   applyLimit,
   applyLimitAndPopulate,
   applyPopulate,
-  defaultGetAllQueryObject,
+  defaultGetAllQueryObjectAndPopulate,
   initializeReqResMocks,
   mockedCatchDuplicateKeyError,
   mockedCatchError,
@@ -144,7 +144,7 @@ describe("Edition Controller", () => {
       const result = getEditionsPage();
       //@ts-expect-error Unsolved error with mockImplementation function
       vi.mocked(Edition.find, true).mockImplementation(() => {
-        return defaultGetAllQueryObject(result);
+        return defaultGetAllQueryObjectAndPopulate(result);
       });
 
       await getAll(req, res);

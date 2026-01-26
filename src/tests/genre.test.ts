@@ -1,14 +1,21 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import {
+  defaultGetAllQueryObjectAndSort,
   initializeReqResMocks,
   mockedCatchDuplicateKeyError,
   mockedCatchError,
 } from "./utils";
 import { Genre } from "../models/genre";
+import { Book } from "../models/book";
 import { add, getAll, getById } from "../controllers/genre";
-import { fakeGenre, fakeGenresList } from "./fake-data/genre";
+import {
+  fakeGenre,
+  fakeGenresListWithURL,
+  getGenresPage,
+} from "./fake-data/genre";
 
 vi.mock("../models/genre.ts");
+vi.mock("../models/book.ts");
 
 describe("Genre Controller", () => {
   describe("Add Genre Controller", async () => {
@@ -103,12 +110,42 @@ describe("Genre Controller", () => {
     it("should return 200 and all genres list", async () => {
       const { req, res } = initializeReqResMocks();
 
-      vi.mocked(Genre.find, true).mockResolvedValue(fakeGenresList);
+      const result = getGenresPage();
+      //@ts-expect-error Unsolved error with mockImplementation function
+      vi.mocked(Genre.find, true).mockImplementation(() => {
+        return defaultGetAllQueryObjectAndSort(result);
+      });
 
       await getAll(req, res);
 
       expect(res.statusCode).toBe(200);
-      expect(res._getJSONData()).toEqual(fakeGenresList);
+      expect(res._getJSONData()).toEqual(fakeGenresListWithURL);
+    });
+
+    it("should return 500 when error is thrown getting all genres sorted by occurrence", async () => {
+      const { req, res } = initializeReqResMocks();
+      req.query = { sortBy: "occurrence" };
+
+      vi.mocked(Book.aggregate, true).mockImplementation(() => {
+        throw mockedCatchError;
+      });
+
+      await getAll(req, res);
+
+      expect(res.statusCode).toBe(500);
+      expect(res._getJSONData()).toEqual({ message: mockedCatchError.message });
+    });
+
+    it("should return 200 and all genres list when sorted by occurrence", async () => {
+      const { req, res } = initializeReqResMocks();
+      req.query = { sortBy: "occurrence" };
+
+      vi.mocked(Book.aggregate, true).mockResolvedValue(fakeGenresListWithURL);
+
+      await getAll(req, res);
+
+      expect(res.statusCode).toBe(200);
+      expect(res._getJSONData()).toEqual(fakeGenresListWithURL);
     });
   });
 });
