@@ -4,12 +4,14 @@ import characters from "./characters.json";
 import settings from "./settings.json";
 import books from "./books.json";
 import editions from "./editions.json";
+import bookLists from "./book-lists.json";
 import * as authorModel from "../models/author";
 import * as genreModel from "../models/genre";
 import * as characterModel from "../models/character";
 import * as settingModel from "../models/setting";
 import * as bookModel from "../models/book";
 import * as editionModel from "../models/edition";
+import * as bookListModel from "../models/book-list";
 import { Types } from "mongoose";
 import { initMongo } from "../mongo-setup";
 
@@ -106,11 +108,53 @@ const addEditions = async () => {
   return addedEditions;
 };
 
+type BookCode = {
+  ISBN?: string;
+  ASIN?: string;
+};
+
+const getSortedEditionIds = async (bookCodes: BookCode[]) => {
+  const editions = await editionModel.Edition.find({
+    $or: bookCodes,
+  }).select("_id ISBN ASIN");
+
+  const editionMap = new Map();
+  editions.forEach((edition) => {
+    if (edition.ISBN) editionMap.set(edition.ISBN, edition._id);
+    if (edition.ASIN) editionMap.set(edition.ASIN, edition._id);
+  });
+
+  const sortedEditionsIds = bookCodes.map((code) => {
+    const [_, value] = Object.entries(code)[0];
+    return editionMap.get(value) || null;
+  });
+
+  return sortedEditionsIds;
+};
+
+export const addBookLists = async () => {
+  console.info("Initializing connection with Mongo");
+  await initMongo().catch(console.dir);
+
+  const parsedBookLists = await Promise.all(
+    bookLists.map(async (bookList) => {
+      const editionsIds = await getSortedEditionIds(bookList.bookCodes);
+      return { ...bookList, books: editionsIds, bookCodes: undefined };
+    }),
+  );
+
+  const addedBookLists =
+    await bookListModel.BookList.insertMany(parsedBookLists);
+  console.log(`${addedBookLists.length} book lists successfully added`);
+  return addedBookLists;
+};
+
 export const seedDB = async () => {
   try {
     console.info("Initializing connection with Mongo");
     await initMongo().catch(console.dir);
     await addEditions();
+    await addBookLists();
     console.info("All data has been added");
   } catch (err: unknown) {
     if (err instanceof Error)
