@@ -14,8 +14,6 @@ import {
 } from "../controllers/book-list";
 import {
   fakeBookList,
-  fakeListOfAllBookLists,
-  fakeListOfAllBookListsWithToObject,
   fakeListOfAllBookListsWithURL,
   getBookListsPageWithToObject,
 } from "./fake-data/book-list";
