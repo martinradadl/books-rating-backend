@@ -4,6 +4,6 @@ try {
   addBookLists().then(() => {
     process.exit(0);
   });
-} catch (_) {
+} catch {
   process.exit(1);
 }
