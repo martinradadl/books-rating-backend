@@ -41,17 +41,12 @@ export const getAll = async (req: Request, res: Response) => {
       .populate("books")
       .populate("bookLists");
 
-    console.log("bookLists: ", bookLists);
-
     const result = bookLists.map((list) => {
-      console.log("list: ", list);
       return {
         ...list.toObject(),
         urlPath: String(list.title).toLowerCase().replace(/\s+/g, "-"),
       };
     });
-
-    console.log("result: ", result);
 
     res.status(200).json(result);
   } catch (err: unknown) {
