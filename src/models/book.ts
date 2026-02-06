@@ -13,6 +13,6 @@ const schema = new mongoose.Schema({
   settings: [{ type: mongoose.Types.ObjectId, ref: "Setting" }],
 });
 
-schema.index({ originalTitle: 1, authorId: 1 }, { unique: true });
+schema.index({ originalTitle: 1, author: 1 }, { unique: true });
 
 export const Book = mongoose.model("Book", schema);

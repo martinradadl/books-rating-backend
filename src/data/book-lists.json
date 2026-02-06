@@ -1,0 +1,41 @@
+[
+  {
+    "title": "Best Books of All Time",
+    "description": "A curated list of the best books ever written.",
+    "bookCodes": [
+      { "ISBN": "9780452284234" },
+      { "ASIN": "B0FSJYYTRF" },
+      { "ISBN": "9781441341709" },
+      { "ISBN": "9780152023980" },
+      { "ISBN": "9780439554930" },
+      { "ASIN": "B007Z332A0" }
+    ]
+  },
+  {
+    "title": "Book Picks 1",
+    "bookCodes": [
+      { "ISBN": "9780439023481" },
+      { "ISBN": "9780439023498" },
+      { "ISBN": "9781635575569" },
+      { "ISBN": "9781594631931" },
+      { "ISBN": "9780374500016" }
+    ]
+  },
+  {
+    "title": "Book Picks 2",
+    "bookCodes": [
+      { "ISBN": "9780553213102" },
+      { "ISBN": "9780312330873" },
+      { "ISBN": "9780439554930" },
+      { "ASIN": "B00ES27LCQ" }
+    ]
+  },
+  {
+    "title": "Book Picks 3",
+    "bookCodes": [
+      { "ISBN": "9780152023980" },
+      { "ISBN": "9780312330873" },
+      { "ASIN": "0439554934" }
+    ]
+  }
+]
