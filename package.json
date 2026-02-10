@@ -13,7 +13,8 @@
     "build": "tsc",
     "lint": "oxlint --max-warnings 0",
     "db-helpers": "ts-node src/data/index.ts",
-    "add-lists": "ts-node src/data/add-lists.ts"
+    "add-lists": "ts-node src/data/add-lists.ts",
+    "add-ratings": "ts-node src/data/add-ratings.ts"
   },
   "dependencies": {
     "bcryptjs": "^3.0.2",
