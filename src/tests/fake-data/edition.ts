@@ -1,7 +1,8 @@
 export const fakeEdition = {
+  _id: "fakeId1",
   title: "fakeTitle1",
   cover: "fakeCover1",
-  book: "fakeBookId",
+  book: "fakeBookId1",
   description: "fakeDescription1",
   published: new Date("2020-01-01").toISOString(),
   pagesCount: 100,
@@ -12,9 +13,10 @@ export const fakeEdition = {
 };
 
 export const fakeEdition2 = {
+  _id: "fakeId2",
   title: "fakeTitle2",
   cover: "fakeCover2",
-  book: "fakeBookId",
+  book: "fakeBookId2",
   description: "fakeDescription2",
   published: new Date("2020-02-02").toISOString(),
   pagesCount: 200,
@@ -31,6 +33,6 @@ export const getEditionsPage = (limit?: number, page?: number) => {
     ? fakeEditionsList
     : fakeEditionsList.slice(
         (page - 1) * limit,
-        (page - 1) * limit + limit + 1
+        (page - 1) * limit + limit + 1,
       );
 };
