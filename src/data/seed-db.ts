@@ -13,6 +13,7 @@ import * as settingModel from "../models/setting";
 import * as bookModel from "../models/book";
 import * as editionModel from "../models/edition";
 import * as bookListModel from "../models/book-list";
+import * as ratingModel from "../models/rating";
 import { Types } from "mongoose";
 import { initMongo } from "../mongo-setup";
 
@@ -162,33 +163,28 @@ export const addRatings = async () => {
     .select("book ISBN ASIN")
     .lean();
 
-  // console.log("books: ", books);
-
   const booksIds = books.reduce<Record<string, string>>(
     (acc, { book, ISBN, ASIN }) => {
       const key = ISBN || ASIN;
       if (!key) {
         return acc;
       }
-
       acc[key] = book.toString();
       return acc;
     },
     {},
   );
 
-  // console.log("booksIds: ", booksIds);
-
   const newRatings = ratings.map((rating) => {
-    // console.log("rating.ISBN: ", rating.ISBN, "rating.ASIN: ", rating.ASIN);
     return {
       book: booksIds[rating.ISBN || rating.ASIN || ""],
       score: rating.score,
     };
   });
 
-  // console.log("new ratings: ", newRatings);
-  return newRatings;
+  const addedRatings = await ratingModel.Rating.insertMany(newRatings);
+  console.log(`${addedRatings.length} ratings successfully added`);
+  return addedRatings;
 };
 
 export const seedDB = async () => {
