@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import * as ratingModel from "../models/rating";
-import * as bookModel from "../models/book";
+import * as editionModel from "../models/edition";
+import mongoose from "mongoose";
 
 export const add = async (req: Request, res: Response) => {
   try {
@@ -48,7 +49,7 @@ export const getCountByBook = async (req: Request, res: Response) => {
 
 export const getMeanRatingByBook = async (req: Request, res: Response) => {
   try {
-    const bookId = req.params.bookId;
+    const bookId = new mongoose.Types.ObjectId(req.params.bookId);
 
     const result = await ratingModel.Rating.aggregate([
       {
@@ -64,7 +65,6 @@ export const getMeanRatingByBook = async (req: Request, res: Response) => {
       },
     ]);
 
-    console.log("result: ", result);
     const averageScore = result.length ? result[0].averageScore : 0;
 
     res.status(200).json(averageScore);
@@ -96,15 +96,24 @@ export const getMostRatedBooks = async (req: Request, res: Response) => {
 
     const bookIds = topBooks.map((book) => book._id);
 
-    const books = await bookModel.Book.find({
-      _id: { $in: bookIds },
-    });
+    const editions = await editionModel.Edition.aggregate([
+      { $match: { book: { $in: bookIds } } },
+      {
+        $group: {
+          _id: "$book",
+          edition: { $first: "$$ROOT" },
+        },
+      },
+      { $replaceRoot: { newRoot: "$edition" } },
+    ]);
 
-    const booksMap = new Map(books.map((book) => [book._id.toString(), book]));
+    const editionsMap = new Map(
+      editions.map((edition) => [edition.book.toString(), edition]),
+    );
 
-    const orderedBooks = bookIds.map((id) => booksMap.get(id.toString()));
+    const orderedEditions = bookIds.map((id) => editionsMap.get(id.toString()));
 
-    res.status(200).json(orderedBooks);
+    res.status(200).json(orderedEditions);
   } catch (err: unknown) {
     if (err instanceof Error) {
       res.status(500).json({ message: err.message });
@@ -133,20 +142,26 @@ export const getBestRatedBooks = async (req: Request, res: Response) => {
 
     const bookIds = topBooks.map((book) => book._id);
 
-    const books = await bookModel.Book.find({
-      _id: { $in: bookIds },
-    });
+    const editions = await editionModel.Edition.aggregate([
+      { $match: { book: { $in: bookIds } } },
+      {
+        $group: {
+          _id: "$book",
+          edition: { $first: "$$ROOT" },
+        },
+      },
+      { $replaceRoot: { newRoot: "$edition" } },
+    ]);
 
-    const booksMap = new Map(
-      books.map((book) => [book._id.toString(), book.toObject()]),
+    const editionsMap = new Map(
+      editions.map((edition) => [edition.book.toString(), edition]),
     );
 
-    const orderedBooks = topBooks.map((item) => ({
-      ...booksMap.get(item._id.toString()),
-      averageScore: Number(item.averageScore.toFixed(2)),
-    }));
+    const orderedEditions = topBooks.map((item) =>
+      editionsMap.get(item._id.toString()),
+    );
 
-    res.status(200).json(orderedBooks);
+    res.status(200).json(orderedEditions);
   } catch (err: unknown) {
     if (err instanceof Error) {
       res.status(500).json({ message: err.message });
