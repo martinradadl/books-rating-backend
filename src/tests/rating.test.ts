@@ -1,19 +1,14 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { initializeReqResMocks, mockedCatchError } from "./utils";
 import { Rating } from "../models/rating";
-import { Edition } from "../models/edition";
 import {
   add,
-  getBestRatedBooks,
   getCountByBook,
   getMeanRatingByBook,
-  getMostRatedBooks,
 } from "../controllers/rating";
-import { fakeMostRatedBooks, fakeRating } from "./fake-data/rating";
-import { fakeEditionsList } from "./fake-data/edition";
+import { fakeRating } from "./fake-data/rating";
 
 vi.mock("../models/rating.ts");
-vi.mock("../models/edition.ts");
 
 describe("Rating Controller", () => {
   describe("Add Rating Controller", async () => {
@@ -103,66 +98,6 @@ describe("Rating Controller", () => {
 
       expect(res.statusCode).toBe(200);
       expect(res._getJSONData()).toEqual(fakeAvgScore);
-    });
-  });
-
-  describe("Get Most Rated Books", async () => {
-    afterEach(() => {
-      vi.resetAllMocks();
-    });
-
-    it("should return 500 when error is thrown getting books", async () => {
-      const { req, res } = initializeReqResMocks();
-      vi.mocked(Rating.aggregate, true).mockImplementation(() => {
-        throw mockedCatchError;
-      });
-
-      await getMostRatedBooks(req, res);
-
-      expect(res.statusCode).toBe(500);
-      expect(res._getJSONData()).toEqual({ message: mockedCatchError.message });
-    });
-
-    it("should return 200 and most rated books", async () => {
-      const { req, res } = initializeReqResMocks();
-
-      vi.mocked(Rating.aggregate, true).mockResolvedValue(fakeMostRatedBooks);
-      vi.mocked(Edition.aggregate, true).mockResolvedValue(fakeEditionsList);
-
-      await getMostRatedBooks(req, res);
-
-      expect(res.statusCode).toBe(200);
-      expect(res._getJSONData()).toEqual(fakeEditionsList);
-    });
-  });
-
-  describe("Get Most Rated Books", async () => {
-    afterEach(() => {
-      vi.resetAllMocks();
-    });
-
-    it("should return 500 when error is thrown getting books", async () => {
-      const { req, res } = initializeReqResMocks();
-      vi.mocked(Rating.aggregate, true).mockImplementation(() => {
-        throw mockedCatchError;
-      });
-
-      await getBestRatedBooks(req, res);
-
-      expect(res.statusCode).toBe(500);
-      expect(res._getJSONData()).toEqual({ message: mockedCatchError.message });
-    });
-
-    it("should return 200 and best rated books", async () => {
-      const { req, res } = initializeReqResMocks();
-
-      vi.mocked(Rating.aggregate, true).mockResolvedValue(fakeMostRatedBooks);
-      vi.mocked(Edition.aggregate, true).mockResolvedValue(fakeEditionsList);
-
-      await getBestRatedBooks(req, res);
-
-      expect(res.statusCode).toBe(200);
-      expect(res._getJSONData()).toEqual(fakeEditionsList);
     });
   });
 });

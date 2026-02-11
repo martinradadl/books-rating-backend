@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
 import * as ratingModel from "../models/rating";
-import * as editionModel from "../models/edition";
 import mongoose from "mongoose";
 
 export const add = async (req: Request, res: Response) => {
@@ -52,100 +51,6 @@ export const getMeanRatingByBook = async (req: Request, res: Response) => {
     const averageScore = result.length ? result[0].averageScore : 0;
 
     res.status(200).json(averageScore);
-  } catch (err: unknown) {
-    if (err instanceof Error) {
-      res.status(500).json({ message: err.message });
-    }
-  }
-};
-
-export const getMostRatedBooks = async (req: Request, res: Response) => {
-  try {
-    const limit = Number(req.query?.limit) || 5;
-
-    const topBooks = await ratingModel.Rating.aggregate([
-      {
-        $group: {
-          _id: "$book",
-          ratingsCount: { $sum: 1 },
-        },
-      },
-      {
-        $sort: { ratingsCount: -1 },
-      },
-      {
-        $limit: limit,
-      },
-    ]);
-
-    const bookIds = topBooks.map((book) => book._id);
-
-    const editions = await editionModel.Edition.aggregate([
-      { $match: { book: { $in: bookIds } } },
-      {
-        $group: {
-          _id: "$book",
-          edition: { $first: "$$ROOT" },
-        },
-      },
-      { $replaceRoot: { newRoot: "$edition" } },
-    ]);
-
-    const editionsMap = new Map(
-      editions.map((edition) => [edition.book.toString(), edition]),
-    );
-
-    const orderedEditions = bookIds.map((id) => editionsMap.get(id.toString()));
-
-    res.status(200).json(orderedEditions);
-  } catch (err: unknown) {
-    if (err instanceof Error) {
-      res.status(500).json({ message: err.message });
-    }
-  }
-};
-
-export const getBestRatedBooks = async (req: Request, res: Response) => {
-  try {
-    const limit = Number(req.query?.limit) || 5;
-
-    const topBooks = await ratingModel.Rating.aggregate([
-      {
-        $group: {
-          _id: "$book",
-          averageScore: { $avg: "$score" },
-        },
-      },
-      {
-        $sort: { averageScore: -1 },
-      },
-      {
-        $limit: limit,
-      },
-    ]);
-
-    const bookIds = topBooks.map((book) => book._id);
-
-    const editions = await editionModel.Edition.aggregate([
-      { $match: { book: { $in: bookIds } } },
-      {
-        $group: {
-          _id: "$book",
-          edition: { $first: "$$ROOT" },
-        },
-      },
-      { $replaceRoot: { newRoot: "$edition" } },
-    ]);
-
-    const editionsMap = new Map(
-      editions.map((edition) => [edition.book.toString(), edition]),
-    );
-
-    const orderedEditions = topBooks.map((item) =>
-      editionsMap.get(item._id.toString()),
-    );
-
-    res.status(200).json(orderedEditions);
   } catch (err: unknown) {
     if (err instanceof Error) {
       res.status(500).json({ message: err.message });
