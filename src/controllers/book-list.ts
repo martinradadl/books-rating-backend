@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import * as bookListModel from "../models/book-list";
 import * as editionModel from "../models/edition";
+import * as ratingModel from "../models/rating";
 import { MONGO_ERRORS } from "../helpers/constants";
 
 export const addBookList = async (req: Request, res: Response) => {
@@ -86,6 +87,100 @@ export const getLatestReleases = async (req: Request, res: Response) => {
     ]);
 
     res.status(200).json(latestReleasesList);
+  } catch (err: unknown) {
+    if (err instanceof Error) {
+      res.status(500).json({ message: err.message });
+    }
+  }
+};
+
+export const getMostRatedBooks = async (req: Request, res: Response) => {
+  try {
+    const limit = Number(req.query?.limit) || 5;
+
+    const topBooks = await ratingModel.Rating.aggregate([
+      {
+        $group: {
+          _id: "$book",
+          ratingsCount: { $sum: 1 },
+        },
+      },
+      {
+        $sort: { ratingsCount: -1 },
+      },
+      {
+        $limit: limit,
+      },
+    ]);
+
+    const bookIds = topBooks.map((book) => book._id);
+
+    const editions = await editionModel.Edition.aggregate([
+      { $match: { book: { $in: bookIds } } },
+      {
+        $group: {
+          _id: "$book",
+          edition: { $first: "$$ROOT" },
+        },
+      },
+      { $replaceRoot: { newRoot: "$edition" } },
+    ]);
+
+    const editionsMap = new Map(
+      editions.map((edition) => [edition.book.toString(), edition]),
+    );
+
+    const orderedEditions = bookIds.map((id) => editionsMap.get(id.toString()));
+
+    res.status(200).json(orderedEditions);
+  } catch (err: unknown) {
+    if (err instanceof Error) {
+      res.status(500).json({ message: err.message });
+    }
+  }
+};
+
+export const getBestRatedBooks = async (req: Request, res: Response) => {
+  try {
+    const limit = Number(req.query?.limit) || 5;
+
+    const topBooks = await ratingModel.Rating.aggregate([
+      {
+        $group: {
+          _id: "$book",
+          averageScore: { $avg: "$score" },
+        },
+      },
+      {
+        $sort: { averageScore: -1 },
+      },
+      {
+        $limit: limit,
+      },
+    ]);
+
+    const bookIds = topBooks.map((book) => book._id);
+
+    const editions = await editionModel.Edition.aggregate([
+      { $match: { book: { $in: bookIds } } },
+      {
+        $group: {
+          _id: "$book",
+          edition: { $first: "$$ROOT" },
+        },
+      },
+      { $replaceRoot: { newRoot: "$edition" } },
+    ]);
+
+    const editionsMap = new Map(
+      editions.map((edition) => [edition.book.toString(), edition]),
+    );
+
+    const orderedEditions = topBooks.map((item) =>
+      editionsMap.get(item._id.toString()),
+    );
+
+    res.status(200).json(orderedEditions);
   } catch (err: unknown) {
     if (err instanceof Error) {
       res.status(500).json({ message: err.message });

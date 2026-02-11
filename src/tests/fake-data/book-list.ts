@@ -12,6 +12,11 @@ export const fakeBookList2 = {
   books: ["fakeBookId3", "fakeBookId4"],
 };
 
+export const fakeMostRatedBooks = [
+  { _id: "fakeBookId1" },
+  { _id: "fakeBookId2" },
+];
+
 const fakeBookListWithToObject = {
   toObject: () => ({
     _id: "fakeId1",
