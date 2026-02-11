@@ -15,22 +15,6 @@ export const add = async (req: Request, res: Response) => {
   }
 };
 
-export const getByBook = async (req: Request, res: Response) => {
-  try {
-    const bookId = req.params.bookId;
-
-    const bookRatings = await ratingModel.Rating.find({
-      book: bookId,
-    });
-
-    res.status(200).json(bookRatings);
-  } catch (err: unknown) {
-    if (err instanceof Error) {
-      res.status(500).json({ message: err.message });
-    }
-  }
-};
-
 export const getCountByBook = async (req: Request, res: Response) => {
   try {
     const bookId = req.params.bookId;

@@ -5,16 +5,11 @@ import { Edition } from "../models/edition";
 import {
   add,
   getBestRatedBooks,
-  getByBook,
   getCountByBook,
   getMeanRatingByBook,
   getMostRatedBooks,
 } from "../controllers/rating";
-import {
-  fakeMostRatedBooks,
-  fakeRating,
-  fakeRatingsList,
-} from "./fake-data/rating";
+import { fakeMostRatedBooks, fakeRating } from "./fake-data/rating";
 import { fakeEditionsList } from "./fake-data/edition";
 
 vi.mock("../models/rating.ts");
@@ -46,34 +41,6 @@ describe("Rating Controller", () => {
 
       expect(res.statusCode).toBe(200);
       expect(res._getJSONData()).toEqual(fakeRating);
-    });
-  });
-
-  describe("Get Ratings by Book ID", async () => {
-    afterEach(() => {
-      vi.resetAllMocks();
-    });
-
-    it("should return 500 when error is thrown getting ratings by book id", async () => {
-      const { req, res } = initializeReqResMocks();
-      vi.mocked(Rating.find, true).mockImplementation(() => {
-        throw mockedCatchError;
-      });
-
-      await getByBook(req, res);
-
-      expect(res.statusCode).toBe(500);
-      expect(res._getJSONData()).toEqual({ message: mockedCatchError.message });
-    });
-
-    it("should return 200 and the selected ratings", async () => {
-      const { req, res } = initializeReqResMocks();
-      vi.mocked(Rating.find, true).mockResolvedValue(fakeRatingsList as any);
-
-      await getByBook(req, res);
-
-      expect(res.statusCode).toBe(200);
-      expect(res._getJSONData()).toEqual(fakeRatingsList);
     });
   });
 
