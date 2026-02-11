@@ -5,6 +5,7 @@ import settings from "./settings.json";
 import books from "./books.json";
 import editions from "./editions.json";
 import bookLists from "./book-lists.json";
+import ratings from "./ratings.json";
 import * as authorModel from "../models/author";
 import * as genreModel from "../models/genre";
 import * as characterModel from "../models/character";
@@ -12,6 +13,7 @@ import * as settingModel from "../models/setting";
 import * as bookModel from "../models/book";
 import * as editionModel from "../models/edition";
 import * as bookListModel from "../models/book-list";
+import * as ratingModel from "../models/rating";
 import { Types } from "mongoose";
 import { initMongo } from "../mongo-setup";
 
@@ -149,12 +151,49 @@ export const addBookLists = async () => {
   return addedBookLists;
 };
 
+export const addRatings = async () => {
+  console.info("Initializing connection with Mongo");
+  await initMongo().catch(console.dir);
+
+  const bookCodes = ratings.map((rating) => ({
+    [rating.ASIN ? "ASIN" : "ISBN"]: rating.ASIN || rating.ISBN,
+  }));
+
+  const books = await editionModel.Edition.find({ $or: bookCodes })
+    .select("book ISBN ASIN")
+    .lean();
+
+  const booksIds = books.reduce<Record<string, string>>(
+    (acc, { book, ISBN, ASIN }) => {
+      const key = ISBN || ASIN;
+      if (!key) {
+        return acc;
+      }
+      acc[key] = book.toString();
+      return acc;
+    },
+    {},
+  );
+
+  const newRatings = ratings.map((rating) => {
+    return {
+      book: booksIds[rating.ISBN || rating.ASIN || ""],
+      score: rating.score,
+    };
+  });
+
+  const addedRatings = await ratingModel.Rating.insertMany(newRatings);
+  console.log(`${addedRatings.length} ratings successfully added`);
+  return addedRatings;
+};
+
 export const seedDB = async () => {
   try {
     console.info("Initializing connection with Mongo");
     await initMongo().catch(console.dir);
     await addEditions();
     await addBookLists();
+    await addRatings();
     console.info("All data has been added");
   } catch (err: unknown) {
     if (err instanceof Error)

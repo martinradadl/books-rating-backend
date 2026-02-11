@@ -10,6 +10,7 @@ import genres from "./routes/genre";
 import settings from "./routes/setting";
 import characters from "./routes/character";
 import bookLists from "./routes/book-list";
+import ratings from "./routes/rating";
 
 const jsonParser = bodyParser.json();
 
@@ -32,6 +33,7 @@ app.use("/genres", genres);
 app.use("/settings", settings);
 app.use("/characters", characters);
 app.use("/book-lists", bookLists);
+app.use("/ratings", ratings);
 
 // Start the server and listen on the specified port
 httpServer.listen(port, () => {
