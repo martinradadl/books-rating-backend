@@ -1,8 +1,10 @@
 import { Request, Response } from "express";
 import * as bookListModel from "../models/book-list";
 import * as editionModel from "../models/edition";
+import * as bookModel from "../models/book";
 import * as ratingModel from "../models/rating";
 import { MONGO_ERRORS } from "../helpers/constants";
+import { parseToObjectId } from "../helpers/utils";
 
 export const addBookList = async (req: Request, res: Response) => {
   try {
@@ -94,9 +96,75 @@ export const getLatestReleases = async (req: Request, res: Response) => {
   }
 };
 
+export const getRelatedBookRecommendation = async (bookId: string) => {
+  try {
+    const book = await bookModel.Book.findById(bookId)
+      .select("relatedGenres")
+      .lean();
+    const relatedGenres = book?.relatedGenres;
+
+    console.log("relatedGenres: ", relatedGenres);
+
+    console.log("before recommendation");
+
+    const [recommendation] = await editionModel.Edition.aggregate([
+      {
+        $lookup: {
+          from: "books",
+          localField: "book",
+          foreignField: "_id",
+          as: "book",
+        },
+      },
+      { $unwind: "$book" },
+      {
+        $match: {
+          "book._id": {
+            $ne: parseToObjectId(bookId),
+          },
+        },
+      },
+      {
+        $addFields: {
+          genreOverlap: {
+            $size: {
+              $setIntersection: ["$book.relatedGenres", relatedGenres],
+            },
+          },
+        },
+      },
+      { $match: { genreOverlap: { $gt: 0 } } },
+      {
+        $sort: { genreOverlap: -1 },
+      },
+      {
+        $group: {
+          _id: "$book",
+          edition: { $first: "$$ROOT" },
+        },
+      },
+      {
+        $replaceRoot: { newRoot: "$edition" },
+      },
+      { $project: { genreOverlap: 0 } },
+      { $limit: 1 },
+    ]);
+
+    console.log("recommendation: ", [recommendation]);
+    return recommendation;
+  } catch (err: unknown) {
+    if (err instanceof Error) {
+      console.log(err.message);
+    }
+  }
+};
+
 export const getMostRatedBooks = async (req: Request, res: Response) => {
   try {
     const limit = Number(req.query?.limit) || 5;
+    const enableRecommendation =
+      req.query?.enableRecommendation === "true" || false;
+    let recommendation;
 
     const topBooks = await ratingModel.Rating.aggregate([
       {
@@ -115,6 +183,16 @@ export const getMostRatedBooks = async (req: Request, res: Response) => {
 
     const bookIds = topBooks.map((book) => book._id);
 
+    if (enableRecommendation) {
+      const index = Math.floor(Math.random() * bookIds.length);
+      const randomBookId = bookIds[index];
+
+      console.log("randomBookId: ", randomBookId);
+      recommendation = await getRelatedBookRecommendation(randomBookId);
+
+      console.log("just after rec: ", recommendation);
+    }
+
     const editions = await editionModel.Edition.aggregate([
       { $match: { book: { $in: bookIds } } },
       {
@@ -132,7 +210,8 @@ export const getMostRatedBooks = async (req: Request, res: Response) => {
 
     const orderedEditions = bookIds.map((id) => editionsMap.get(id.toString()));
 
-    res.status(200).json(orderedEditions);
+    const response = { list: orderedEditions, recommendation };
+    res.status(200).json(response);
   } catch (err: unknown) {
     if (err instanceof Error) {
       res.status(500).json({ message: err.message });
@@ -143,6 +222,9 @@ export const getMostRatedBooks = async (req: Request, res: Response) => {
 export const getBestRatedBooks = async (req: Request, res: Response) => {
   try {
     const limit = Number(req.query?.limit) || 5;
+    const enableRecommendation =
+      req.query?.enableRecommendation === "true" || false;
+    let recommendation;
 
     const topBooks = await ratingModel.Rating.aggregate([
       {
@@ -160,6 +242,12 @@ export const getBestRatedBooks = async (req: Request, res: Response) => {
     ]);
 
     const bookIds = topBooks.map((book) => book._id);
+
+    if (enableRecommendation) {
+      const index = Math.floor(Math.random() * bookIds.length);
+      const randomBookId = bookIds[index];
+      recommendation = await getRelatedBookRecommendation(randomBookId);
+    }
 
     const editions = await editionModel.Edition.aggregate([
       { $match: { book: { $in: bookIds } } },
@@ -180,7 +268,8 @@ export const getBestRatedBooks = async (req: Request, res: Response) => {
       editionsMap.get(item._id.toString()),
     );
 
-    res.status(200).json(orderedEditions);
+    const response = { list: orderedEditions, recommendation };
+    res.status(200).json(response);
   } catch (err: unknown) {
     if (err instanceof Error) {
       res.status(500).json({ message: err.message });

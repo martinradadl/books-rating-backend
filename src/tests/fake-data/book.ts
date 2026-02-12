@@ -1,5 +1,5 @@
 export const fakeBook = {
-  _id: "fakeId1",
+  _id: "aaaaaaaaaaaaaaaaaaaaaaaa",
   originalTitle: "fakeOriginalTitle1",
   author: "fakeAuthorId",
   relatedGenres: ["fakeGenre1Id", "fakeGenre2Id"],
@@ -9,7 +9,7 @@ export const fakeBook = {
 };
 
 export const fakeBook2 = {
-  _id: "fakeId2",
+  _id: "cccccccccccccccccccccccc",
   originalTitle: "fakeOriginalTitle2",
   author: "fakeAuthorId",
   relatedGenres: ["fakeGenre3Id", "fakeGenre4Id"],
