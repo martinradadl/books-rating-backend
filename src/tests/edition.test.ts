@@ -1,8 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import {
-  applyLimit,
   applyLimitAndPopulate,
-  applyPopulate,
+  applyPopulateAndLean,
   defaultGetAllQueryObjectAndPopulate,
   initializeReqResMocks,
   mockedCatchDuplicateKeyError,
@@ -10,6 +9,7 @@ import {
 } from "./utils";
 import { Edition } from "../models/edition";
 import { Book } from "../models/book";
+import { Rating } from "../models/rating";
 import {
   add,
   getAll,
@@ -21,12 +21,14 @@ import {
 import {
   fakeEdition,
   fakeEditionsList,
+  fakeEditionWithRatingsData,
   getEditionsPage,
 } from "./fake-data/edition";
 import { fakeBook } from "./fake-data/book";
 
 vi.mock("../models/edition.ts");
 vi.mock("../models/book.ts");
+vi.mock("../models/rating.ts");
 
 describe("Edition Controller", () => {
   describe("Add Edition Controller", async () => {
@@ -111,13 +113,24 @@ describe("Edition Controller", () => {
 
       //@ts-expect-error Unsolved error with mockImplementation function
       vi.mocked(Edition.findById, true).mockImplementation(() => {
-        return applyPopulate(fakeEdition, 1);
+        return applyPopulateAndLean(fakeEdition);
       });
+
+      const fakeRatingsAggregateResult = [
+        {
+          averageRating: fakeEditionWithRatingsData.averageRating,
+          ratingCount: fakeEditionWithRatingsData.ratingCount,
+        },
+      ];
+
+      vi.mocked(Rating.aggregate, true).mockResolvedValue(
+        fakeRatingsAggregateResult,
+      );
 
       await getById(req, res);
 
       expect(res.statusCode).toBe(200);
-      expect(res._getJSONData()).toEqual(fakeEdition);
+      expect(res._getJSONData()).toEqual(fakeEditionWithRatingsData);
     });
   });
 
@@ -206,15 +219,15 @@ describe("Edition Controller", () => {
     it("should return 200 and books by same author list", async () => {
       const { req, res } = initializeReqResMocks();
 
-      //@ts-expect-error Unsolved error with mockImplementation function
-      vi.mocked(Edition.aggregate, true).mockImplementation(() => {
-        return applyLimit(fakeEditionsList, 1);
-      });
+      vi.mocked(Edition.aggregate, true).mockResolvedValue(
+        //@ts-expect-error Unsolved error with mockImplementation function
+        fakeEditionWithRatingsData,
+      );
 
       await getBooksBySameAuthor(req, res);
 
       expect(res.statusCode).toBe(200);
-      expect(res._getJSONData()).toEqual(fakeEditionsList);
+      expect(res._getJSONData()).toEqual(fakeEditionWithRatingsData);
     });
   });
 
@@ -250,15 +263,15 @@ describe("Edition Controller", () => {
         //@ts-expect-error Unsolved error with mockImplementation function
         select: mockSelect,
       }));
-      //@ts-expect-error Unsolved error with mockImplementation function
-      vi.mocked(Edition.aggregate, true).mockImplementation(() => {
-        return applyLimit(fakeEditionsList, 1);
-      });
+      vi.mocked(Edition.aggregate, true).mockResolvedValue(
+        //@ts-expect-error Unsolved error with mockImplementation function
+        fakeEditionWithRatingsData,
+      );
 
       await getRelatedBooks(req, res);
 
       expect(res.statusCode).toBe(200);
-      expect(res._getJSONData()).toEqual(fakeEditionsList);
+      expect(res._getJSONData()).toEqual(fakeEditionWithRatingsData);
     });
   });
 });

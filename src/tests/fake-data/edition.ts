@@ -26,6 +26,12 @@ export const fakeEdition2 = {
   language: "fakeLanguage2",
 };
 
+export const fakeEditionWithRatingsData = {
+  ...fakeEdition,
+  averageRating: 4.5,
+  ratingCount: 10,
+};
+
 export const fakeEditionsList = [fakeEdition, fakeEdition2];
 
 export const getEditionsPage = (limit?: number, page?: number) => {
