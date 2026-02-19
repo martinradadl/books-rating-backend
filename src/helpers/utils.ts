@@ -7,57 +7,53 @@ export const parseToObjectId = (id: string) => {
 };
 
 export const getRelatedBookRecommendation = async (bookId: string) => {
-  try {
-    const book = await bookModel.Book.findById(bookId)
-      .select("relatedGenres")
-      .lean();
-    const relatedGenres = book?.relatedGenres;
+  const book = await bookModel.Book.findById(bookId)
+    .select("relatedGenres")
+    .lean();
+  const relatedGenres = book?.relatedGenres;
 
-    const [recommendation] = await editionModel.Edition.aggregate([
-      {
-        $lookup: {
-          from: "books",
-          localField: "book",
-          foreignField: "_id",
-          as: "book",
+  const [recommendation] = await editionModel.Edition.aggregate([
+    {
+      $lookup: {
+        from: "books",
+        localField: "book",
+        foreignField: "_id",
+        as: "book",
+      },
+    },
+    { $unwind: "$book" },
+    {
+      $match: {
+        "book._id": {
+          $ne: parseToObjectId(bookId),
         },
       },
-      { $unwind: "$book" },
-      {
-        $match: {
-          "book._id": {
-            $ne: parseToObjectId(bookId),
+    },
+    {
+      $addFields: {
+        genreOverlap: {
+          $size: {
+            $setIntersection: ["$book.relatedGenres", relatedGenres],
           },
         },
       },
-      {
-        $addFields: {
-          genreOverlap: {
-            $size: {
-              $setIntersection: ["$book.relatedGenres", relatedGenres],
-            },
-          },
-        },
+    },
+    { $match: { genreOverlap: { $gt: 0 } } },
+    {
+      $sort: { genreOverlap: -1 },
+    },
+    {
+      $group: {
+        _id: "$book",
+        edition: { $first: "$$ROOT" },
       },
-      { $match: { genreOverlap: { $gt: 0 } } },
-      {
-        $sort: { genreOverlap: -1 },
-      },
-      {
-        $group: {
-          _id: "$book",
-          edition: { $first: "$$ROOT" },
-        },
-      },
-      {
-        $replaceRoot: { newRoot: "$edition" },
-      },
-      { $project: { genreOverlap: 0 } },
-      { $limit: 1 },
-    ]);
+    },
+    {
+      $replaceRoot: { newRoot: "$edition" },
+    },
+    { $project: { genreOverlap: 0 } },
+    { $limit: 1 },
+  ]);
 
-    return recommendation;
-  } catch (err: unknown) {
-    throw err;
-  }
+  return recommendation;
 };
