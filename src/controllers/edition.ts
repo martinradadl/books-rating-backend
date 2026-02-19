@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import * as editionModel from "../models/edition";
 import * as bookModel from "../models/book";
+import * as ratingModel from "../models/rating";
 import { CAROUSEL_LENGTH_LIMIT, MONGO_ERRORS } from "../helpers/constants";
 import { parseToObjectId } from "../helpers/utils";
 
@@ -38,17 +39,41 @@ export const add = async (req: Request, res: Response) => {
 export const getById = async (req: Request, res: Response) => {
   try {
     const editionId = req.params.id;
-    const edition = await editionModel.Edition.findById(editionId).populate({
-      path: "book",
-      populate: [
-        { path: "author" },
-        { path: "relatedGenres" },
-        { path: "characters" },
-        { path: "settings" },
-      ],
-    });
+    const edition = await editionModel.Edition.findById(editionId)
+      .populate({
+        path: "book",
+        populate: [
+          { path: "author" },
+          { path: "relatedGenres" },
+          { path: "characters" },
+          { path: "settings" },
+        ],
+      })
+      .lean();
 
-    res.status(200).json(edition);
+    const result = await ratingModel.Rating.aggregate([
+      {
+        $match: {
+          //@ts-expect-error
+          book: parseToObjectId(edition?.book._id),
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          averageRating: { $avg: "$score" },
+          ratingCount: { $sum: 1 },
+        },
+      },
+    ]);
+
+    const parsedEdition = {
+      ...edition,
+      averageRating: result[0].averageRating ?? 0,
+      ratingCount: result[0].ratingCount ?? 0,
+    };
+
+    res.status(200).json(parsedEdition);
   } catch (err: unknown) {
     if (err instanceof Error) {
       res.status(500).json({ message: err.message });
@@ -146,7 +171,33 @@ export const getBooksBySameAuthor = async (req: Request, res: Response) => {
       {
         $replaceRoot: { newRoot: "$edition" },
       },
-    ]).limit(limit);
+      {
+        $lookup: {
+          from: "ratings",
+          localField: "book._id",
+          foreignField: "book",
+          as: "ratings",
+        },
+      },
+      {
+        $addFields: {
+          ratingCount: { $size: "$ratings" },
+          averageRating: {
+            $cond: [
+              { $gt: [{ $size: "$ratings" }, 0] },
+              { $avg: "$ratings.score" },
+              0,
+            ],
+          },
+        },
+      },
+      {
+        $project: {
+          ratings: 0,
+        },
+      },
+      { $limit: limit },
+    ]);
 
     res.status(200).json(editionsList);
   } catch (err: unknown) {
@@ -213,7 +264,33 @@ export const getRelatedBooks = async (req: Request, res: Response) => {
       {
         $replaceRoot: { newRoot: "$edition" },
       },
-    ]).limit(limit);
+      {
+        $lookup: {
+          from: "ratings",
+          localField: "book._id",
+          foreignField: "book",
+          as: "ratings",
+        },
+      },
+      {
+        $addFields: {
+          ratingCount: { $size: "$ratings" },
+          averageRating: {
+            $cond: [
+              { $gt: [{ $size: "$ratings" }, 0] },
+              { $avg: "$ratings.score" },
+              0,
+            ],
+          },
+        },
+      },
+      {
+        $project: {
+          ratings: 0,
+        },
+      },
+      { $limit: limit },
+    ]);
 
     res.status(200).json(editionsList);
   } catch (err: unknown) {
