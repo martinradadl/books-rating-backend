@@ -1,7 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   applyLimitAndPopulate,
-  applyPopulateAndLean,
   defaultGetAllQueryObjectAndPopulate,
   initializeReqResMocks,
   mockedCatchDuplicateKeyError,
@@ -9,7 +8,6 @@ import {
 } from "./utils";
 import { Edition } from "../models/edition";
 import { Book } from "../models/book";
-import { Rating } from "../models/rating";
 import {
   add,
   getAll,
@@ -98,7 +96,7 @@ describe("Edition Controller", () => {
 
     it("should return 500 when getting an edition by id", async () => {
       const { req, res } = initializeReqResMocks();
-      vi.mocked(Edition.findById, true).mockImplementation(() => {
+      vi.mocked(Edition.aggregate, true).mockImplementation(() => {
         throw mockedCatchError;
       });
 
@@ -111,21 +109,9 @@ describe("Edition Controller", () => {
     it("should return 200 and the selected edition", async () => {
       const { req, res } = initializeReqResMocks();
 
-      //@ts-expect-error Unsolved error with mockImplementation function
-      vi.mocked(Edition.findById, true).mockImplementation(() => {
-        return applyPopulateAndLean(fakeEdition);
-      });
-
-      const fakeRatingsAggregateResult = [
-        {
-          averageRating: fakeEditionWithRatingsData.averageRating,
-          ratingCount: fakeEditionWithRatingsData.ratingCount,
-        },
-      ];
-
-      vi.mocked(Rating.aggregate, true).mockResolvedValue(
-        fakeRatingsAggregateResult,
-      );
+      vi.mocked(Edition.aggregate, true).mockResolvedValue([
+        fakeEditionWithRatingsData,
+      ]);
 
       await getById(req, res);
 

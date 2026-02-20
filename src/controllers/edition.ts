@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import * as editionModel from "../models/edition";
 import * as bookModel from "../models/book";
-import * as ratingModel from "../models/rating";
 import { CAROUSEL_LENGTH_LIMIT, MONGO_ERRORS } from "../helpers/constants";
 import { parseToObjectId } from "../helpers/utils";
 
@@ -38,42 +37,99 @@ export const add = async (req: Request, res: Response) => {
 
 export const getById = async (req: Request, res: Response) => {
   try {
-    const editionId = req.params.id;
-    const edition = await editionModel.Edition.findById(editionId)
-      .populate({
-        path: "book",
-        populate: [
-          { path: "author" },
-          { path: "relatedGenres" },
-          { path: "characters" },
-          { path: "settings" },
-        ],
-      })
-      .lean();
+    const editionId = parseToObjectId(req.params.id);
 
-    const result = await ratingModel.Rating.aggregate([
+    const [edition] = await editionModel.Edition.aggregate([
+      { $match: { _id: editionId } },
+
       {
-        $match: {
-          //@ts-expect-error
-          book: parseToObjectId(edition?.book._id),
+        $lookup: {
+          from: "books",
+          localField: "book",
+          foreignField: "_id",
+          as: "book",
+        },
+      },
+      { $unwind: "$book" },
+
+      {
+        $lookup: {
+          from: "authors",
+          localField: "book.author",
+          foreignField: "_id",
+          as: "book.author",
+        },
+      },
+      { $unwind: { path: "$book.author", preserveNullAndEmptyArrays: true } },
+
+      {
+        $lookup: {
+          from: "genres",
+          localField: "book.relatedGenres",
+          foreignField: "_id",
+          as: "book.relatedGenres",
         },
       },
       {
-        $group: {
-          _id: null,
-          averageRating: { $avg: "$score" },
-          ratingCount: { $sum: 1 },
+        $lookup: {
+          from: "characters",
+          localField: "book.characters",
+          foreignField: "_id",
+          as: "book.characters",
+        },
+      },
+      {
+        $lookup: {
+          from: "settings",
+          localField: "book.settings",
+          foreignField: "_id",
+          as: "book.settings",
+        },
+      },
+
+      {
+        $lookup: {
+          from: "ratings",
+          let: { bookId: "$book._id" },
+          pipeline: [
+            {
+              $match: {
+                $expr: { $eq: ["$book", "$$bookId"] },
+              },
+            },
+            {
+              $group: {
+                _id: null,
+                averageRating: { $avg: "$score" },
+                ratingCount: { $sum: 1 },
+              },
+            },
+          ],
+          as: "ratingStats",
+        },
+      },
+      {
+        $unwind: {
+          path: "$ratingStats",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+
+      {
+        $addFields: {
+          averageRating: { $ifNull: ["$ratingStats.averageRating", 0] },
+          ratingCount: { $ifNull: ["$ratingStats.ratingCount", 0] },
+        },
+      },
+
+      {
+        $project: {
+          ratingStats: 0,
         },
       },
     ]);
 
-    const parsedEdition = {
-      ...edition,
-      averageRating: result[0].averageRating ?? 0,
-      ratingCount: result[0].ratingCount ?? 0,
-    };
-
-    res.status(200).json(parsedEdition);
+    res.status(200).json(edition);
   } catch (err: unknown) {
     if (err instanceof Error) {
       res.status(500).json({ message: err.message });
