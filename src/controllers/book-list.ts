@@ -3,7 +3,7 @@ import * as bookListModel from "../models/book-list";
 import * as editionModel from "../models/edition";
 import * as ratingModel from "../models/rating";
 import { MONGO_ERRORS } from "../helpers/constants";
-import { getRelatedBookRecommendation } from "../helpers/utils";
+import { getRelatedBookSuggestion } from "../helpers/utils";
 
 export const addBookList = async (req: Request, res: Response) => {
   try {
@@ -98,9 +98,8 @@ export const getLatestReleases = async (req: Request, res: Response) => {
 export const getMostRatedBooks = async (req: Request, res: Response) => {
   try {
     const limit = Number(req.query?.limit) || 5;
-    const enableRecommendation =
-      req.query?.enableRecommendation === "true" || false;
-    let recommendation;
+    const enableSuggestion = req.query?.enableSuggestion === "true" || false;
+    let suggestion;
 
     const topBooks = await ratingModel.Rating.aggregate([
       {
@@ -119,10 +118,10 @@ export const getMostRatedBooks = async (req: Request, res: Response) => {
 
     const bookIds = topBooks.map((book) => book._id);
 
-    if (enableRecommendation) {
+    if (enableSuggestion) {
       const index = Math.floor(Math.random() * bookIds.length);
       const randomBookId = bookIds[index];
-      recommendation = await getRelatedBookRecommendation(randomBookId);
+      suggestion = await getRelatedBookSuggestion(randomBookId);
     }
 
     const editions = await editionModel.Edition.aggregate([
@@ -142,7 +141,7 @@ export const getMostRatedBooks = async (req: Request, res: Response) => {
 
     const orderedEditions = bookIds.map((id) => editionsMap.get(id.toString()));
 
-    const response = { list: orderedEditions, recommendation };
+    const response = { list: orderedEditions, suggestion };
     res.status(200).json(response);
   } catch (err: unknown) {
     if (err instanceof Error) {
@@ -154,9 +153,8 @@ export const getMostRatedBooks = async (req: Request, res: Response) => {
 export const getBestRatedBooks = async (req: Request, res: Response) => {
   try {
     const limit = Number(req.query?.limit) || 5;
-    const enableRecommendation =
-      req.query?.enableRecommendation === "true" || false;
-    let recommendation;
+    const enableSuggestion = req.query?.enableSuggestion === "true" || false;
+    let suggestion;
 
     const topBooks = await ratingModel.Rating.aggregate([
       {
@@ -175,10 +173,10 @@ export const getBestRatedBooks = async (req: Request, res: Response) => {
 
     const bookIds = topBooks.map((book) => book._id);
 
-    if (enableRecommendation) {
+    if (enableSuggestion) {
       const index = Math.floor(Math.random() * bookIds.length);
       const randomBookId = bookIds[index];
-      recommendation = await getRelatedBookRecommendation(randomBookId);
+      suggestion = await getRelatedBookSuggestion(randomBookId);
     }
 
     const editions = await editionModel.Edition.aggregate([
@@ -200,7 +198,7 @@ export const getBestRatedBooks = async (req: Request, res: Response) => {
       editionsMap.get(item._id.toString()),
     );
 
-    const response = { list: orderedEditions, recommendation };
+    const response = { list: orderedEditions, suggestion };
     res.status(200).json(response);
   } catch (err: unknown) {
     if (err instanceof Error) {

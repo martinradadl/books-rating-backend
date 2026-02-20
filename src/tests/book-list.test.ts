@@ -23,7 +23,7 @@ import {
   getBookListsPageWithToObject,
 } from "./fake-data/book-list";
 import { fakeEdition, fakeEditionsList } from "./fake-data/edition";
-import { getRelatedBookRecommendation } from "../helpers/utils";
+import { getRelatedBookSuggestion } from "../helpers/utils";
 
 vi.mock("../models/book-list.ts");
 vi.mock("../models/edition.ts");
@@ -192,23 +192,23 @@ describe("Book List Controller", () => {
 
       await getMostRatedBooks(req, res);
 
-      const response = { list: fakeEditionsList, recommendation: undefined };
+      const response = { list: fakeEditionsList, suggestion: undefined };
 
       expect(res.statusCode).toBe(200);
       expect(res._getJSONData()).toEqual(response);
     });
 
-    it("should return 200 and most rated books and recommendation", async () => {
+    it("should return 200 and most rated books and suggestion", async () => {
       const { req, res } = initializeReqResMocks();
-      req.query.enableRecommendation = "true";
+      req.query.enableSuggestion = "true";
 
       vi.mocked(Rating.aggregate, true).mockResolvedValue(fakeMostRatedBooks);
-      vi.mocked(getRelatedBookRecommendation).mockResolvedValue(fakeEdition);
+      vi.mocked(getRelatedBookSuggestion).mockResolvedValue(fakeEdition);
       vi.mocked(Edition.aggregate).mockResolvedValueOnce(fakeEditionsList);
 
       await getMostRatedBooks(req, res);
 
-      const response = { list: fakeEditionsList, recommendation: fakeEdition };
+      const response = { list: fakeEditionsList, suggestion: fakeEdition };
 
       expect(res.statusCode).toBe(200);
       expect(res._getJSONData()).toEqual(response);
@@ -240,23 +240,23 @@ describe("Book List Controller", () => {
 
       await getBestRatedBooks(req, res);
 
-      const response = { list: fakeEditionsList, recommendation: undefined };
+      const response = { list: fakeEditionsList, suggestion: undefined };
 
       expect(res.statusCode).toBe(200);
       expect(res._getJSONData()).toEqual(response);
     });
 
-    it("should return 200 and best rated books and recommendation", async () => {
+    it("should return 200 and best rated books and suggestion", async () => {
       const { req, res } = initializeReqResMocks();
-      req.query.enableRecommendation = "true";
+      req.query.enableSuggestion = "true";
 
       vi.mocked(Rating.aggregate, true).mockResolvedValue(fakeMostRatedBooks);
-      vi.mocked(getRelatedBookRecommendation).mockResolvedValue(fakeEdition);
+      vi.mocked(getRelatedBookSuggestion).mockResolvedValue(fakeEdition);
       vi.mocked(Edition.aggregate).mockResolvedValueOnce(fakeEditionsList);
 
       await getBestRatedBooks(req, res);
 
-      const response = { list: fakeEditionsList, recommendation: fakeEdition };
+      const response = { list: fakeEditionsList, suggestion: fakeEdition };
 
       expect(res.statusCode).toBe(200);
       expect(res._getJSONData()).toEqual(response);

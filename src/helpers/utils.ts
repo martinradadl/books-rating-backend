@@ -6,13 +6,13 @@ export const parseToObjectId = (id: string) => {
   return new mongoose.Types.ObjectId(id);
 };
 
-export const getRelatedBookRecommendation = async (bookId: string) => {
+export const getRelatedBookSuggestion = async (bookId: string) => {
   const book = await bookModel.Book.findById(bookId)
     .select("relatedGenres")
     .lean();
   const relatedGenres = book?.relatedGenres;
 
-  const [recommendation] = await editionModel.Edition.aggregate([
+  const [suggestion] = await editionModel.Edition.aggregate([
     {
       $lookup: {
         from: "books",
@@ -51,9 +51,17 @@ export const getRelatedBookRecommendation = async (bookId: string) => {
     {
       $replaceRoot: { newRoot: "$edition" },
     },
+    {
+      $lookup: {
+        from: "genres",
+        localField: "book.relatedGenres",
+        foreignField: "_id",
+        as: "book.relatedGenres",
+      },
+    },
     { $project: { genreOverlap: 0 } },
     { $limit: 1 },
   ]);
 
-  return recommendation;
+  return suggestion;
 };
