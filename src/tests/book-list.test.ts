@@ -22,11 +22,14 @@ import {
   fakeMostRatedBooks,
   getBookListsPageWithToObject,
 } from "./fake-data/book-list";
-import { fakeEditionsList } from "./fake-data/edition";
+import { fakeEdition, fakeEditionsList } from "./fake-data/edition";
+import { getRelatedBookSuggestion } from "../helpers/utils";
 
 vi.mock("../models/book-list.ts");
 vi.mock("../models/edition.ts");
 vi.mock("../models/rating.ts");
+vi.mock("../models/book.ts");
+vi.mock("../helpers/utils");
 
 describe("Book List Controller", () => {
   describe("Add Book List Controller", async () => {
@@ -189,8 +192,26 @@ describe("Book List Controller", () => {
 
       await getMostRatedBooks(req, res);
 
+      const response = { list: fakeEditionsList, suggestion: undefined };
+
       expect(res.statusCode).toBe(200);
-      expect(res._getJSONData()).toEqual(fakeEditionsList);
+      expect(res._getJSONData()).toEqual(response);
+    });
+
+    it("should return 200 and most rated books and suggestion", async () => {
+      const { req, res } = initializeReqResMocks();
+      req.query.enableSuggestion = "true";
+
+      vi.mocked(Rating.aggregate, true).mockResolvedValue(fakeMostRatedBooks);
+      vi.mocked(getRelatedBookSuggestion).mockResolvedValue(fakeEdition);
+      vi.mocked(Edition.aggregate).mockResolvedValueOnce(fakeEditionsList);
+
+      await getMostRatedBooks(req, res);
+
+      const response = { list: fakeEditionsList, suggestion: fakeEdition };
+
+      expect(res.statusCode).toBe(200);
+      expect(res._getJSONData()).toEqual(response);
     });
   });
 
@@ -219,8 +240,26 @@ describe("Book List Controller", () => {
 
       await getBestRatedBooks(req, res);
 
+      const response = { list: fakeEditionsList, suggestion: undefined };
+
       expect(res.statusCode).toBe(200);
-      expect(res._getJSONData()).toEqual(fakeEditionsList);
+      expect(res._getJSONData()).toEqual(response);
+    });
+
+    it("should return 200 and best rated books and suggestion", async () => {
+      const { req, res } = initializeReqResMocks();
+      req.query.enableSuggestion = "true";
+
+      vi.mocked(Rating.aggregate, true).mockResolvedValue(fakeMostRatedBooks);
+      vi.mocked(getRelatedBookSuggestion).mockResolvedValue(fakeEdition);
+      vi.mocked(Edition.aggregate).mockResolvedValueOnce(fakeEditionsList);
+
+      await getBestRatedBooks(req, res);
+
+      const response = { list: fakeEditionsList, suggestion: fakeEdition };
+
+      expect(res.statusCode).toBe(200);
+      expect(res._getJSONData()).toEqual(response);
     });
   });
 });

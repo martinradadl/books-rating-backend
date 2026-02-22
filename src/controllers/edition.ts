@@ -37,16 +37,97 @@ export const add = async (req: Request, res: Response) => {
 
 export const getById = async (req: Request, res: Response) => {
   try {
-    const editionId = req.params.id;
-    const edition = await editionModel.Edition.findById(editionId).populate({
-      path: "book",
-      populate: [
-        { path: "author" },
-        { path: "relatedGenres" },
-        { path: "characters" },
-        { path: "settings" },
-      ],
-    });
+    const editionId = parseToObjectId(req.params.id);
+
+    const [edition] = await editionModel.Edition.aggregate([
+      { $match: { _id: editionId } },
+
+      {
+        $lookup: {
+          from: "books",
+          localField: "book",
+          foreignField: "_id",
+          as: "book",
+        },
+      },
+      { $unwind: "$book" },
+
+      {
+        $lookup: {
+          from: "authors",
+          localField: "book.author",
+          foreignField: "_id",
+          as: "book.author",
+        },
+      },
+      { $unwind: { path: "$book.author", preserveNullAndEmptyArrays: true } },
+
+      {
+        $lookup: {
+          from: "genres",
+          localField: "book.relatedGenres",
+          foreignField: "_id",
+          as: "book.relatedGenres",
+        },
+      },
+      {
+        $lookup: {
+          from: "characters",
+          localField: "book.characters",
+          foreignField: "_id",
+          as: "book.characters",
+        },
+      },
+      {
+        $lookup: {
+          from: "settings",
+          localField: "book.settings",
+          foreignField: "_id",
+          as: "book.settings",
+        },
+      },
+
+      {
+        $lookup: {
+          from: "ratings",
+          let: { bookId: "$book._id" },
+          pipeline: [
+            {
+              $match: {
+                $expr: { $eq: ["$book", "$$bookId"] },
+              },
+            },
+            {
+              $group: {
+                _id: null,
+                averageRating: { $avg: "$score" },
+                ratingCount: { $sum: 1 },
+              },
+            },
+          ],
+          as: "ratingStats",
+        },
+      },
+      {
+        $unwind: {
+          path: "$ratingStats",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+
+      {
+        $addFields: {
+          averageRating: { $ifNull: ["$ratingStats.averageRating", 0] },
+          ratingCount: { $ifNull: ["$ratingStats.ratingCount", 0] },
+        },
+      },
+
+      {
+        $project: {
+          ratingStats: 0,
+        },
+      },
+    ]);
 
     res.status(200).json(edition);
   } catch (err: unknown) {
@@ -146,7 +227,33 @@ export const getBooksBySameAuthor = async (req: Request, res: Response) => {
       {
         $replaceRoot: { newRoot: "$edition" },
       },
-    ]).limit(limit);
+      {
+        $lookup: {
+          from: "ratings",
+          localField: "book._id",
+          foreignField: "book",
+          as: "ratings",
+        },
+      },
+      {
+        $addFields: {
+          ratingCount: { $size: "$ratings" },
+          averageRating: {
+            $cond: [
+              { $gt: [{ $size: "$ratings" }, 0] },
+              { $avg: "$ratings.score" },
+              0,
+            ],
+          },
+        },
+      },
+      {
+        $project: {
+          ratings: 0,
+        },
+      },
+      { $limit: limit },
+    ]);
 
     res.status(200).json(editionsList);
   } catch (err: unknown) {
@@ -213,7 +320,33 @@ export const getRelatedBooks = async (req: Request, res: Response) => {
       {
         $replaceRoot: { newRoot: "$edition" },
       },
-    ]).limit(limit);
+      {
+        $lookup: {
+          from: "ratings",
+          localField: "book._id",
+          foreignField: "book",
+          as: "ratings",
+        },
+      },
+      {
+        $addFields: {
+          ratingCount: { $size: "$ratings" },
+          averageRating: {
+            $cond: [
+              { $gt: [{ $size: "$ratings" }, 0] },
+              { $avg: "$ratings.score" },
+              0,
+            ],
+          },
+        },
+      },
+      {
+        $project: {
+          ratings: 0,
+        },
+      },
+      { $limit: limit },
+    ]);
 
     res.status(200).json(editionsList);
   } catch (err: unknown) {

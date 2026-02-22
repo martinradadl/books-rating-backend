@@ -14,7 +14,7 @@ export const initializeReqResMocks = () => {
 };
 
 export const defaultGetAllQueryObject = (
-  result: Array<Record<string, unknown>>
+  result: Array<Record<string, unknown>>,
 ) => {
   return {
     limit: () => {
@@ -28,7 +28,7 @@ export const defaultGetAllQueryObject = (
 };
 
 export const defaultGetAllQueryObjectAndSort = (
-  result: Array<Record<string, unknown>>
+  result: Array<Record<string, unknown>>,
 ) => {
   return {
     sort: () => {
@@ -47,7 +47,7 @@ export const defaultGetAllQueryObjectAndSort = (
 
 export const applyPopulate = (
   result: Record<string, unknown> | Array<Record<string, unknown>>,
-  depth: number
+  depth: number,
 ) => {
   if (depth <= 0) return result;
   return {
@@ -55,9 +55,17 @@ export const applyPopulate = (
   };
 };
 
+export const applyPopulateAndLean = (
+  result: Record<string, unknown> | Array<Record<string, unknown>>,
+) => {
+  return {
+    populate: () => ({ lean: () => result }),
+  };
+};
+
 export const applyLimit = (
   result: Record<string, unknown> | Array<Record<string, unknown>>,
-  depth: number
+  depth: number,
 ) => {
   if (depth <= 0) return result;
   return {
@@ -69,7 +77,7 @@ export const applyLimit = (
 
 export const applyLimitAndPopulate = (
   result: Record<string, unknown> | Array<Record<string, unknown>>,
-  depth: number
+  depth: number,
 ) => {
   if (depth <= 0) return result;
   return {
@@ -83,7 +91,7 @@ export const applyLimitAndPopulate = (
 
 export const defaultGetAllQueryObjectAndPopulate = (
   result: Array<Record<string, unknown>>,
-  populateDepth: number = 1
+  populateDepth: number = 1,
 ) => {
   return {
     limit: () => {
