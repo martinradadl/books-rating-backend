@@ -4,6 +4,11 @@ import * as editionModel from "../models/edition";
 import * as ratingModel from "../models/rating";
 import { MONGO_ERRORS } from "../helpers/constants";
 import { getRelatedBookSuggestion } from "../helpers/utils";
+import {
+  GROUP_FIRST_EDITION_BY_BOOK_QUERY,
+  RATING_DATA_LOOKUP_QUERY,
+  UNWIND_PRESERVE_NULL_AND_EMPTY_ARRAYS_QUERY,
+} from "../helpers/queries";
 
 export const addBookList = async (req: Request, res: Response) => {
   try {
@@ -58,10 +63,122 @@ export const getAll = async (req: Request, res: Response) => {
   }
 };
 
-export const getById = async (req: Request, res: Response) => {
+export const getByTitle = async (req: Request, res: Response) => {
   try {
-    const bookListId = req.params.id;
-    const bookList = await bookListModel.BookList.findById(bookListId);
+    const rawTitle = req.params.title;
+    const titlePattern = rawTitle.replace(/-/g, " ");
+
+    const page = parseInt(req.query?.page as string) || 1;
+    const limit = parseInt(req.query?.limit as string) || 10;
+    const skip = (page - 1) * limit;
+
+    const [bookList] = await bookListModel.BookList.aggregate([
+      {
+        $match: { title: { $regex: `^${titlePattern}$`, $options: "i" } },
+      },
+      {
+        $lookup: {
+          from: "editions",
+          localField: "books",
+          foreignField: "_id",
+          as: "books",
+          pipeline: [
+            { $sort: { createdAt: -1 } },
+
+            {
+              $facet: {
+                data: [
+                  { $skip: skip },
+                  { $limit: limit },
+
+                  {
+                    $lookup: {
+                      from: "books",
+                      localField: "book",
+                      foreignField: "_id",
+                      as: "book",
+                    },
+                  },
+                  {
+                    $unwind: {
+                      path: "$book",
+                      preserveNullAndEmptyArrays: true,
+                    },
+                  },
+
+                  {
+                    $lookup: {
+                      from: "authors",
+                      localField: "book.author",
+                      foreignField: "_id",
+                      as: "book.author",
+                    },
+                  },
+                  {
+                    $unwind: {
+                      path: "$book.author",
+                      preserveNullAndEmptyArrays: true,
+                    },
+                  },
+
+                  {
+                    $lookup: RATING_DATA_LOOKUP_QUERY("$book._id"),
+                  },
+                  {
+                    $unwind:
+                      UNWIND_PRESERVE_NULL_AND_EMPTY_ARRAYS_QUERY(
+                        "$ratingData",
+                      ),
+                  },
+                  {
+                    $addFields: {
+                      averageRating: {
+                        $ifNull: ["$ratingData.averageRating", 0],
+                      },
+                      ratingCount: { $ifNull: ["$ratingData.ratingCount", 0] },
+                    },
+                  },
+                  {
+                    $project: { ratingData: 0 },
+                  },
+                ],
+
+                totalCount: [{ $count: "count" }],
+              },
+            },
+            {
+              $unwind: {
+                path: "$totalCount",
+                preserveNullAndEmptyArrays: true,
+              },
+            },
+            {
+              $addFields: {
+                booksCount: { $ifNull: ["$totalCount.count", 0] },
+              },
+            },
+            {
+              $project: {
+                totalCount: 0,
+              },
+            },
+          ],
+        },
+      },
+      {
+        $unwind: {
+          path: "$books",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $addFields: {
+          booksCount: { $ifNull: ["$books.booksCount", 0] },
+          books: { $ifNull: ["$books.data", []] },
+        },
+      },
+    ]);
+
     res.status(200).json(bookList);
   } catch (err: unknown) {
     if (err instanceof Error) {
@@ -77,12 +194,9 @@ export const getLatestReleases = async (req: Request, res: Response) => {
     const latestReleasesList = await editionModel.Edition.aggregate([
       { $sort: { published: -1 } },
       {
-        $group: {
-          _id: "$book",
-          latestEdition: { $first: "$$ROOT" },
-        },
+        $group: GROUP_FIRST_EDITION_BY_BOOK_QUERY,
       },
-      { $replaceRoot: { newRoot: "$latestEdition" } },
+      { $replaceRoot: { newRoot: "$edition" } },
       { $sort: { published: -1 } },
       { $limit: limit },
     ]);
@@ -127,10 +241,7 @@ export const getMostRatedBooks = async (req: Request, res: Response) => {
     const editions = await editionModel.Edition.aggregate([
       { $match: { book: { $in: bookIds } } },
       {
-        $group: {
-          _id: "$book",
-          edition: { $first: "$$ROOT" },
-        },
+        $group: GROUP_FIRST_EDITION_BY_BOOK_QUERY,
       },
       { $replaceRoot: { newRoot: "$edition" } },
     ]);
@@ -182,10 +293,7 @@ export const getBestRatedBooks = async (req: Request, res: Response) => {
     const editions = await editionModel.Edition.aggregate([
       { $match: { book: { $in: bookIds } } },
       {
-        $group: {
-          _id: "$book",
-          edition: { $first: "$$ROOT" },
-        },
+        $group: GROUP_FIRST_EDITION_BY_BOOK_QUERY,
       },
       { $replaceRoot: { newRoot: "$edition" } },
     ]);

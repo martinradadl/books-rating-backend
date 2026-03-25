@@ -8,6 +8,6 @@ router.get("/", bookListController.getAll);
 router.get("/latest-releases", bookListController.getLatestReleases);
 router.get("/most-rated", bookListController.getMostRatedBooks);
 router.get("/best-rated", bookListController.getBestRatedBooks);
-router.get("/:id", bookListController.getById);
+router.get("/:title", bookListController.getByTitle);
 
 export default router;
