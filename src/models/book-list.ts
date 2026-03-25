@@ -16,8 +16,8 @@ schema.pre("validate", async function (next) {
   if (hasBooks === hasBookLists) {
     return next(
       new Error(
-        "A BookList must contain either books or bookLists (exactly one)"
-      )
+        "A BookList must contain either books or bookLists (exactly one)",
+      ),
     );
   }
 
@@ -47,7 +47,7 @@ schema.pre("validate", async function (next) {
 
     const validIds = existingBookLists.map((e) => e._id.toString());
     this.bookLists = this.bookLists.filter((id) =>
-      validIds.includes(id.toString())
+      validIds.includes(id.toString()),
     );
   }
 
