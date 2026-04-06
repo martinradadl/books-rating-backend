@@ -12,7 +12,7 @@ import {
   addBookList,
   getAll,
   getBestRatedBooks,
-  getById,
+  getByTitle,
   getLatestReleases,
   getMostRatedBooks,
 } from "../controllers/book-list";
@@ -109,18 +109,20 @@ describe("Book List Controller", () => {
     });
   });
 
-  describe("Get Book List by ID", async () => {
+  describe("Get Book List by Title", async () => {
     afterEach(() => {
       vi.resetAllMocks();
     });
 
-    it("should return 500 when error is thrown getting an book list by id", async () => {
+    it("should return 500 when error is thrown getting an book list by title", async () => {
       const { req, res } = initializeReqResMocks();
-      vi.mocked(BookList.findById, true).mockImplementation(() => {
+      req.params.title = "fake-title";
+
+      vi.mocked(BookList.aggregate, true).mockImplementation(() => {
         throw mockedCatchError;
       });
 
-      await getById(req, res);
+      await getByTitle(req, res);
 
       expect(res.statusCode).toBe(500);
       expect(res._getJSONData()).toEqual({ message: mockedCatchError.message });
@@ -128,9 +130,13 @@ describe("Book List Controller", () => {
 
     it("should return 200 and the selected book list", async () => {
       const { req, res } = initializeReqResMocks();
-      vi.mocked(BookList.findById, true).mockResolvedValue(fakeBookList as any);
+      req.params.title = "fake-title";
 
-      await getById(req, res);
+      vi.mocked(BookList.aggregate, true).mockResolvedValue([
+        fakeBookList as any,
+      ]);
+
+      await getByTitle(req, res);
 
       expect(res.statusCode).toBe(200);
       expect(res._getJSONData()).toEqual(fakeBookList);

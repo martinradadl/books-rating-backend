@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import * as bookModel from "../models/book";
 import * as editionModel from "../models/edition";
+import { GROUP_FIRST_EDITION_BY_BOOK_QUERY } from "./queries";
 
 export const parseToObjectId = (id: string) => {
   return new mongoose.Types.ObjectId(id);
@@ -43,10 +44,7 @@ export const getRelatedBookSuggestion = async (bookId: string) => {
       $sort: { genreOverlap: -1 },
     },
     {
-      $group: {
-        _id: "$book",
-        edition: { $first: "$$ROOT" },
-      },
+      $group: GROUP_FIRST_EDITION_BY_BOOK_QUERY,
     },
     {
       $replaceRoot: { newRoot: "$edition" },

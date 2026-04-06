@@ -3,6 +3,12 @@ import * as editionModel from "../models/edition";
 import * as bookModel from "../models/book";
 import { CAROUSEL_LENGTH_LIMIT, MONGO_ERRORS } from "../helpers/constants";
 import { parseToObjectId } from "../helpers/utils";
+import {
+  GROUP_FIRST_EDITION_BY_BOOK_QUERY,
+  RATING_ADD_FIELDS_QUERY,
+  RATING_DATA_LOOKUP_QUERY,
+  UNWIND_PRESERVE_NULL_AND_EMPTY_ARRAYS_QUERY,
+} from "../helpers/queries";
 
 export const add = async (req: Request, res: Response) => {
   try {
@@ -60,7 +66,7 @@ export const getById = async (req: Request, res: Response) => {
           as: "book.author",
         },
       },
-      { $unwind: { path: "$book.author", preserveNullAndEmptyArrays: true } },
+      { $unwind: UNWIND_PRESERVE_NULL_AND_EMPTY_ARRAYS_QUERY("$book.author") },
 
       {
         $lookup: {
@@ -88,43 +94,22 @@ export const getById = async (req: Request, res: Response) => {
       },
 
       {
-        $lookup: {
-          from: "ratings",
-          let: { bookId: "$book._id" },
-          pipeline: [
-            {
-              $match: {
-                $expr: { $eq: ["$book", "$$bookId"] },
-              },
-            },
-            {
-              $group: {
-                _id: null,
-                averageRating: { $avg: "$score" },
-                ratingCount: { $sum: 1 },
-              },
-            },
-          ],
-          as: "ratingStats",
-        },
+        $lookup: RATING_DATA_LOOKUP_QUERY("$book._id"),
       },
       {
-        $unwind: {
-          path: "$ratingStats",
-          preserveNullAndEmptyArrays: true,
-        },
+        $unwind: UNWIND_PRESERVE_NULL_AND_EMPTY_ARRAYS_QUERY("$ratingData"),
       },
 
       {
         $addFields: {
-          averageRating: { $ifNull: ["$ratingStats.averageRating", 0] },
-          ratingCount: { $ifNull: ["$ratingStats.ratingCount", 0] },
+          averageRating: { $ifNull: ["$ratingData.averageRating", 0] },
+          ratingCount: { $ifNull: ["$ratingData.ratingCount", 0] },
         },
       },
 
       {
         $project: {
-          ratingStats: 0,
+          ratingData: 0,
         },
       },
     ]);
@@ -219,10 +204,7 @@ export const getBooksBySameAuthor = async (req: Request, res: Response) => {
         },
       },
       {
-        $group: {
-          _id: "$book",
-          edition: { $first: "$$ROOT" },
-        },
+        $group: GROUP_FIRST_EDITION_BY_BOOK_QUERY,
       },
       {
         $replaceRoot: { newRoot: "$edition" },
@@ -236,16 +218,7 @@ export const getBooksBySameAuthor = async (req: Request, res: Response) => {
         },
       },
       {
-        $addFields: {
-          ratingCount: { $size: "$ratings" },
-          averageRating: {
-            $cond: [
-              { $gt: [{ $size: "$ratings" }, 0] },
-              { $avg: "$ratings.score" },
-              0,
-            ],
-          },
-        },
+        $addFields: RATING_ADD_FIELDS_QUERY,
       },
       {
         $project: {
@@ -312,10 +285,7 @@ export const getRelatedBooks = async (req: Request, res: Response) => {
         $sort: { genreOverlap: -1 },
       },
       {
-        $group: {
-          _id: "$book",
-          edition: { $first: "$$ROOT" },
-        },
+        $group: GROUP_FIRST_EDITION_BY_BOOK_QUERY,
       },
       {
         $replaceRoot: { newRoot: "$edition" },
@@ -329,16 +299,7 @@ export const getRelatedBooks = async (req: Request, res: Response) => {
         },
       },
       {
-        $addFields: {
-          ratingCount: { $size: "$ratings" },
-          averageRating: {
-            $cond: [
-              { $gt: [{ $size: "$ratings" }, 0] },
-              { $avg: "$ratings.score" },
-              0,
-            ],
-          },
-        },
+        $addFields: RATING_ADD_FIELDS_QUERY,
       },
       {
         $project: {
