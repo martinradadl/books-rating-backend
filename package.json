@@ -8,6 +8,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon --exec node -r ts-node/register --env-file=.env src/index.ts",
+    "start": "NODE_ENV=production node dist/index.js",
     "test": "vitest --run",
     "test:dev": "vitest --run --printConsoleTrace --coverage",
     "build": "tsc",
