@@ -22,7 +22,11 @@ initMongo().catch(console.dir);
 
 app.use(jsonParser);
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(cors()); // APP_URL pending
+
+const corsOptions = {
+  origin: ["http://localhost/", "books-rating.vercel.app"],
+};
+app.use(cors(corsOptions)); // APP_URL pending
 
 app.get("/", (_, res) => res.send("Server is running"));
 
