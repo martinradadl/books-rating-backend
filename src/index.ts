@@ -24,9 +24,9 @@ app.use(jsonParser);
 app.use(bodyParser.urlencoded({ extended: true }));
 
 const corsOptions = {
-  origin: ["http://localhost/", "books-rating.vercel.app"],
+  origin: ["http://localhost:5173", "https://books-rating.vercel.app"],
 };
-app.use(cors(corsOptions)); // APP_URL pending
+app.use(cors(corsOptions));
 
 app.get("/", (_, res) => res.send("Server is running"));
 
