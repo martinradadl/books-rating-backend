@@ -7,10 +7,17 @@ import {
 } from "./utils";
 import { Genre } from "../models/genre";
 import { Book } from "../models/book";
-import { add, getAll, getById } from "../controllers/genre";
+import {
+  add,
+  getAll,
+  getById,
+  getByUrlSlug,
+  getRelatedGenres,
+} from "../controllers/genre";
 import {
   fakeGenre,
   fakeGenresListWithURL,
+  fakeRelatedGenres,
   getGenresPage,
 } from "./fake-data/genre";
 
@@ -90,6 +97,36 @@ describe("Genre Controller", () => {
     });
   });
 
+  describe("Get Genre by URL Slug", async () => {
+    afterEach(() => {
+      vi.resetAllMocks();
+    });
+
+    it("should return 500 when error is thrown getting a genre by url slug", async () => {
+      const { req, res } = initializeReqResMocks();
+      vi.mocked(Genre.findOne, true).mockImplementation(() => {
+        throw mockedCatchError;
+      });
+
+      await getByUrlSlug(req, res);
+
+      expect(res.statusCode).toBe(500);
+      expect(res._getJSONData()).toEqual({ message: mockedCatchError.message });
+    });
+
+    it("should return 200 and the selected genre", async () => {
+      const { req, res } = initializeReqResMocks();
+      req.params = { slug: "fiction" };
+
+      vi.mocked(Genre.findOne, true).mockResolvedValue(fakeGenre as any);
+
+      await getByUrlSlug(req, res);
+
+      expect(res.statusCode).toBe(200);
+      expect(res._getJSONData()).toEqual(fakeGenre);
+    });
+  });
+
   describe("Get All Genres", async () => {
     afterEach(() => {
       vi.resetAllMocks();
@@ -146,6 +183,38 @@ describe("Genre Controller", () => {
 
       expect(res.statusCode).toBe(200);
       expect(res._getJSONData()).toEqual(fakeGenresListWithURL);
+    });
+  });
+
+  describe("Get Related Genres", async () => {
+    afterEach(() => {
+      vi.resetAllMocks();
+    });
+
+    it("should return 500 when error is thrown getting related genres", async () => {
+      const { req, res } = initializeReqResMocks();
+      req.params = { slug: "fake-genre" };
+
+      vi.mocked(Book.aggregate, true).mockImplementation(() => {
+        throw mockedCatchError;
+      });
+
+      await getRelatedGenres(req, res);
+
+      expect(res.statusCode).toBe(500);
+      expect(res._getJSONData()).toEqual({ message: mockedCatchError.message });
+    });
+
+    it("should return 200 and related genres list", async () => {
+      const { req, res } = initializeReqResMocks();
+      req.params = { slug: "fake-genre" };
+
+      vi.mocked(Book.aggregate, true).mockResolvedValue(fakeRelatedGenres);
+
+      await getRelatedGenres(req, res);
+
+      expect(res.statusCode).toBe(200);
+      expect(res._getJSONData()).toEqual(fakeRelatedGenres);
     });
   });
 });

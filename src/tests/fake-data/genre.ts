@@ -12,10 +12,15 @@ export const fakeGenre2 = {
 
 export const fakeGenresList = [fakeGenre, fakeGenre2];
 
+export const fakeRelatedGenres = [
+  { _id: "fakeId1", name: "fakeGenre1", slug: "fakegenre1" },
+  { _id: "fakeId2", name: "fakeGenre2", slug: "fakegenre2" },
+];
+
 export const fakeGenresListWithURL = fakeGenresList.map((genre) => ({
   _id: genre._id,
   name: genre.name,
-  urlPath: genre.name.toLowerCase().replace(/\s+/g, "-"),
+  slug: genre.name.toLowerCase().replace(/\s+/g, "-"),
 }));
 
 export const getGenresPage = (limit?: number, page?: number) => {

@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { MONGO_ERRORS } from "../helpers/constants";
 import * as genreModel from "../models/genre";
 import * as bookModel from "../models/book";
+import { parseUrlSlugToCapitalizedString } from "../helpers/utils";
 
 export const add = async (req: Request, res: Response) => {
   try {
@@ -26,6 +27,19 @@ export const add = async (req: Request, res: Response) => {
 export const getById = async (req: Request, res: Response) => {
   try {
     const genre = await genreModel.Genre.findById(req.params.id);
+    res.status(200).json(genre);
+  } catch (err: unknown) {
+    if (err instanceof Error) {
+      res.status(500).json({ message: err.message });
+    }
+  }
+};
+
+export const getByUrlSlug = async (req: Request, res: Response) => {
+  try {
+    const genreName = parseUrlSlugToCapitalizedString(req.params.slug);
+
+    const genre = await genreModel.Genre.findOne({ name: genreName });
     res.status(200).json(genre);
   } catch (err: unknown) {
     if (err instanceof Error) {
@@ -73,7 +87,7 @@ export const getAll = async (req: Request, res: Response) => {
           $project: {
             _id: "$genre._id",
             name: "$genre.name",
-            urlPath: {
+            slug: {
               $replaceAll: {
                 input: { $toLower: "$genre.name" },
                 find: " ",
@@ -93,11 +107,75 @@ export const getAll = async (req: Request, res: Response) => {
       parsedList = genresList.map((genre) => ({
         name: genre.name,
         _id: genre._id,
-        urlPath: genre.name.toLowerCase().replace(/\s+/g, "-"),
+        slug: genre.name.toLowerCase().replace(/\s+/g, "-"),
       }));
     }
 
     res.status(200).json(parsedList);
+  } catch (err: unknown) {
+    if (err instanceof Error) {
+      res.status(500).json({ message: err.message });
+    }
+  }
+};
+
+export const getRelatedGenres = async (req: Request, res: Response) => {
+  try {
+    const genreName = parseUrlSlugToCapitalizedString(req.params.slug);
+    const limit = parseInt(req.query?.limit as string) || 6;
+
+    const relatedGenres = await bookModel.Book.aggregate([
+      {
+        $lookup: {
+          from: "genres",
+          localField: "relatedGenres",
+          foreignField: "_id",
+          as: "genres",
+        },
+      },
+
+      {
+        $match: {
+          "genres.name": genreName,
+        },
+      },
+
+      { $unwind: "$relatedGenres" },
+
+      {
+        $lookup: {
+          from: "genres",
+          localField: "relatedGenres",
+          foreignField: "_id",
+          as: "genre",
+        },
+      },
+      { $unwind: "$genre" },
+
+      {
+        $match: {
+          "genre.name": { $ne: genreName },
+        },
+      },
+
+      {
+        $group: {
+          _id: "$genre._id",
+          name: { $first: "$genre.name" },
+        },
+      },
+
+      { $sort: { count: -1 } },
+
+      { $limit: limit },
+    ]);
+
+    const relatedGenresWithSlugs = relatedGenres.map((genre) => ({
+      ...genre,
+      slug: genre.name.toLowerCase().replace(/\s+/g, "-"),
+    }));
+
+    res.status(200).json(relatedGenresWithSlugs);
   } catch (err: unknown) {
     if (err instanceof Error) {
       res.status(500).json({ message: err.message });

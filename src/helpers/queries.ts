@@ -1,3 +1,5 @@
+import { PipelineStage } from "mongoose";
+
 export const RATING_ADD_FIELDS_QUERY = {
   ratingCount: { $size: "$ratings" },
   averageRating: {
@@ -33,4 +35,38 @@ export const UNWIND_PRESERVE_NULL_AND_EMPTY_ARRAYS_QUERY = (path: string) => ({
 export const GROUP_FIRST_EDITION_BY_BOOK_QUERY = {
   _id: "$book",
   edition: { $first: "$$ROOT" },
+};
+
+export const FILTER_EDITIONS_BY_GENRE_QUERY: (
+  genreName: string,
+) => PipelineStage[] = (genreName: string) => {
+  if (genreName === "") {
+    return [];
+  }
+  return [
+    {
+      $lookup: {
+        from: "books",
+        localField: "book",
+        foreignField: "_id",
+        as: "book",
+      },
+    },
+    { $unwind: "$book" },
+
+    {
+      $lookup: {
+        from: "genres",
+        localField: "book.relatedGenres",
+        foreignField: "_id",
+        as: "genres",
+      },
+    },
+
+    {
+      $match: {
+        "genres.name": genreName,
+      },
+    },
+  ];
 };

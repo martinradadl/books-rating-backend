@@ -63,3 +63,13 @@ export const getRelatedBookSuggestion = async (bookId: string) => {
 
   return suggestion;
 };
+
+export const parseUrlSlugToCapitalizedString = (slug: string | undefined) => {
+  if (slug === undefined) {
+    return "";
+  }
+  return slug
+    .split("-")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+};

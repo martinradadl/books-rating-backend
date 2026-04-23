@@ -1,9 +1,15 @@
 import { Request, Response } from "express";
 import * as editionModel from "../models/edition";
 import * as bookModel from "../models/book";
+import * as ratingModel from "../models/rating";
 import { CAROUSEL_LENGTH_LIMIT, MONGO_ERRORS } from "../helpers/constants";
-import { parseToObjectId } from "../helpers/utils";
 import {
+  getRelatedBookSuggestion,
+  parseToObjectId,
+  parseUrlSlugToCapitalizedString,
+} from "../helpers/utils";
+import {
+  FILTER_EDITIONS_BY_GENRE_QUERY,
   GROUP_FIRST_EDITION_BY_BOOK_QUERY,
   RATING_ADD_FIELDS_QUERY,
   RATING_DATA_LOOKUP_QUERY,
@@ -310,6 +316,148 @@ export const getRelatedBooks = async (req: Request, res: Response) => {
     ]);
 
     res.status(200).json(editionsList);
+  } catch (err: unknown) {
+    if (err instanceof Error) {
+      res.status(500).json({ message: err.message });
+    }
+  }
+};
+
+export const getLatestReleases = async (req: Request, res: Response) => {
+  try {
+    const limit = parseInt(req.query?.limit as string) || 0;
+    const genreName = parseUrlSlugToCapitalizedString(
+      req.query?.genre as string,
+    );
+
+    const latestReleasesList = await editionModel.Edition.aggregate([
+      ...FILTER_EDITIONS_BY_GENRE_QUERY(genreName),
+
+      { $sort: { published: -1 } },
+      {
+        $group: GROUP_FIRST_EDITION_BY_BOOK_QUERY,
+      },
+      { $replaceRoot: { newRoot: "$edition" } },
+      { $sort: { published: -1 } },
+      { $limit: limit },
+    ]);
+
+    res.status(200).json(latestReleasesList);
+  } catch (err: unknown) {
+    if (err instanceof Error) {
+      res.status(500).json({ message: err.message });
+    }
+  }
+};
+
+export const getMostRatedBooks = async (req: Request, res: Response) => {
+  try {
+    const limit = Number(req.query?.limit) || 5;
+    const enableSuggestion = req.query?.enableSuggestion === "true" || false;
+    let suggestion;
+    const genreName = parseUrlSlugToCapitalizedString(
+      req.query?.genre as string,
+    );
+
+    const topBooks = await ratingModel.Rating.aggregate([
+      ...FILTER_EDITIONS_BY_GENRE_QUERY(genreName),
+      {
+        $group: {
+          _id: genreName ? "$book._id" : "$book",
+          ratingsCount: { $sum: 1 },
+        },
+      },
+      {
+        $sort: { ratingsCount: -1 },
+      },
+      {
+        $limit: limit,
+      },
+    ]);
+
+    const bookIds = topBooks.map((book) => book._id);
+
+    if (enableSuggestion) {
+      const index = Math.floor(Math.random() * bookIds.length);
+      const randomBookId = bookIds[index];
+      suggestion = await getRelatedBookSuggestion(randomBookId);
+    }
+
+    const editions = await editionModel.Edition.aggregate([
+      { $match: { book: { $in: bookIds } } },
+      {
+        $group: GROUP_FIRST_EDITION_BY_BOOK_QUERY,
+      },
+      { $replaceRoot: { newRoot: "$edition" } },
+    ]);
+
+    const editionsMap = new Map(
+      editions.map((edition) => [edition.book.toString(), edition]),
+    );
+
+    const orderedEditions = bookIds.map((id) => editionsMap.get(id.toString()));
+
+    const response = { list: orderedEditions, suggestion };
+    res.status(200).json(response);
+  } catch (err: unknown) {
+    if (err instanceof Error) {
+      res.status(500).json({ message: err.message });
+    }
+  }
+};
+
+export const getBestRatedBooks = async (req: Request, res: Response) => {
+  try {
+    const limit = Number(req.query?.limit) || 5;
+    const enableSuggestion = req.query?.enableSuggestion === "true" || false;
+    let suggestion;
+    const genreName = parseUrlSlugToCapitalizedString(
+      req.query?.genre as string,
+    );
+
+    const topBooks = await ratingModel.Rating.aggregate([
+      ...FILTER_EDITIONS_BY_GENRE_QUERY(genreName),
+
+      {
+        $group: {
+          _id: genreName ? "$book._id" : "$book",
+          averageScore: { $avg: "$score" },
+        },
+      },
+      {
+        $sort: { averageScore: -1 },
+      },
+      {
+        $limit: limit,
+      },
+    ]);
+
+    const bookIds = topBooks.map((book) => book._id);
+
+    if (enableSuggestion) {
+      const index = Math.floor(Math.random() * bookIds.length);
+      const randomBookId = bookIds[index];
+      suggestion = await getRelatedBookSuggestion(randomBookId);
+    }
+
+    const editions = await editionModel.Edition.aggregate([
+      { $match: { book: { $in: bookIds } } },
+      {
+        $group: GROUP_FIRST_EDITION_BY_BOOK_QUERY,
+      },
+      { $replaceRoot: { newRoot: "$edition" } },
+    ]);
+
+    const editionsMap = new Map(
+      editions.map((edition) => [edition.book.toString(), edition]),
+    );
+
+    const orderedEditions = topBooks.map((item) =>
+      editionsMap.get(item._id.toString()),
+    );
+
+    const response = { list: orderedEditions, suggestion };
+    res.status(200).json(response);
   } catch (err: unknown) {
     if (err instanceof Error) {
       res.status(500).json({ message: err.message });
