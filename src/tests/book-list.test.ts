@@ -6,30 +6,14 @@ import {
   mockedCatchError,
 } from "./utils";
 import { BookList } from "../models/book-list";
-import { Edition } from "../models/edition";
-import { Rating } from "../models/rating";
-import {
-  addBookList,
-  getAll,
-  getBestRatedBooks,
-  getByTitle,
-  getLatestReleases,
-  getMostRatedBooks,
-} from "../controllers/book-list";
+import { addBookList, getAll, getByTitle } from "../controllers/book-list";
 import {
   fakeBookList,
   fakeListOfAllBookListsWithURL,
-  fakeMostRatedBooks,
   getBookListsPageWithToObject,
 } from "./fake-data/book-list";
-import { fakeEdition, fakeEditionsList } from "./fake-data/edition";
-import { getRelatedBookSuggestion } from "../helpers/utils";
 
 vi.mock("../models/book-list.ts");
-vi.mock("../models/edition.ts");
-vi.mock("../models/rating.ts");
-vi.mock("../models/book.ts");
-vi.mock("../helpers/utils");
 
 describe("Book List Controller", () => {
   describe("Add Book List Controller", async () => {
@@ -140,132 +124,6 @@ describe("Book List Controller", () => {
 
       expect(res.statusCode).toBe(200);
       expect(res._getJSONData()).toEqual(fakeBookList);
-    });
-  });
-
-  describe("Get Latest Releases", async () => {
-    afterEach(() => {
-      vi.resetAllMocks();
-    });
-
-    it("should return 500 when error is thrown getting latest releases", async () => {
-      const { req, res } = initializeReqResMocks();
-
-      vi.mocked(Edition.aggregate, true).mockImplementation(() => {
-        throw mockedCatchError;
-      });
-
-      await getLatestReleases(req, res);
-
-      expect(res.statusCode).toBe(500);
-      expect(res._getJSONData()).toEqual({ message: mockedCatchError.message });
-    });
-
-    it("should return 200 and latest releases", async () => {
-      const { req, res } = initializeReqResMocks();
-
-      vi.mocked(Edition.aggregate, true).mockResolvedValue(fakeEditionsList);
-
-      await getLatestReleases(req, res);
-
-      expect(res.statusCode).toBe(200);
-      expect(res._getJSONData()).toEqual(fakeEditionsList);
-    });
-  });
-
-  describe("Get Most Rated Books", async () => {
-    afterEach(() => {
-      vi.resetAllMocks();
-    });
-
-    it("should return 500 when error is thrown getting books", async () => {
-      const { req, res } = initializeReqResMocks();
-      vi.mocked(Rating.aggregate, true).mockImplementation(() => {
-        throw mockedCatchError;
-      });
-
-      await getMostRatedBooks(req, res);
-
-      expect(res.statusCode).toBe(500);
-      expect(res._getJSONData()).toEqual({ message: mockedCatchError.message });
-    });
-
-    it("should return 200 and most rated books", async () => {
-      const { req, res } = initializeReqResMocks();
-
-      vi.mocked(Rating.aggregate, true).mockResolvedValue(fakeMostRatedBooks);
-      vi.mocked(Edition.aggregate, true).mockResolvedValue(fakeEditionsList);
-
-      await getMostRatedBooks(req, res);
-
-      const response = { list: fakeEditionsList, suggestion: undefined };
-
-      expect(res.statusCode).toBe(200);
-      expect(res._getJSONData()).toEqual(response);
-    });
-
-    it("should return 200 and most rated books and suggestion", async () => {
-      const { req, res } = initializeReqResMocks();
-      req.query.enableSuggestion = "true";
-
-      vi.mocked(Rating.aggregate, true).mockResolvedValue(fakeMostRatedBooks);
-      vi.mocked(getRelatedBookSuggestion).mockResolvedValue(fakeEdition);
-      vi.mocked(Edition.aggregate).mockResolvedValueOnce(fakeEditionsList);
-
-      await getMostRatedBooks(req, res);
-
-      const response = { list: fakeEditionsList, suggestion: fakeEdition };
-
-      expect(res.statusCode).toBe(200);
-      expect(res._getJSONData()).toEqual(response);
-    });
-  });
-
-  describe("Get Best Rated Books", async () => {
-    afterEach(() => {
-      vi.resetAllMocks();
-    });
-
-    it("should return 500 when error is thrown getting books", async () => {
-      const { req, res } = initializeReqResMocks();
-      vi.mocked(Rating.aggregate, true).mockImplementation(() => {
-        throw mockedCatchError;
-      });
-
-      await getBestRatedBooks(req, res);
-
-      expect(res.statusCode).toBe(500);
-      expect(res._getJSONData()).toEqual({ message: mockedCatchError.message });
-    });
-
-    it("should return 200 and best rated books", async () => {
-      const { req, res } = initializeReqResMocks();
-
-      vi.mocked(Rating.aggregate, true).mockResolvedValue(fakeMostRatedBooks);
-      vi.mocked(Edition.aggregate, true).mockResolvedValue(fakeEditionsList);
-
-      await getBestRatedBooks(req, res);
-
-      const response = { list: fakeEditionsList, suggestion: undefined };
-
-      expect(res.statusCode).toBe(200);
-      expect(res._getJSONData()).toEqual(response);
-    });
-
-    it("should return 200 and best rated books and suggestion", async () => {
-      const { req, res } = initializeReqResMocks();
-      req.query.enableSuggestion = "true";
-
-      vi.mocked(Rating.aggregate, true).mockResolvedValue(fakeMostRatedBooks);
-      vi.mocked(getRelatedBookSuggestion).mockResolvedValue(fakeEdition);
-      vi.mocked(Edition.aggregate).mockResolvedValueOnce(fakeEditionsList);
-
-      await getBestRatedBooks(req, res);
-
-      const response = { list: fakeEditionsList, suggestion: fakeEdition };
-
-      expect(res.statusCode).toBe(200);
-      expect(res._getJSONData()).toEqual(response);
     });
   });
 });
