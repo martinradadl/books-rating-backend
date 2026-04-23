@@ -32,6 +32,11 @@ export const fakeEditionWithRatingsData = {
   ratingCount: 10,
 };
 
+export const fakeMostRatedBooks = [
+  { _id: "fakeBookId1" },
+  { _id: "fakeBookId2" },
+];
+
 export const fakeEditionsList = [fakeEdition, fakeEdition2];
 
 export const getEditionsPage = (limit?: number, page?: number) => {
