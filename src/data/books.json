@@ -439,5 +439,1132 @@
       "The Slabs, Mojave Desert, California",
       "Alaska"
     ]
+  },
+  {
+    "originalTitle": "The Hobbit",
+    "authorName": "J.R.R. Tolkien",
+    "relatedGenresNames": [
+      "Fantasy",
+      "Classics",
+      "Fiction",
+      "Adventure",
+      "Young Adult"
+    ],
+    "firstPublished": "September 21, 1937",
+    "charactersNames": [
+      "Gandalf",
+      "Bilbo Baggins",
+      "Thorin Oakenshield",
+      "Smaug",
+      "Elrond Half-elven",
+      "Gollum",
+      "Dwalin"
+    ],
+    "settingsNames": ["Middle Earth"]
+  },
+  {
+    "originalTitle": "The Lord of the Rings: The Fellowship of the Ring",
+    "authorName": "J.R.R. Tolkien",
+    "relatedGenresNames": ["Fantasy", "Classics", "Fiction", "Adventure"],
+    "firstPublished": "July 29, 1954",
+    "charactersNames": [
+      "Frodo Baggins",
+      "Meriadoc Brandybuck",
+      "Aragorn",
+      "Gimli",
+      "Boromir",
+      "Tom Bombadil",
+      "Rúmil",
+      "Saruman"
+    ],
+    "settingsNames": ["Middle Earth"]
+  },
+  {
+    "originalTitle": "The Lord of the Rings: The Two Towers",
+    "authorName": "J.R.R. Tolkien",
+    "relatedGenresNames": ["Fantasy", "Fiction", "Classics", "Adventure"],
+    "firstPublished": "November 11, 1954",
+    "charactersNames": [
+      "Frodo Baggins",
+      "Meriadoc Brandybuck",
+      "Gandalf",
+      "Aragorn",
+      "Gimli",
+      "Boromir",
+      "Bilbo Baggins",
+      "Eriol",
+      "Rúmil",
+      "Treebeard",
+      "Saruman"
+    ],
+    "settingsNames": ["Middle Earth"]
+  },
+  {
+    "originalTitle": "The Lord of the Rings: The Return of the King",
+    "authorName": "J.R.R. Tolkien",
+    "relatedGenresNames": ["Fantasy", "Fiction", "Classics", "Adventure"],
+    "firstPublished": "October 20, 1955",
+    "charactersNames": [
+      "Frodo Baggins",
+      "Meriadoc Brandybuck",
+      "Gandalf",
+      "Aragorn",
+      "Gimli",
+      "Bilbo Baggins",
+      "Saruman",
+      "Éowyn",
+      "Éomer"
+    ],
+    "settingsNames": ["Middle Earth"]
+  },
+  {
+    "originalTitle": "Romeo and Juliet",
+    "authorName": "William Shakespeare",
+    "relatedGenresNames": [
+      "Classics",
+      "Plays",
+      "Fiction",
+      "Romance",
+      "Drama",
+      "School"
+    ],
+    "firstPublished": "January 1, 1590",
+    "charactersNames": [
+      "Friar Lawrence",
+      "Paris",
+      "Escalus",
+      "Montague",
+      "Lady Montague",
+      "Abram",
+      "Balthasar",
+      "Capulet",
+      "Lady Capulet",
+      "Romeo",
+      "Juliet"
+    ],
+    "settingsNames": ["Verona, Italy"]
+  },
+  {
+    "originalTitle": "Hamlet, Prince of Denmark",
+    "authorName": "William Shakespeare",
+    "relatedGenresNames": ["Classics", "Plays", "Fiction", "Drama", "School"],
+    "firstPublished": "January 1, 1601",
+    "charactersNames": [
+      "Horatio",
+      "Polonius",
+      "Laertes",
+      "Gertrude",
+      "Marcellus",
+      "Ophelia",
+      "Hamlet"
+    ],
+    "settingsNames": ["Denmark"]
+  },
+  {
+    "originalTitle": "Macbeth",
+    "authorName": "William Shakespeare",
+    "relatedGenresNames": ["Classics", "Plays", "Fiction", "Drama", "School"],
+    "firstPublished": "January 1, 1623",
+    "charactersNames": [
+      "Macbeth",
+      "King Duncan",
+      "Lady Macbeth",
+      "Fleance",
+      "Seyward"
+    ],
+    "settingsNames": ["Scotland"]
+  },
+  {
+    "originalTitle": "Brave New World",
+    "authorName": "Aldous Huxley",
+    "relatedGenresNames": [
+      "Classics",
+      "Fiction",
+      "Science Fiction",
+      "Dystopia",
+      "School",
+      "Philosophy",
+      "Fantasy"
+    ],
+    "firstPublished": "January 1, 1932",
+    "charactersNames": [
+      "John (Brave New World)",
+      "Bernard Marx",
+      "Lenina Crowne",
+      "Helmholtz Watson",
+      "Mustapha Mond"
+    ],
+    "settingsNames": ["New Mexico, United States", "London, England"]
+  },
+  {
+    "originalTitle": "Ὀδύσσεια",
+    "authorName": "Homer",
+    "relatedGenresNames": [
+      "Classics",
+      "Fiction",
+      "Poetry",
+      "Mythology",
+      "Fantasy",
+      "School",
+      "Adventure"
+    ],
+    "firstPublished": "January 1, 801",
+    "charactersNames": [
+      "Odysseus",
+      "Penelope (wife of Odysseus)",
+      "Telemachus",
+      "Minerva",
+      "Polyphemus",
+      "Achilles",
+      "Agamemnon",
+      "Helen of Troy"
+    ],
+    "settingsNames": ["Ithaca, Greece", "Greece"]
+  },
+  {
+    "originalTitle": "Ἰλιάς",
+    "authorName": "Homer",
+    "relatedGenresNames": [
+      "Classics",
+      "Poetry",
+      "Fiction",
+      "Mythology",
+      "Fantasy",
+      "Historical Fiction",
+      "School"
+    ],
+    "firstPublished": "January 1, 801",
+    "charactersNames": [
+      "Odysseus",
+      "Menelaus",
+      "Paris",
+      "Hector of Troy",
+      "Helen of Troy",
+      "Briseis"
+    ],
+    "settingsNames": ["Troy", "Greece"]
+  },
+  {
+    "originalTitle": "Don Quijote de la Mancha",
+    "authorName": "Miguel de Cervantes Saavedra",
+    "relatedGenresNames": [
+      "Classics",
+      "Fiction",
+      "Historical Fiction",
+      "Adventure",
+      "Humor"
+    ],
+    "firstPublished": "January 1, 1615",
+    "charactersNames": ["Sancho Panza", "Don Quijote de la Mancha"],
+    "settingsNames": ["La Mancha, Spain", "Barcelona, Spain", "Spain"]
+  },
+  {
+    "originalTitle": "Candide, ou l'Optimisme",
+    "authorName": "Voltaire",
+    "relatedGenresNames": [
+      "Classics",
+      "Fiction",
+      "Philosophy",
+      "Humor",
+      "School"
+    ],
+    "firstPublished": "January 1, 1759",
+    "charactersNames": [
+      "Pangloss",
+      "Cunegonde",
+      "Dr. Pangloss",
+      "Candide (Voltaire)"
+    ],
+    "settingsNames": ["Germany", "Netherlands", "Portugal", "England"]
+  },
+  {
+    "originalTitle": "A Study in Scarlet",
+    "authorName": "Arthur Conan Doyle",
+    "relatedGenresNames": [
+      "Classics",
+      "Mystery",
+      "Fiction",
+      "Crime",
+      "Thriller",
+      "Historical Fiction"
+    ],
+    "firstPublished": "December 27, 1887",
+    "charactersNames": ["John Watson", "Sherlock Holmes", "Inspector Lestrade"],
+    "settingsNames": ["London, England"]
+  },
+  {
+    "originalTitle": "The Adventures of Sherlock Holmes",
+    "authorName": "Arthur Conan Doyle",
+    "relatedGenresNames": [
+      "Classics",
+      "Mystery",
+      "Fiction",
+      "Short Stories",
+      "Crime",
+      "Historical Fiction",
+      "Thriller"
+    ],
+    "firstPublished": "October 14, 1892",
+    "charactersNames": [
+      "Sherlock Holmes",
+      "Inspector Lestrade",
+      "John Watson",
+      "Irene Adler"
+    ],
+    "settingsNames": ["London, England"]
+  },
+  {
+    "originalTitle": "Sense and Sensibility",
+    "authorName": "Jane Austen",
+    "relatedGenresNames": [
+      "Classics",
+      "Fiction",
+      "Romance",
+      "Historical Fiction"
+    ],
+    "firstPublished": "October 30, 1811",
+    "charactersNames": [
+      "John Willoughby",
+      "Margaret Dashwood",
+      "Robert Ferrars",
+      "Anne Steele",
+      "Lucy Steele"
+    ],
+    "settingsNames": ["Sussex, England", "London, England", "Devon, England"]
+  },
+  {
+    "originalTitle": "Преступление и наказание",
+    "authorName": "Fyodor Dostoevsky",
+    "relatedGenresNames": ["Classics", "Fiction", "Philosophy", "Crime"],
+    "firstPublished": "January 1, 1866",
+    "charactersNames": [
+      "Rodion Romanovich Raskolnikov",
+      "Porfiry Petrovich",
+      "Sofia Semyonovna Marmeladova",
+      "Avdotya Romanovna Raskolnikova"
+    ],
+    "settingsNames": ["Russia", "St. Petersburg, Russia"]
+  },
+  {
+    "originalTitle": "Братья Карамазовы",
+    "authorName": "Fyodor Dostoevsky",
+    "relatedGenresNames": ["Classics", "Fiction", "Philosophy"],
+    "firstPublished": "January 1, 1880",
+    "charactersNames": [
+      "Dmitri Fyodorovich Karamazov",
+      "Ivan Fyodorovich Karamazov",
+      "Alexei Fyodorovich Karamazov",
+      "Pavel Smerdyakov"
+    ],
+    "settingsNames": ["Russia"]
+  },
+  {
+    "originalTitle": "Идиот",
+    "authorName": "Fyodor Dostoevsky",
+    "relatedGenresNames": [
+      "Classics",
+      "Fiction",
+      "Philosophy",
+      "Historical Fiction"
+    ],
+    "firstPublished": "January 1, 1869",
+    "charactersNames": ["Prince Myshkin", "Nastasya Filippovna", "Rogozhin"],
+    "settingsNames": ["St. Petersburg, Russia", "Russia"]
+  },
+  {
+    "originalTitle": "Alice's Adventures in Wonderland",
+    "authorName": "Lewis Carroll",
+    "relatedGenresNames": [
+      "Classics",
+      "Fantasy",
+      "Fiction",
+      "Childrens",
+      "Adventure",
+      "Young Adult"
+    ],
+    "firstPublished": "January 1, 1865",
+    "charactersNames": [
+      "The Queen of Hearts (Lewis Carroll)",
+      "The Cheshire Cat (Lewis Carroll)",
+      "The White Rabbit (Lewis Carroll)",
+      "The Caterpillar (Lewis Carroll)",
+      "Alice Liddell"
+    ],
+    "settingsNames": ["Wonderland"]
+  },
+  {
+    "originalTitle": "Le Comte de Monte-Cristo",
+    "authorName": "Alexandre Dumas",
+    "relatedGenresNames": [
+      "Classics",
+      "Fiction",
+      "Historical Fiction",
+      "Adventure"
+    ],
+    "firstPublished": "January 1, 1844",
+    "charactersNames": [
+      "Edmond Dantès",
+      "Abbé Faria",
+      "Giovanni Bertuccio",
+      "Luigi Vampa",
+      "Haydée",
+      "Mercédès Mondego",
+      "Fernand Mondego"
+    ],
+    "settingsNames": ["Marseille, France", "Paris, France", "France"]
+  },
+  {
+    "originalTitle": "Анна Каренина",
+    "authorName": "Leo Tolstoy",
+    "relatedGenresNames": [
+      "Classics",
+      "Fiction",
+      "Romance",
+      "Historical Fiction"
+    ],
+    "firstPublished": "January 1, 1878",
+    "charactersNames": [
+      "Princess Ekaterina \"Kitty\" Aleksandrovna Shcherbatskaya",
+      "Anna Arkadyevna Karenina",
+      "Count Aleksei Kirillovich Vronsky"
+    ],
+    "settingsNames": ["Russia"]
+  },
+  {
+    "originalTitle": "A Tale of Two Cities",
+    "authorName": "Charles Dickens",
+    "relatedGenresNames": [
+      "Classics",
+      "Fiction",
+      "Historical Fiction",
+      "School"
+    ],
+    "firstPublished": "November 26, 1859",
+    "charactersNames": [
+      "Sydney Carton",
+      "Charles Darnay",
+      "Lucie Manette",
+      "Madame Therese Defarge",
+      "Dr. Alexandre Manette"
+    ],
+    "settingsNames": ["Paris, France", "London, England"]
+  },
+  {
+    "originalTitle": "A Christmas Carol",
+    "authorName": "Charles Dickens",
+    "relatedGenresNames": [
+      "Classics",
+      "Fiction",
+      "Fantasy",
+      "Historical Fiction",
+      "School"
+    ],
+    "firstPublished": "December 19, 1843",
+    "charactersNames": [
+      "Ebenezer Scrooge",
+      "Tiny Tim",
+      "Bob Cratchit",
+      "Fred (A Christmas Carol)",
+      "Jacob Marley"
+    ],
+    "settingsNames": ["London, England"]
+  },
+  {
+    "originalTitle": "Great Expectations",
+    "authorName": "Charles Dickens",
+    "relatedGenresNames": [
+      "Classics",
+      "Fiction",
+      "Historical Fiction",
+      "School"
+    ],
+    "firstPublished": "January 1, 1861",
+    "charactersNames": [
+      "Miss Havisham",
+      "Pip",
+      "Joseph \"Joe\" Gargery",
+      "Abel Magwitch",
+      "Herbert Pocket",
+      "John Wemmick"
+    ],
+    "settingsNames": ["England"]
+  },
+  {
+    "originalTitle": "The Adventures of Huckleberry Finn",
+    "authorName": "Mark Twain",
+    "relatedGenresNames": [
+      "Classics",
+      "Fiction",
+      "Historical Fiction",
+      "Adventure",
+      "Young Adult",
+      "School"
+    ],
+    "firstPublished": "January 1, 1885",
+    "charactersNames": [
+      "Huckleberry Finn",
+      "Tom Sawyer",
+      "Aunt Polly",
+      "Prince Edward Tudor"
+    ],
+    "settingsNames": [
+      "The United States of America",
+      "St. Petersburg, Missouri"
+    ]
+  },
+  {
+    "originalTitle": "The Adventures of Tom Sawyer",
+    "authorName": "Mark Twain",
+    "relatedGenresNames": [
+      "Classics",
+      "Fiction",
+      "Adventure",
+      "Historical Fiction",
+      "Young Adult",
+      "Childrens",
+      "School"
+    ],
+    "firstPublished": "January 1, 1876",
+    "charactersNames": ["Huckleberry Finn", "Tom Sawyer"],
+    "settingsNames": ["Hannibal, Missouri"]
+  },
+  {
+    "originalTitle": "Little Women or, Meg, Jo, Beth and Amy",
+    "authorName": "Louisa May Alcott",
+    "relatedGenresNames": [
+      "Classics",
+      "Fiction",
+      "Historical Fiction",
+      "Romance",
+      "Young Adult"
+    ],
+    "firstPublished": "September 30, 1868",
+    "charactersNames": [
+      "Marmee March",
+      "Margaret \"Meg\" March",
+      "Amy March",
+      "Theodore \"Laurie\" Laurence"
+    ],
+    "settingsNames": ["Concord, Massachusetts", "London, England"]
+  },
+  {
+    "originalTitle": "Les Misérables",
+    "authorName": "Victor Hugo",
+    "relatedGenresNames": [
+      "Classics",
+      "Fiction",
+      "Historical Fiction",
+      "Romance"
+    ],
+    "firstPublished": "March 31, 1862",
+    "charactersNames": [
+      "Jean Valjean",
+      "Javert",
+      "Cosette",
+      "Fantine",
+      "Bishop Myriel",
+      "M. & Mme. Thénardier",
+      "Marius Pontmercy"
+    ],
+    "settingsNames": ["Paris, France", "France"]
+  },
+  {
+    "originalTitle": "Frankenstein; or, The Modern Prometheus",
+    "authorName": "Mary Wollstonecraft Shelley",
+    "relatedGenresNames": [
+      "Classics",
+      "Horror",
+      "Fiction",
+      "Science Fiction",
+      "Gothic",
+      "Fantasy",
+      "School"
+    ],
+    "firstPublished": "January 1, 1818",
+    "charactersNames": [
+      "Alphonse Frankenstein",
+      "Justine Moritz",
+      "Victor Frankenstein",
+      "The Monster (Frankenstein)"
+    ],
+    "settingsNames": ["Switzerland", "Germany"]
+  },
+  {
+    "originalTitle": "Harry Potter and the Prisoner of Azkaban",
+    "authorName": "J.K. Rowling",
+    "relatedGenresNames": [
+      "Fantasy",
+      "Fiction",
+      "Young Adult",
+      "Childrens",
+      "Adventure",
+      "Classics"
+    ],
+    "firstPublished": "July 8, 1999",
+    "charactersNames": [
+      "Draco Malfoy",
+      "Albus Dumbledore",
+      "Harry Potter",
+      "Hermione Granger",
+      "Sirius Black",
+      "Ron Weasley"
+    ],
+    "settingsNames": [
+      "Hogwarts School of Witchcraft and Wizardry",
+      "Scotland",
+      "United Kingdom"
+    ]
+  },
+  {
+    "originalTitle": "Harry Potter and the Goblet of Fire",
+    "authorName": "J.K. Rowling",
+    "relatedGenresNames": [
+      "Fantasy",
+      "Fiction",
+      "Young Adult",
+      "Childrens",
+      "Adventure",
+      "Classics"
+    ],
+    "firstPublished": "July 8, 2000",
+    "charactersNames": [
+      "Sirius Black",
+      "Ron Weasley",
+      "Draco Malfoy",
+      "Albus Dumbledore",
+      "Harry Potter",
+      "Hermione Granger"
+    ],
+    "settingsNames": [
+      "Hogwarts School of Witchcraft and Wizardry",
+      "Scotland",
+      "United Kingdom"
+    ]
+  },
+  {
+    "originalTitle": "Harry Potter and the Order of the Phoenix",
+    "authorName": "J.K. Rowling",
+    "relatedGenresNames": [
+      "Fantasy",
+      "Fiction",
+      "Young Adult",
+      "Childrens",
+      "Adventure",
+      "Classics"
+    ],
+    "firstPublished": "June 21, 2003",
+    "charactersNames": [
+      "Sirius Black",
+      "Ron Weasley",
+      "Draco Malfoy",
+      "Albus Dumbledore",
+      "Harry Potter",
+      "Hermione Granger"
+    ],
+    "settingsNames": [
+      "Hogwarts School of Witchcraft and Wizardry",
+      "London, England"
+    ]
+  },
+  {
+    "originalTitle": "A Game of Thrones",
+    "authorName": "George R.R. Martin",
+    "relatedGenresNames": ["Fantasy", "Fiction", "Adventure"],
+    "firstPublished": "August 6, 1996",
+    "charactersNames": [
+      "Jon Snow",
+      "Cersei Lannister",
+      "Jorah Mormont",
+      "Brandon Stark",
+      "Catelyn Stark",
+      "Tyrion Lannister",
+      "Daenerys Targaryen"
+    ],
+    "settingsNames": ["The Lands of Ice and Fire", "Westeros"]
+  },
+  {
+    "originalTitle": "A Clash of Kings",
+    "authorName": "George R.R. Martin",
+    "relatedGenresNames": ["Fantasy", "Fiction", "Adventure"],
+    "firstPublished": "November 16, 1998",
+    "charactersNames": [
+      "Brandon Stark",
+      "Catelyn Stark",
+      "Tyrion Lannister",
+      "Daenerys Targaryen",
+      "Robb Stark",
+      "Arya Stark",
+      "Jaime Lannister"
+    ],
+    "settingsNames": ["The Lands of Ice and Fire", "Westeros"]
+  },
+  {
+    "originalTitle": "Animal Farm",
+    "authorName": "George Orwell",
+    "relatedGenresNames": [
+      "Classics",
+      "Fiction",
+      "Dystopia",
+      "Fantasy",
+      "School",
+      "Politics",
+      "Science Fiction"
+    ],
+    "firstPublished": "August 17, 1945",
+    "charactersNames": [
+      "Moses (Animal Farm)",
+      "Benjamin",
+      "Mr. Jones (Animal Farm)",
+      "Mollie (Animal Farm)"
+    ],
+    "settingsNames": ["England"]
+  },
+  {
+    "originalTitle": "Fahrenheit 451",
+    "authorName": "Ray Bradbury",
+    "relatedGenresNames": [
+      "Classics",
+      "Fiction",
+      "Science Fiction",
+      "Dystopia",
+      "School",
+      "Fantasy"
+    ],
+    "firstPublished": "January 1, 1953",
+    "charactersNames": [
+      "Guy Montag",
+      "Clarisse McClellan",
+      "Mildred Montag",
+      "Captain Beatty",
+      "Professor Faber",
+      "The Mechanical Hound"
+    ],
+    "settingsNames": ["The United States of America"]
+  },
+  {
+    "originalTitle": "Gone with the Wind",
+    "authorName": "Margaret Mitchell",
+    "relatedGenresNames": [
+      "Classics",
+      "Historical Fiction",
+      "Fiction",
+      "Romance"
+    ],
+    "firstPublished": "June 30, 1936",
+    "charactersNames": [
+      "Jonas Wilkerson",
+      "Emmie Slattery",
+      "Will Benteen",
+      "Aunt Pittypat Hamilton",
+      "Uncle Peter"
+    ],
+    "settingsNames": ["Atlanta, Georgia"]
+  },
+  {
+    "originalTitle": "The Hitchhiker’s Guide to the Galaxy",
+    "authorName": "Douglas Adams",
+    "relatedGenresNames": [
+      "Science Fiction",
+      "Fiction",
+      "Classics",
+      "Humor",
+      "Fantasy",
+      "Comedy",
+      "Adventure"
+    ],
+    "firstPublished": "October 12, 1979",
+    "charactersNames": [
+      "Zaphod Beeblebrox",
+      "Arthur Dent",
+      "Ford Prefect",
+      "Trillian",
+      "Marvin, the paranoid android"
+    ],
+    "settingsNames": ["Magrathea", "Space"]
+  },
+  {
+    "originalTitle": "Alquimista",
+    "authorName": "Paulo Coelho",
+    "relatedGenresNames": [
+      "Fiction",
+      "Classics",
+      "Fantasy",
+      "Philosophy",
+      "Self Help",
+      "Adventure"
+    ],
+    "firstPublished": "January 1, 1988",
+    "charactersNames": ["Santiago", "Alchemist", "Melchizedek"],
+    "settingsNames": ["Egypt", "Morocco", "Spain"]
+  },
+  {
+    "originalTitle": "The Shining",
+    "authorName": "Stephen King",
+    "relatedGenresNames": [
+      "Horror",
+      "Fiction",
+      "Thriller",
+      "Classics",
+      "Fantasy",
+      "Mystery"
+    ],
+    "firstPublished": "January 28, 1977",
+    "charactersNames": [
+      "Wendy Torrance",
+      "Danny Torrance",
+      "Dick Halloran",
+      "Horace Derwent",
+      "Delberg Grady",
+      "Jack Torrance"
+    ],
+    "settingsNames": ["Colorado, United States", "The United States of America"]
+  },
+  {
+    "originalTitle": "It",
+    "authorName": "Stephen King",
+    "relatedGenresNames": [
+      "Horror",
+      "Fiction",
+      "Thriller",
+      "Fantasy",
+      "Classics",
+      "Mystery"
+    ],
+    "firstPublished": "September 15, 1986",
+    "charactersNames": [
+      "Dick Halloran",
+      "Pennywise the Dancing Clown",
+      "Bill Denbrough",
+      "Richie Tozier",
+      "Eddie Kaspbrak",
+      "Stan Uris"
+    ],
+    "settingsNames": ["The United States of America"]
+  },
+  {
+    "originalTitle": "Die Verwandlung",
+    "authorName": "Franz Kafka",
+    "relatedGenresNames": [
+      "Classics",
+      "Fiction",
+      "Philosophy",
+      "Fantasy",
+      "Short Stories",
+      "Horror",
+      "School"
+    ],
+    "firstPublished": "January 1, 1915",
+    "charactersNames": [
+      "Gregor Samsa",
+      "Grete Samsa",
+      "Mr. Samsa",
+      "Mrs. Samsa"
+    ],
+    "settingsNames": []
+  },
+  {
+    "originalTitle": "Der Prozess",
+    "authorName": "Franz Kafka",
+    "relatedGenresNames": ["Classics", "Fiction", "Philosophy", "Dystopia"],
+    "firstPublished": "January 1, 1925",
+    "charactersNames": [
+      "Josef K.",
+      "Fräulein Elsa",
+      "Fräulein Bürstner",
+      "Karl K."
+    ],
+    "settingsNames": []
+  },
+  {
+    "originalTitle": "Dune",
+    "authorName": "Frank Patrick Herbert",
+    "relatedGenresNames": [
+      "Science Fiction",
+      "Fiction",
+      "Fantasy",
+      "Classics",
+      "Adventure"
+    ],
+    "firstPublished": "June 1, 1965",
+    "charactersNames": [
+      "Stilgar",
+      "Vladimir Harkonnen",
+      "Duncan Idaho",
+      "Leto Atreides",
+      "Paul Atreides",
+      "Alia Atreides",
+      "Lady Jessica"
+    ],
+    "settingsNames": ["Arrakis", "Caladan", "Giedi Prime", "Harko", "Arrakin"]
+  },
+  {
+    "originalTitle": "The Fault in Our Stars",
+    "authorName": "John Green",
+    "relatedGenresNames": ["Young Adult", "Romance", "Fiction", "Drama"],
+    "firstPublished": "January 10, 2012",
+    "charactersNames": ["Hazel Grace Lancaster", "Augustus Waters"],
+    "settingsNames": ["Indianapolis, Indiana", "Amsterdam"]
+  },
+  {
+    "originalTitle": "The Silent Patient",
+    "authorName": "Alex Michaelides",
+    "relatedGenresNames": ["Thriller", "Mystery", "Fiction", "Crime"],
+    "firstPublished": "February 5, 2019",
+    "charactersNames": [
+      "Alicia Berenson",
+      "Kathy Faber",
+      "Professor Lazarus Diomedes",
+      "Gabriel Berenson",
+      "Max Berenson"
+    ],
+    "settingsNames": ["London, England"]
+  },
+  {
+    "originalTitle": "The Housemaid",
+    "authorName": "Freida McFadden",
+    "relatedGenresNames": ["Thriller", "Mystery", "Fiction", "Crime"],
+    "firstPublished": "April 26, 2022",
+    "charactersNames": [],
+    "settingsNames": ["Long Island, New York"]
+  },
+  {
+    "originalTitle": "The Housemaid's Secret",
+    "authorName": "Freida McFadden",
+    "relatedGenresNames": ["Thriller", "Mystery", "Fiction", "Crime"],
+    "firstPublished": "February 15, 2023",
+    "charactersNames": [],
+    "settingsNames": ["New York City, United States"]
+  },
+  {
+    "originalTitle": "Angels & Demons",
+    "authorName": "Dan Brown",
+    "relatedGenresNames": [
+      "Fiction",
+      "Mystery",
+      "Thriller",
+      "Adventure",
+      "Crime",
+      "Historical Fiction"
+    ],
+    "firstPublished": "May 1, 2000",
+    "charactersNames": [
+      "Vittoria Vetra",
+      "Robert Langdon",
+      "Leonardo Vetra",
+      "Gunther Glick",
+      "Maximilian Kohler",
+      "Camerlengo Carlo Ventresca"
+    ],
+    "settingsNames": ["Rome, Italy", "Vatican City", "Geneva, Switzerland"]
+  },
+  {
+    "originalTitle": "The Da Vinci Code",
+    "authorName": "Dan Brown",
+    "relatedGenresNames": [
+      "Fiction",
+      "Mystery",
+      "Thriller",
+      "Historical Fiction",
+      "Adventure",
+      "Crime"
+    ],
+    "firstPublished": "March 18, 2003",
+    "charactersNames": [
+      "Sophie Neveu",
+      "Sir Leigh Teabing",
+      "Silas (The Da Vinci Code)"
+    ],
+    "settingsNames": ["England", "Paris, France"]
+  },
+  {
+    "originalTitle": "The Glass Castle",
+    "authorName": "Jeannette Walls",
+    "relatedGenresNames": [
+      "Nonfiction",
+      "Memoir",
+      "Biography",
+      "School",
+      "Classics"
+    ],
+    "firstPublished": "March 1, 2005",
+    "charactersNames": [
+      "Jeannette Walls",
+      "Rex Walls",
+      "Rose Mary Walls",
+      "Maureen Walls",
+      "Brian Walls"
+    ],
+    "settingsNames": ["New York City, United States"]
+  },
+  {
+    "originalTitle": "In Cold Blood",
+    "authorName": "Truman Capote",
+    "relatedGenresNames": [
+      "Nonfiction",
+      "Classics",
+      "Crime",
+      "Mystery",
+      "Thriller",
+      "History"
+    ],
+    "firstPublished": "January 17, 1966",
+    "charactersNames": [
+      "Perry Edward Smith",
+      "Richard Hickock",
+      "Herb Clutter",
+      "Bonnie Clutter",
+      "Nancy Clutter"
+    ],
+    "settingsNames": ["Holcomb, Kansas"]
+  },
+  {
+    "originalTitle": "The Immortal Life of Henrietta Lacks",
+    "authorName": "Rebecca Skloot",
+    "relatedGenresNames": ["Nonfiction", "History", "Biography", "Science"],
+    "firstPublished": "February 2, 2010",
+    "charactersNames": ["Henrietta Lacks"],
+    "settingsNames": ["Baltimore, Maryland", "Clover, Virginia"]
+  },
+  {
+    "originalTitle": "קיצור תולדות האנושות",
+    "authorName": "Yuval Noah Harari",
+    "relatedGenresNames": ["Nonfiction", "History", "Science", "Philosophy"],
+    "firstPublished": "January 1, 2011",
+    "charactersNames": [],
+    "settingsNames": []
+  },
+  {
+    "originalTitle": "Unbroken: A World War II Story of Survival, Resilience, and Redemption",
+    "authorName": "Laura Hillenbrand",
+    "relatedGenresNames": ["Nonfiction", "History", "Biography", "Memoir"],
+    "firstPublished": "November 16, 2010",
+    "charactersNames": [
+      "Louie Zamperini",
+      "Russell Allen Phillips",
+      "Pete Zamperini",
+      "Stanley Pillsbury",
+      "Harry Brooks"
+    ],
+    "settingsNames": []
+  },
+  {
+    "originalTitle": "How to Win Friends and Influence People",
+    "authorName": "Dale Carnegie",
+    "relatedGenresNames": ["Self Help", "Nonfiction", "Business", "Classics"],
+    "firstPublished": "October 1, 1936",
+    "charactersNames": [],
+    "settingsNames": []
+  },
+  {
+    "originalTitle": "Wild: From Lost to Found on the Pacific Crest Trail",
+    "authorName": "Cheryl Strayed",
+    "relatedGenresNames": ["Nonfiction", "Memoir", "Biography", "Adventure"],
+    "firstPublished": "March 20, 2012",
+    "charactersNames": ["Cheryl Strayed"],
+    "settingsNames": ["Oregon, United States"]
+  },
+  {
+    "originalTitle": "When Breath Becomes Air",
+    "authorName": "Paul Kalanithi",
+    "relatedGenresNames": ["Nonfiction", "Memoir", "Biography", "Philosophy"],
+    "firstPublished": "January 12, 2016",
+    "charactersNames": [],
+    "settingsNames": []
+  },
+  {
+    "originalTitle": "Il Principe",
+    "authorName": "Niccolò Machiavelli",
+    "relatedGenresNames": [
+      "Philosophy",
+      "Classics",
+      "Nonfiction",
+      "Politics",
+      "History"
+    ],
+    "firstPublished": "January 1, 1532",
+    "charactersNames": [
+      "Theseus (mythology)",
+      "Alexander the Great",
+      "Francesco Sforza I",
+      "Pope Alexander VI",
+      "Niccolò Machiavelli"
+    ],
+    "settingsNames": []
+  },
+  {
+    "originalTitle": "A Brief History of Time",
+    "authorName": "Stephen W. Hawking",
+    "relatedGenresNames": [
+      "Science",
+      "Nonfiction",
+      "History",
+      "Classics",
+      "Philosophy"
+    ],
+    "firstPublished": "September 1, 1988",
+    "charactersNames": [],
+    "settingsNames": []
+  },
+  {
+    "originalTitle": "Eat, Pray, Love: One Woman's Search for Everything Across Italy, India, and Indonesia",
+    "authorName": "Elizabeth Gilbert",
+    "relatedGenresNames": ["Nonfiction", "Memoir", "Biography", "Romance"],
+    "firstPublished": "February 16, 2006",
+    "charactersNames": ["Liz Gilbert", "Felipe", "Richard from Texas", "Wayan"],
+    "settingsNames": ["Italy", "India", "Indonesia"]
+  },
+  {
+    "originalTitle": "The Bell Jar",
+    "authorName": "Sylvia Plath",
+    "relatedGenresNames": ["Classics", "Fiction", "Psychology"],
+    "firstPublished": "January 14, 1963",
+    "charactersNames": ["Esther Greenwood", "Buddy Willard", "Joan Gilling"],
+    "settingsNames": ["Boston, Massachusetts", "New York City, United States"]
+  },
+  {
+    "originalTitle": "Ein Psycholog erlebt das Konzentrationslager",
+    "authorName": "Viktor E. Frankl",
+    "relatedGenresNames": [
+      "Nonfiction",
+      "Psychology",
+      "Philosophy",
+      "History",
+      "Self Help",
+      "Memoir",
+      "Biography",
+      "Classics"
+    ],
+    "firstPublished": "January 1, 1946",
+    "charactersNames": [],
+    "settingsNames": []
+  },
+  {
+    "originalTitle": "Steve Jobs",
+    "authorName": "Walter Isaacson",
+    "relatedGenresNames": [
+      "Biography",
+      "Nonfiction",
+      "Business",
+      "History",
+      "Memoir"
+    ],
+    "firstPublished": "October 1, 2011",
+    "charactersNames": ["Steve Jobs"],
+    "settingsNames": ["San Francisco, California", "Silicon Valley, California"]
+  },
+  {
+    "originalTitle": "Tuesdays with Morrie",
+    "authorName": "Mitch Albom",
+    "relatedGenresNames": [
+      "Nonfiction",
+      "Memoir",
+      "Biography",
+      "Classics",
+      "Philosophy",
+      "Self Help"
+    ],
+    "firstPublished": "August 18, 1997",
+    "charactersNames": ["Mitch Albom", "Morrie Schwartz"],
+    "settingsNames": []
   }
 ]

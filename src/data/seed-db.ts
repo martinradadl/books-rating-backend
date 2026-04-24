@@ -142,7 +142,7 @@ export const addBookLists = async () => {
     bookLists.map(async (bookList) => {
       const editionsIds = await getSortedEditionIds(bookList.bookCodes);
       return { ...bookList, books: editionsIds, bookCodes: undefined };
-    }),
+    })
   );
 
   const addedBookLists =
@@ -172,7 +172,7 @@ export const addRatings = async () => {
       acc[key] = book.toString();
       return acc;
     },
-    {},
+    {}
   );
 
   const newRatings = ratings.map((rating) => {
