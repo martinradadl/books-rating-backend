@@ -4,6 +4,8 @@ import * as characterModel from "../models/character";
 import * as settingModel from "../models/setting";
 import * as bookModel from "../models/book";
 import * as editionModel from "../models/edition";
+import * as bookListModel from "../models/book-list";
+import * as ratingModel from "../models/rating";
 import { initMongo } from "../mongo-setup";
 
 export const deleteAllAuthors = async () => {
@@ -79,6 +81,30 @@ export const deleteAllEditions = async () => {
   }
 };
 
+export const deleteAllBookLists = async () => {
+  try {
+    console.info("Deleting Book Lists...");
+    const wereElementsDeleted = await bookListModel.BookList.collection.drop();
+    console.info("succeed? " + wereElementsDeleted);
+  } catch (err: unknown) {
+    if (err instanceof Error) {
+      console.error(err.message);
+    }
+  }
+};
+
+export const deleteAllRatings = async () => {
+  try {
+    console.info("Deleting Ratings...");
+    const wereElementsDeleted = await ratingModel.Rating.collection.drop();
+    console.info("succeed? " + wereElementsDeleted);
+  } catch (err: unknown) {
+    if (err instanceof Error) {
+      console.error(err.message);
+    }
+  }
+};
+
 export const cleanUpDB = async () => {
   try {
     console.info("Initializing connection with Mongo");
@@ -89,6 +115,8 @@ export const cleanUpDB = async () => {
     await deleteAllSettings();
     await deleteAllBooks();
     await deleteAllEditions();
+    await deleteAllBookLists();
+    await deleteAllRatings();
     console.info("All collections have been cleaned");
   } catch (err: unknown) {
     if (err instanceof Error)

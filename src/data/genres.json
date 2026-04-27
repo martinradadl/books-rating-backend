@@ -106,5 +106,45 @@
   {
     "name": "Travel",
     "description": "Travel literature is a genre that describes the experiences of travelers as they explore different places, cultures, and landscapes. It often combines personal narrative with factual information about geography, history, and culture."
+  },
+  {
+    "name": "Plays",
+    "description": "Plays are a genre of literature that consists of works written for performance on stage. They typically include dialogue between characters and stage directions, and can encompass a wide range of themes and styles, from comedy to tragedy."
+  },
+  {
+    "name": "Drama",
+    "description": "Drama is a genre of literature that focuses on the emotional and relational development of characters. It often explores complex themes and conflicts, and can be presented in various forms, including plays, novels, and films."
+  },
+  {
+    "name": "Poetry",
+    "description": "Poetry is a form of literary art in which language is used for its aesthetic and evocative qualities in addition to, or in lieu of, its apparent meaning. Poetry may be written independently, as discrete poems, or may occur in conjunction with other arts, as in poetic drama, hymns or lyrics.\n\nPoetry, and discussions of it, have a long history. Early attempts to define poetry, such as Aristotle's Poetics, focused on the uses of speech in rhetoric, drama, song and comedy.[1] Later attempts concentrated on features such as repetition and rhyme, and emphasised the aesthetics which distinguish poetry from prose.[2] From the mid-20th century, poetry has sometimes been more loosely defined as a fundamental creative act using language.[3]"
+  },
+  {
+    "name": "Mythology",
+    "description": "Mythology is a genre of literature that encompasses traditional stories, legends, and beliefs that are passed down through generations. These stories often explain natural phenomena, cultural practices, and the origins of the world and humanity. Mythology can be found in various cultures around the world, each with its own unique set of myths and legends. These stories often feature gods, goddesses, heroes, and mythical creatures, and they serve to convey moral lessons, cultural values, and historical events in a narrative form."
+  },
+  {
+    "name": "Humor",
+    "description": "Humor is a genre of literature that aims to entertain and amuse readers through the use of wit, satire, irony, and comedic elements. It often involves exaggeration, absurdity, and clever wordplay to create a lighthearted and enjoyable reading experience."
+  },
+  {
+    "name": "Short Stories",
+    "description": "A short story is a short work of prose fiction. It may be in any genre of fiction, and the exact definition of \"short\" will often depend on the genre. Short stories are often collected together with other short stories, poetry, art, and/or essays in order to form a larger book, although it is becoming more common for short stories to be released as stand-alone ebooks."
+  },
+  {
+    "name": "Comedy",
+    "description": "Comedy is a genre of literature that aims to entertain and amuse readers through the use of humor, satire, and lighthearted themes. It often involves characters and situations that are exaggerated or absurd, and it typically has a happy or uplifting ending. Comedy can be found in various forms, including novels, plays, films, and television shows"
+  },
+  {
+    "name": "Self Help",
+    "description": "Self-help is a genre of literature that provides guidance and advice to individuals seeking to improve their lives, achieve personal goals, or overcome challenges. Self-help books often cover topics such as personal development, mental health, relationships, productivity, and motivation."
+  },
+  {
+    "name": "Science",
+    "description": "Science (from the Latin scientia, meaning \"knowledge\") is the effort to discover, and increase human understanding of how the physical world works. Through controlled methods, science uses observable physical evidence of natural phenomena to collect data, and analyzes this information to explain what and how things work."
+  },
+  {
+    "name": "Business",
+    "description": "A business (also known as enterprise or firm) is an organization engaged in the trade of goods, services, or both to consumers. Businesses are predominant in capitalist economies, where most of them are privately owned and administered to earn profit to increase the wealth of their owners. Businesses may also be not-for-profit or state-owned. A business owned by multiple individuals may be referred to as a company, although that term also has a more precise meaning."
   }
 ]
