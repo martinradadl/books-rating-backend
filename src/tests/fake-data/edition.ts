@@ -26,6 +26,23 @@ export const fakeEdition2 = {
   language: "fakeLanguage2",
 };
 
+export const fakeEditionPopulated = {
+  ...fakeEdition,
+  book: { _id: "fakeBookId1" },
+};
+
+export const fakeEdition2Populated = {
+  ...fakeEdition2,
+  book: { _id: "fakeBookId2" },
+};
+
+export const fakeEditionsList = [fakeEdition, fakeEdition2];
+
+export const fakePopulatedEditionsList = [
+  fakeEditionPopulated,
+  fakeEdition2Populated,
+];
+
 export const fakeEditionWithRatingsData = {
   ...fakeEdition,
   averageRating: 4.5,
@@ -37,13 +54,11 @@ export const fakeMostRatedBooks = [
   { _id: "fakeBookId2" },
 ];
 
-export const fakeEditionsList = [fakeEdition, fakeEdition2];
-
 export const getEditionsPage = (limit?: number, page?: number) => {
   return !limit || !page
     ? fakeEditionsList
     : fakeEditionsList.slice(
         (page - 1) * limit,
-        (page - 1) * limit + limit + 1,
+        (page - 1) * limit + limit + 1
       );
 };
