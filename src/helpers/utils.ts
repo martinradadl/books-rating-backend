@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import * as bookModel from "../models/book";
 import * as editionModel from "../models/edition";
-import { GROUP_FIRST_EDITION_BY_BOOK_QUERY } from "./queries";
+import { GROUP_FIRST_EDITION_BY_BOOK_QUERY, LOOKUP_BOOK } from "./queries";
 
 export const parseToObjectId = (id: string) => {
   return new mongoose.Types.ObjectId(id);
@@ -14,15 +14,7 @@ export const getRelatedBookSuggestion = async (bookId: string) => {
   const relatedGenres = book?.relatedGenres;
 
   const [suggestion] = await editionModel.Edition.aggregate([
-    {
-      $lookup: {
-        from: "books",
-        localField: "book",
-        foreignField: "_id",
-        as: "book",
-      },
-    },
-    { $unwind: "$book" },
+    ...LOOKUP_BOOK(),
     {
       $match: {
         "book._id": {
@@ -64,8 +56,8 @@ export const getRelatedBookSuggestion = async (bookId: string) => {
   return suggestion;
 };
 
-export const parseUrlSlugToCapitalizedString = (slug: string | undefined) => {
-  if (slug === undefined) {
+export const parseUrlSlugToCapitalizedString = (slug: string) => {
+  if (slug === "undefined") {
     return "";
   }
   return slug
