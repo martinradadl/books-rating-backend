@@ -25,6 +25,7 @@ import {
   fakeEditionsList,
   fakeEditionWithRatingsData,
   fakeMostRatedBooks,
+  fakePopulatedEditionsList,
   getEditionsPage,
 } from "./fake-data/edition";
 import { fakeBook } from "./fake-data/book";
@@ -214,7 +215,7 @@ describe("Edition Controller", () => {
 
       vi.mocked(Edition.aggregate, true).mockResolvedValue(
         //@ts-expect-error Unsolved error with mockImplementation function
-        fakeEditionWithRatingsData,
+        fakeEditionWithRatingsData
       );
 
       await getBooksBySameAuthor(req, res);
@@ -258,7 +259,7 @@ describe("Edition Controller", () => {
       }));
       vi.mocked(Edition.aggregate, true).mockResolvedValue(
         //@ts-expect-error Unsolved error with mockImplementation function
-        fakeEditionWithRatingsData,
+        fakeEditionWithRatingsData
       );
 
       await getRelatedBooks(req, res);
@@ -319,11 +320,16 @@ describe("Edition Controller", () => {
       const { req, res } = initializeReqResMocks();
 
       vi.mocked(Rating.aggregate, true).mockResolvedValue(fakeMostRatedBooks);
-      vi.mocked(Edition.aggregate, true).mockResolvedValue(fakeEditionsList);
+      vi.mocked(Edition.aggregate, true).mockResolvedValue(
+        fakePopulatedEditionsList
+      );
 
       await getMostRatedBooks(req, res);
 
-      const response = { list: fakeEditionsList, suggestion: undefined };
+      const response = {
+        list: fakePopulatedEditionsList,
+        suggestion: undefined,
+      };
 
       expect(res.statusCode).toBe(200);
       expect(res._getJSONData()).toEqual(response);
@@ -335,11 +341,16 @@ describe("Edition Controller", () => {
 
       vi.mocked(Rating.aggregate, true).mockResolvedValue(fakeMostRatedBooks);
       vi.mocked(getRelatedBookSuggestion).mockResolvedValue(fakeEdition);
-      vi.mocked(Edition.aggregate).mockResolvedValueOnce(fakeEditionsList);
+      vi.mocked(Edition.aggregate).mockResolvedValueOnce(
+        fakePopulatedEditionsList
+      );
 
       await getMostRatedBooks(req, res);
 
-      const response = { list: fakeEditionsList, suggestion: fakeEdition };
+      const response = {
+        list: fakePopulatedEditionsList,
+        suggestion: fakeEdition,
+      };
 
       expect(res.statusCode).toBe(200);
       expect(res._getJSONData()).toEqual(response);
@@ -367,11 +378,16 @@ describe("Edition Controller", () => {
       const { req, res } = initializeReqResMocks();
 
       vi.mocked(Rating.aggregate, true).mockResolvedValue(fakeMostRatedBooks);
-      vi.mocked(Edition.aggregate, true).mockResolvedValue(fakeEditionsList);
+      vi.mocked(Edition.aggregate, true).mockResolvedValue(
+        fakePopulatedEditionsList
+      );
 
       await getBestRatedBooks(req, res);
 
-      const response = { list: fakeEditionsList, suggestion: undefined };
+      const response = {
+        list: fakePopulatedEditionsList,
+        suggestion: undefined,
+      };
 
       expect(res.statusCode).toBe(200);
       expect(res._getJSONData()).toEqual(response);
@@ -383,11 +399,16 @@ describe("Edition Controller", () => {
 
       vi.mocked(Rating.aggregate, true).mockResolvedValue(fakeMostRatedBooks);
       vi.mocked(getRelatedBookSuggestion).mockResolvedValue(fakeEdition);
-      vi.mocked(Edition.aggregate).mockResolvedValueOnce(fakeEditionsList);
+      vi.mocked(Edition.aggregate).mockResolvedValueOnce(
+        fakePopulatedEditionsList
+      );
 
       await getBestRatedBooks(req, res);
 
-      const response = { list: fakeEditionsList, suggestion: fakeEdition };
+      const response = {
+        list: fakePopulatedEditionsList,
+        suggestion: fakeEdition,
+      };
 
       expect(res.statusCode).toBe(200);
       expect(res._getJSONData()).toEqual(response);

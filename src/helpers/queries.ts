@@ -37,36 +37,45 @@ export const GROUP_FIRST_EDITION_BY_BOOK_QUERY = {
   edition: { $first: "$$ROOT" },
 };
 
-export const FILTER_EDITIONS_BY_GENRE_QUERY: (
-  genreName: string,
-) => PipelineStage[] = (genreName: string) => {
-  if (genreName === "") {
-    return [];
-  }
-  return [
-    {
-      $lookup: {
-        from: "books",
-        localField: "book",
-        foreignField: "_id",
-        as: "book",
-      },
+export const LOOKUP_BOOK = (): PipelineStage[] => [
+  {
+    $lookup: {
+      from: "books",
+      localField: "book",
+      foreignField: "_id",
+      as: "book",
     },
-    { $unwind: "$book" },
+  },
+  { $unwind: "$book" },
+];
 
-    {
-      $lookup: {
-        from: "genres",
-        localField: "book.relatedGenres",
-        foreignField: "_id",
-        as: "genres",
-      },
-    },
+export const FILTER_BY_GENRE = (genreName: string): PipelineStage[] =>
+  genreName
+    ? [
+        {
+          $lookup: {
+            from: "genres",
+            localField: "book.relatedGenres",
+            foreignField: "_id",
+            as: "genres",
+          },
+        },
+        {
+          $match: {
+            "genres.name": genreName,
+          },
+        },
+      ]
+    : [];
 
-    {
-      $match: {
-        "genres.name": genreName,
-      },
+export const LOOKUP_AUTHOR = (): PipelineStage[] => [
+  {
+    $lookup: {
+      from: "authors",
+      localField: "book.author",
+      foreignField: "_id",
+      as: "book.author",
     },
-  ];
-};
+  },
+  { $unwind: "$book.author" },
+];

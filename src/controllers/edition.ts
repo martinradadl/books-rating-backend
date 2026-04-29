@@ -9,8 +9,10 @@ import {
   parseUrlSlugToCapitalizedString,
 } from "../helpers/utils";
 import {
-  FILTER_EDITIONS_BY_GENRE_QUERY,
+  FILTER_BY_GENRE,
   GROUP_FIRST_EDITION_BY_BOOK_QUERY,
+  LOOKUP_AUTHOR,
+  LOOKUP_BOOK,
   RATING_ADD_FIELDS_QUERY,
   RATING_DATA_LOOKUP_QUERY,
   UNWIND_PRESERVE_NULL_AND_EMPTY_ARRAYS_QUERY,
@@ -327,17 +329,40 @@ export const getLatestReleases = async (req: Request, res: Response) => {
   try {
     const limit = parseInt(req.query?.limit as string) || 0;
     const genreName = parseUrlSlugToCapitalizedString(
-      req.query?.genre as string,
+      req.query?.genre as string
     );
 
     const latestReleasesList = await editionModel.Edition.aggregate([
-      ...FILTER_EDITIONS_BY_GENRE_QUERY(genreName),
+      ...LOOKUP_BOOK(),
+      ...FILTER_BY_GENRE(genreName),
+      ...LOOKUP_AUTHOR(),
 
       { $sort: { published: -1 } },
       {
         $group: GROUP_FIRST_EDITION_BY_BOOK_QUERY,
       },
       { $replaceRoot: { newRoot: "$edition" } },
+
+      {
+        $lookup: RATING_DATA_LOOKUP_QUERY("$book._id"),
+      },
+      {
+        $unwind: UNWIND_PRESERVE_NULL_AND_EMPTY_ARRAYS_QUERY("$ratingData"),
+      },
+      {
+        $addFields: {
+          averageRating: {
+            $ifNull: ["$ratingData.averageRating", 0],
+          },
+          ratingCount: {
+            $ifNull: ["$ratingData.ratingCount", 0],
+          },
+        },
+      },
+      {
+        $project: { ratingData: 0 },
+      },
+
       { $sort: { published: -1 } },
       { $limit: limit },
     ]);
@@ -356,11 +381,12 @@ export const getMostRatedBooks = async (req: Request, res: Response) => {
     const enableSuggestion = req.query?.enableSuggestion === "true" || false;
     let suggestion;
     const genreName = parseUrlSlugToCapitalizedString(
-      req.query?.genre as string,
+      req.query?.genre as string
     );
 
     const topBooks = await ratingModel.Rating.aggregate([
-      ...FILTER_EDITIONS_BY_GENRE_QUERY(genreName),
+      ...LOOKUP_BOOK(),
+      ...FILTER_BY_GENRE(genreName),
       {
         $group: {
           _id: genreName ? "$book._id" : "$book",
@@ -385,14 +411,36 @@ export const getMostRatedBooks = async (req: Request, res: Response) => {
 
     const editions = await editionModel.Edition.aggregate([
       { $match: { book: { $in: bookIds } } },
+      ...LOOKUP_BOOK(),
+      ...LOOKUP_AUTHOR(),
       {
         $group: GROUP_FIRST_EDITION_BY_BOOK_QUERY,
       },
       { $replaceRoot: { newRoot: "$edition" } },
+
+      {
+        $lookup: RATING_DATA_LOOKUP_QUERY("$book._id"),
+      },
+      {
+        $unwind: UNWIND_PRESERVE_NULL_AND_EMPTY_ARRAYS_QUERY("$ratingData"),
+      },
+      {
+        $addFields: {
+          averageRating: {
+            $ifNull: ["$ratingData.averageRating", 0],
+          },
+          ratingCount: {
+            $ifNull: ["$ratingData.ratingCount", 0],
+          },
+        },
+      },
+      {
+        $project: { ratingData: 0 },
+      },
     ]);
 
     const editionsMap = new Map(
-      editions.map((edition) => [edition.book.toString(), edition]),
+      editions.map((edition) => [edition.book._id.toString(), edition])
     );
 
     const orderedEditions = bookIds.map((id) => editionsMap.get(id.toString()));
@@ -412,11 +460,12 @@ export const getBestRatedBooks = async (req: Request, res: Response) => {
     const enableSuggestion = req.query?.enableSuggestion === "true" || false;
     let suggestion;
     const genreName = parseUrlSlugToCapitalizedString(
-      req.query?.genre as string,
+      req.query?.genre as string
     );
 
     const topBooks = await ratingModel.Rating.aggregate([
-      ...FILTER_EDITIONS_BY_GENRE_QUERY(genreName),
+      ...LOOKUP_BOOK(),
+      ...FILTER_BY_GENRE(genreName),
 
       {
         $group: {
@@ -442,18 +491,40 @@ export const getBestRatedBooks = async (req: Request, res: Response) => {
 
     const editions = await editionModel.Edition.aggregate([
       { $match: { book: { $in: bookIds } } },
+      ...LOOKUP_BOOK(),
+      ...LOOKUP_AUTHOR(),
       {
         $group: GROUP_FIRST_EDITION_BY_BOOK_QUERY,
       },
       { $replaceRoot: { newRoot: "$edition" } },
+
+      {
+        $lookup: RATING_DATA_LOOKUP_QUERY("$book._id"),
+      },
+      {
+        $unwind: UNWIND_PRESERVE_NULL_AND_EMPTY_ARRAYS_QUERY("$ratingData"),
+      },
+      {
+        $addFields: {
+          averageRating: {
+            $ifNull: ["$ratingData.averageRating", 0],
+          },
+          ratingCount: {
+            $ifNull: ["$ratingData.ratingCount", 0],
+          },
+        },
+      },
+      {
+        $project: { ratingData: 0 },
+      },
     ]);
 
     const editionsMap = new Map(
-      editions.map((edition) => [edition.book.toString(), edition]),
+      editions.map((edition) => [edition.book._id.toString(), edition])
     );
 
     const orderedEditions = topBooks.map((item) =>
-      editionsMap.get(item._id.toString()),
+      editionsMap.get(item._id.toString())
     );
 
     const response = { list: orderedEditions, suggestion };
