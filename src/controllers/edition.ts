@@ -389,7 +389,7 @@ export const getMostRatedBooks = async (req: Request, res: Response) => {
       ...FILTER_BY_GENRE(genreName),
       {
         $group: {
-          _id: genreName ? "$book._id" : "$book",
+          _id: "$book._id",
           ratingsCount: { $sum: 1 },
         },
       },
@@ -469,7 +469,7 @@ export const getBestRatedBooks = async (req: Request, res: Response) => {
 
       {
         $group: {
-          _id: genreName ? "$book._id" : "$book",
+          _id: "$book._id",
           averageScore: { $avg: "$score" },
         },
       },
