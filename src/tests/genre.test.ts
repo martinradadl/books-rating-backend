@@ -102,8 +102,9 @@ describe("Genre Controller", () => {
       vi.resetAllMocks();
     });
 
-    it("should return 500 when error is thrown getting a genre by url slug", async () => {
+    it("should return 500 when url is not set", async () => {
       const { req, res } = initializeReqResMocks();
+      req.params = { slug: "undefined" };
       vi.mocked(Genre.findOne, true).mockImplementation(() => {
         throw mockedCatchError;
       });
