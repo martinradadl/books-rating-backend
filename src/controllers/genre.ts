@@ -182,3 +182,74 @@ export const getRelatedGenres = async (req: Request, res: Response) => {
     }
   }
 };
+
+export const getRandomGenresWithRandomEditions = async (
+  req: Request,
+  res: Response
+) => {
+  try {
+    const genresLimit = Number(req.query.genresLimit) || 4;
+    const editionsLimit = Number(req.query.editionsLimit) || 5;
+
+    const lists = await genreModel.Genre.aggregate([
+      {
+        $sample: { size: genresLimit },
+      },
+
+      {
+        $project: {
+          _id: 0,
+          genre: "$$ROOT",
+        },
+      },
+
+      {
+        $lookup: {
+          from: "books",
+          let: { genreId: "$genre._id" },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $in: ["$$genreId", "$relatedGenres"],
+                },
+              },
+            },
+
+            {
+              $sample: { size: editionsLimit },
+            },
+
+            {
+              $lookup: {
+                from: "editions",
+                let: { bookId: "$_id" },
+                pipeline: [
+                  {
+                    $match: {
+                      $expr: {
+                        $eq: ["$book", "$$bookId"],
+                      },
+                    },
+                  },
+                  { $limit: 1 },
+                ],
+                as: "edition",
+              },
+            },
+
+            { $unwind: "$edition" },
+            { $replaceRoot: { newRoot: "$edition" } },
+          ],
+          as: "editions",
+        },
+      },
+    ]);
+
+    res.status(200).json(lists);
+  } catch (err: unknown) {
+    if (err instanceof Error) {
+      res.status(500).json({ message: err.message });
+    }
+  }
+};
