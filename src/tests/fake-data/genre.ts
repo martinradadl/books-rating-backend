@@ -1,3 +1,5 @@
+import { fakeEdition, fakeEdition2 } from "./edition";
+
 export const fakeGenre = {
   _id: "fakeId1",
   name: "fakeName1",
@@ -22,6 +24,11 @@ export const fakeGenresListWithURL = fakeGenresList.map((genre) => ({
   name: genre.name,
   slug: genre.name.toLowerCase().replace(/\s+/g, "-"),
 }));
+
+export const fakeRandomGenresListWithEditions = [
+  { genre: fakeGenre, editions: [fakeEdition] },
+  { genre: fakeGenre2, editions: [fakeEdition2] },
+];
 
 export const getGenresPage = (limit?: number, page?: number) => {
   return !limit || !page

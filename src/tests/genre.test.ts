@@ -12,11 +12,13 @@ import {
   getAll,
   getById,
   getByUrlSlug,
+  getRandomGenresWithRandomEditions,
   getRelatedGenres,
 } from "../controllers/genre";
 import {
   fakeGenre,
   fakeGenresListWithURL,
+  fakeRandomGenresListWithEditions,
   fakeRelatedGenres,
   getGenresPage,
 } from "./fake-data/genre";
@@ -216,6 +218,38 @@ describe("Genre Controller", () => {
 
       expect(res.statusCode).toBe(200);
       expect(res._getJSONData()).toEqual(fakeRelatedGenres);
+    });
+  });
+
+  describe("Get Random Genres With Random Editions", async () => {
+    afterEach(() => {
+      vi.resetAllMocks();
+    });
+
+    it("should return 500 when error is thrown getting random genres", async () => {
+      const { req, res } = initializeReqResMocks();
+
+      vi.mocked(Genre.aggregate, true).mockImplementation(() => {
+        throw mockedCatchError;
+      });
+
+      await getRandomGenresWithRandomEditions(req, res);
+
+      expect(res.statusCode).toBe(500);
+      expect(res._getJSONData()).toEqual({ message: mockedCatchError.message });
+    });
+
+    it("should return 200 and random genres list", async () => {
+      const { req, res } = initializeReqResMocks();
+
+      vi.mocked(Genre.aggregate, true).mockResolvedValue(
+        fakeRandomGenresListWithEditions
+      );
+
+      await getRandomGenresWithRandomEditions(req, res);
+
+      expect(res.statusCode).toBe(200);
+      expect(res._getJSONData()).toEqual(fakeRandomGenresListWithEditions);
     });
   });
 });
