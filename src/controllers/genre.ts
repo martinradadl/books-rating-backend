@@ -2,7 +2,10 @@ import { Request, Response } from "express";
 import { MONGO_ERRORS } from "../helpers/constants";
 import * as genreModel from "../models/genre";
 import * as bookModel from "../models/book";
-import { parseUrlSlugToCapitalizedString } from "../helpers/utils";
+import {
+  parseUrlSlugsToGenresList,
+  parseUrlSlugToCapitalizedString,
+} from "../helpers/utils";
 
 export const add = async (req: Request, res: Response) => {
   try {
@@ -170,10 +173,7 @@ export const getRelatedGenres = async (req: Request, res: Response) => {
       { $limit: limit },
     ]);
 
-    const relatedGenresWithSlugs = relatedGenres.map((genre) => ({
-      ...genre,
-      slug: genre.name.toLowerCase().replace(/\s+/g, "-"),
-    }));
+    const relatedGenresWithSlugs = parseUrlSlugsToGenresList(relatedGenres);
 
     res.status(200).json(relatedGenresWithSlugs);
   } catch (err: unknown) {
@@ -247,6 +247,41 @@ export const getRandomGenresWithRandomEditions = async (
     ]);
 
     res.status(200).json(lists);
+  } catch (err: unknown) {
+    if (err instanceof Error) {
+      res.status(500).json({ message: err.message });
+    }
+  }
+};
+
+export const searchByName = async (req: Request, res: Response) => {
+  try {
+    const query = req.query.query;
+    const limit = parseInt(req.query?.limit as string) || 4;
+
+    const results = await genreModel.Genre.aggregate([
+      {
+        $match: {
+          name: {
+            $regex: query,
+            $options: "i",
+          },
+        },
+      },
+      {
+        $limit: limit,
+      },
+      {
+        $project: {
+          _id: 1,
+          name: 1,
+        },
+      },
+    ]);
+
+    const parsedResults = parseUrlSlugsToGenresList(results);
+
+    return res.status(200).json(parsedResults);
   } catch (err: unknown) {
     if (err instanceof Error) {
       res.status(500).json({ message: err.message });

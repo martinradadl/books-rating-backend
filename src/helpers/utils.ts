@@ -65,3 +65,10 @@ export const parseUrlSlugToCapitalizedString = (slug: string) => {
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(" ");
 };
+
+export const parseUrlSlugsToGenresList = (list: any[]) => {
+  return list.map((genre) => ({
+    ...genre,
+    slug: genre.name.toLowerCase().replace(/\s+/g, "-"),
+  }));
+};
