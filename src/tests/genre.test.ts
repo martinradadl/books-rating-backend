@@ -14,6 +14,7 @@ import {
   getByUrlSlug,
   getRandomGenresWithRandomEditions,
   getRelatedGenres,
+  searchByName,
 } from "../controllers/genre";
 import {
   fakeGenre,
@@ -250,6 +251,35 @@ describe("Genre Controller", () => {
 
       expect(res.statusCode).toBe(200);
       expect(res._getJSONData()).toEqual(fakeRandomGenresListWithEditions);
+    });
+  });
+
+  describe("Search By Name", async () => {
+    afterEach(() => {
+      vi.resetAllMocks();
+    });
+
+    it("should return 500 when error is thrown getting search results", async () => {
+      const { req, res } = initializeReqResMocks();
+      vi.mocked(Genre.aggregate, true).mockImplementation(() => {
+        throw mockedCatchError;
+      });
+
+      await searchByName(req, res);
+
+      expect(res.statusCode).toBe(500);
+      expect(res._getJSONData()).toEqual({ message: mockedCatchError.message });
+    });
+
+    it("should return 200 and search results", async () => {
+      const { req, res } = initializeReqResMocks();
+
+      vi.mocked(Genre.aggregate, true).mockResolvedValue(fakeGenresListWithURL);
+
+      await searchByName(req, res);
+
+      expect(res.statusCode).toBe(200);
+      expect(res._getJSONData()).toEqual(fakeGenresListWithURL);
     });
   });
 });
