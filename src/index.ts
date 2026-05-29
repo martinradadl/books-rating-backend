@@ -24,7 +24,12 @@ app.use(jsonParser);
 app.use(bodyParser.urlencoded({ extended: true }));
 
 const corsOptions = {
-  origin: ["http://localhost:5173", "https://books-rating.vercel.app"],
+  origin: [
+    "http://localhost:5173",
+    "https://books-rating.vercel.app",
+    new RegExp("^https://books-rating.*-martin-radas-projects\\.vercel\\.app$"),
+  ],
+  credentials: true,
 };
 app.use(cors(corsOptions));
 
