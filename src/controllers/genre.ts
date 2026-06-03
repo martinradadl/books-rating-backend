@@ -258,8 +258,10 @@ export const searchByName = async (req: Request, res: Response) => {
   try {
     const query = req.query.query;
     const limit = parseInt(req.query?.limit as string) || 4;
+    const page = parseInt(req.query?.page as string) || 1;
+    const skip = (page - 1) * limit;
 
-    const results = await genreModel.Genre.aggregate([
+    const [aggregationResult] = await genreModel.Genre.aggregate([
       {
         $match: {
           name: {
@@ -269,19 +271,29 @@ export const searchByName = async (req: Request, res: Response) => {
         },
       },
       {
-        $limit: limit,
-      },
-      {
-        $project: {
-          _id: 1,
-          name: 1,
+        $facet: {
+          results: [
+            { $skip: skip },
+            { $limit: limit },
+            {
+              $project: {
+                _id: 1,
+                name: 1,
+              },
+            },
+          ],
+          totalCount: [{ $count: "count" }],
         },
       },
     ]);
 
-    const parsedResults = parseUrlSlugsToGenresList(results);
+    const parsedResults = parseUrlSlugsToGenresList(aggregationResult.results);
+    const totalCount = aggregationResult.totalCount[0]?.count ?? 0;
 
-    return res.status(200).json(parsedResults);
+    return res.status(200).json({
+      results: parsedResults,
+      totalCount,
+    });
   } catch (err: unknown) {
     if (err instanceof Error) {
       res.status(500).json({ message: err.message });

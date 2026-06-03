@@ -274,12 +274,23 @@ describe("Genre Controller", () => {
     it("should return 200 and search results", async () => {
       const { req, res } = initializeReqResMocks();
 
-      vi.mocked(Genre.aggregate, true).mockResolvedValue(fakeGenresListWithURL);
+      const fakeCount = 2;
+      const fakeAggregationResult = [
+        {
+          results: fakeGenresListWithURL,
+          totalCount: [{ count: fakeCount }],
+        },
+      ];
+      vi.mocked(Genre.aggregate, true).mockResolvedValue(fakeAggregationResult);
 
       await searchByName(req, res);
 
+      const fakeResponseData = {
+        results: fakeGenresListWithURL,
+        totalCount: fakeCount,
+      };
       expect(res.statusCode).toBe(200);
-      expect(res._getJSONData()).toEqual(fakeGenresListWithURL);
+      expect(res._getJSONData()).toEqual(fakeResponseData);
     });
   });
 });
