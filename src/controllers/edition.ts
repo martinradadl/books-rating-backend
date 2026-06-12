@@ -535,3 +535,84 @@ export const getBestRatedBooks = async (req: Request, res: Response) => {
     }
   }
 };
+
+export const searchByTitleOrAuthor = async (req: Request, res: Response) => {
+  try {
+    const query = req.query.query;
+    const limit = parseInt(req.query?.limit as string) || 4;
+    const page = parseInt(req.query?.page as string) || 1;
+    const skip = (page - 1) * limit;
+
+    const [aggregationResult] = await editionModel.Edition.aggregate([
+      ...LOOKUP_BOOK(),
+      ...LOOKUP_AUTHOR(),
+
+      {
+        $match: {
+          $or: [
+            {
+              title: {
+                $regex: query,
+                $options: "i",
+              },
+            },
+            {
+              "book.author.name": {
+                $regex: query,
+                $options: "i",
+              },
+            },
+          ],
+        },
+      },
+
+      {
+        $group: {
+          _id: "$book._id",
+          edition: { $first: "$$ROOT" },
+        },
+      },
+      {
+        $replaceRoot: {
+          newRoot: "$edition",
+        },
+      },
+      {
+        $project: {
+          _id: 1,
+          book: {
+            author: {
+              name: 1,
+            },
+          },
+          cover: 1,
+          title: 1,
+        },
+      },
+
+      {
+        $facet: {
+          results: [{ $skip: skip }, { $limit: limit }],
+          totalCount: [{ $count: "count" }],
+        },
+      },
+      {
+        $project: {
+          results: 1,
+          totalCount: {
+            $ifNull: [{ $arrayElemAt: ["$totalCount.count", 0] }, 0],
+          },
+        },
+      },
+    ]);
+
+    return res.status(200).json({
+      results: aggregationResult?.results ?? [],
+      totalCount: aggregationResult?.totalCount ?? 0,
+    });
+  } catch (err: unknown) {
+    if (err instanceof Error) {
+      res.status(500).json({ message: err.message });
+    }
+  }
+};

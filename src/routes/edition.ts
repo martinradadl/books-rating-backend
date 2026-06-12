@@ -10,6 +10,7 @@ router.get("/related-books", editionController.getRelatedBooks);
 router.get("/latest-releases", editionController.getLatestReleases);
 router.get("/most-rated", editionController.getMostRatedBooks);
 router.get("/best-rated", editionController.getBestRatedBooks);
+router.get("/search", editionController.searchByTitleOrAuthor);
 router.get("/:id", editionController.getById);
 router.get("/", editionController.getAll);
 
