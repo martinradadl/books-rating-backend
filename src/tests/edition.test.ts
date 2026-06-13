@@ -19,6 +19,7 @@ import {
   getMoreEditions,
   getMostRatedBooks,
   getRelatedBooks,
+  searchByTitleOrAuthor,
 } from "../controllers/edition";
 import {
   fakeEdition,
@@ -412,6 +413,48 @@ describe("Edition Controller", () => {
 
       expect(res.statusCode).toBe(200);
       expect(res._getJSONData()).toEqual(response);
+    });
+  });
+
+  describe("Search By Title or Author", async () => {
+    afterEach(() => {
+      vi.resetAllMocks();
+    });
+
+    it("should return 500 when error is thrown getting search results", async () => {
+      const { req, res } = initializeReqResMocks();
+      vi.mocked(Edition.aggregate, true).mockImplementation(() => {
+        throw mockedCatchError;
+      });
+
+      await searchByTitleOrAuthor(req, res);
+
+      expect(res.statusCode).toBe(500);
+      expect(res._getJSONData()).toEqual({ message: mockedCatchError.message });
+    });
+
+    it("should return 200 and search results", async () => {
+      const { req, res } = initializeReqResMocks();
+
+      const fakeCount = 2;
+      const fakeAggregationResult = [
+        {
+          results: fakeEditionsList,
+          totalCount: fakeCount,
+        },
+      ];
+      vi.mocked(Edition.aggregate, true).mockResolvedValue(
+        fakeAggregationResult
+      );
+
+      await searchByTitleOrAuthor(req, res);
+
+      const fakeResponseData = {
+        results: fakeEditionsList,
+        totalCount: fakeCount,
+      };
+      expect(res.statusCode).toBe(200);
+      expect(res._getJSONData()).toEqual(fakeResponseData);
     });
   });
 });
