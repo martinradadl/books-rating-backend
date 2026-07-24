@@ -26,6 +26,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 const corsOptions = {
   origin: [
     "http://localhost:5173",
+    "http://localhost:4173",
     "https://books-rating.vercel.app",
     new RegExp("^https://books-rating.*-martin-radas-projects\\.vercel\\.app$"),
   ],
