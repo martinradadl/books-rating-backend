@@ -46,6 +46,12 @@ export const fakeListOfAllBookListsWithURL = fakeListOfAllBookLists.map(
   }),
 );
 
+export const fakeListOfAllBookListsWithURLAndToObject =
+  fakeListOfAllBookListsWithToObject.map((bookList) => ({
+    ...bookList.toObject(),
+    urlPath: bookList.title.toLowerCase().replace(/\s+/g, "-"),
+  }));
+
 export const getBookListsPage = (limit?: number, page?: number) => {
   return !limit || !page
     ? fakeListOfAllBookLists
@@ -63,3 +69,25 @@ export const getBookListsPageWithToObject = (limit?: number, page?: number) => {
         (page - 1) * limit + limit + 1,
       );
 };
+
+export const fakeBooksCountAggregateResult = [
+  {
+    _id: fakeBookList._id,
+    booksCount: 2,
+  },
+  {
+    _id: fakeBookList2._id,
+    booksCount: 4,
+  },
+];
+
+export const fakeBooksCountMap = new Map([
+  [
+    fakeBooksCountAggregateResult[0]._id,
+    fakeBooksCountAggregateResult[0].booksCount,
+  ],
+  [
+    fakeBooksCountAggregateResult[1]._id,
+    fakeBooksCountAggregateResult[1].booksCount,
+  ],
+]);
