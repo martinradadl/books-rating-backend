@@ -89,6 +89,26 @@ describe("Book List Controller", () => {
         return defaultGetAllQueryObjectAndPopulate(result);
       });
 
+      console.log("result: ", result);
+
+      await getAll(req, res);
+
+      expect(res.statusCode).toBe(200);
+      expect(res._getJSONData()).toEqual(
+        fakeListOfAllBookListsWithURLAndToObject,
+      );
+    });
+
+    it("should return 200 all the lists with itemLimit", async () => {
+      const { req, res } = initializeReqResMocks();
+      req.query = { itemLimit: "2" };
+
+      const result = getBookListsPageWithToObject();
+      //@ts-expect-error Unsolved error with mockImplementation function
+      vi.mocked(BookList.find, true).mockImplementation(() => {
+        return defaultGetAllQueryObjectAndPopulate(result);
+      });
+
       await getAll(req, res);
 
       expect(res.statusCode).toBe(200);

@@ -19,7 +19,6 @@ const fakeBookListWithToObject = {
     description: "fakeBookListDescription",
     books: ["fakeBookId1", "fakeBookId2"],
   }),
-  title: "fakeBookListTitle",
 };
 
 const fakeBookListWithToObject2 = {
@@ -29,7 +28,6 @@ const fakeBookListWithToObject2 = {
     description: "fakeBookListDescription2",
     books: ["fakeBookId3", "fakeBookId4"],
   }),
-  title: "fakeBookListTitle2",
 };
 
 export const fakeListOfAllBookLists = [fakeBookList, fakeBookList2];
@@ -49,7 +47,7 @@ export const fakeListOfAllBookListsWithURL = fakeListOfAllBookLists.map(
 export const fakeListOfAllBookListsWithURLAndToObject =
   fakeListOfAllBookListsWithToObject.map((bookList) => ({
     ...bookList.toObject(),
-    urlPath: bookList.title.toLowerCase().replace(/\s+/g, "-"),
+    urlPath: bookList.toObject().title.toLowerCase().replace(/\s+/g, "-"),
   }));
 
 export const getBookListsPage = (limit?: number, page?: number) => {

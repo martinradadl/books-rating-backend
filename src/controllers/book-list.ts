@@ -154,7 +154,9 @@ export const getAll = async (req: Request, res: Response) => {
         ...(withCarouselData && {
           books: bookListsEditionsWithRatingData[index],
         }),
-        urlPath: String(list.title).toLowerCase().replace(/\s+/g, "-"),
+        urlPath: String(list.toObject().title)
+          .toLowerCase()
+          .replace(/\s+/g, "-"),
         ...(withBooksCount && {
           booksCount: booksCountMap.get(String(list.toObject()._id)) ?? 0,
         }),
