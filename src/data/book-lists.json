@@ -128,5 +128,119 @@
       { "ISBN": "9781803144375" },
       { "ISBN": "9781400064168" }
     ]
+  },
+  {
+    "title": "Book Picks 6",
+    "description": "A curated selection or top recommendations of books by our reviewers",
+    "bookCodes": [
+      { "ISBN": "9781451648539" },
+      { "ASIN": "B0GTTRZM7N" },
+      { "ISBN": "9780553380163" },
+      { "ISBN": "9780812988413" },
+      { "ASIN": "0671027034" },
+      { "ASIN": "0062316117" },
+      { "ISBN": "9780679745587" },
+      { "ASIN": "B0DVH1BKQC" },
+      { "ISBN": "9781837901319" },
+      { "ISBN": "9781250301697" },
+      { "ISBN": "9780593099322" },
+      { "ISBN": "9780553213690" },
+      { "ISBN": "9780450040184" },
+      { "ASIN": "B0DLST8SW8" },
+      { "ISBN": "9780007491568" },
+      { "ASIN": "B0FSL3LDR2" }
+    ]
+  },
+  {
+    "title": "Book Picks 7",
+    "description": "A curated selection or top recommendations of books by our reviewers",
+    "bookCodes": [
+      { "ISBN": "9780807014295" },
+      { "ASIN": "B0GTTRZM7N" },
+      { "ISBN": "9780937832387" },
+      { "ISBN": "9780812988413" },
+      { "ISBN": "9781400064168" },
+      { "ISBN": "9781400052172" },
+      { "ISBN": "9780679745587" },
+      { "ISBN": "9781416524793" },
+      { "ISBN": "9781803144375" },
+      { "ISBN": "9781250301697" },
+      { "ISBN": "9780805209990" },
+      { "ISBN": "9780450411434" },
+      { "ISBN": "9780450040184" },
+      { "ISBN": "9780446365383" },
+      { "ISBN": "9780451526342" },
+      { "ASIN": "B0FSL3LDR2" }
+    ]
+  },
+  {
+    "title": "Book Picks 8",
+    "description": "A curated selection or top recommendations of books by our reviewers",
+    "bookCodes": [
+      { "ISBN": "9781451648539" },
+      { "ISBN": "9780143038412" },
+      { "ISBN": "9780937832387" },
+      { "ISBN": "9780307592736" },
+      { "ASIN": "0671027034" },
+      { "ISBN": "9781400052172" },
+      { "ISBN": "9780743247542" },
+      { "ASIN": "B0DVH1BKQC" },
+      { "ISBN": "9781803144375" },
+      { "ISBN": "9780525478812" },
+      { "ISBN": "9780593099322" },
+      { "ISBN": "9780450411434" },
+      { "ISBN": "9780062315007" },
+      { "ASIN": "B0DLST8SW8" },
+      { "ISBN": "9780451526342" },
+      { "ISBN": "9780553588484" }
+    ]
+  },
+  {
+    "title": "Book Picks 9",
+    "description": "A curated selection or top recommendations of books by our reviewers",
+    "bookCodes": [
+      { "ISBN": "9780807014295" },
+      { "ISBN": "9780143038412" },
+      { "ISBN": "9780553380163" },
+      { "ISBN": "9780307592736" },
+      { "ISBN": "9781400064168" },
+      { "ASIN": "0062316117" },
+      { "ISBN": "9780743247542" },
+      { "ISBN": "9781416524793" },
+      { "ISBN": "9781837901319" },
+      { "ISBN": "9780525478812" },
+      { "ISBN": "9780805209990" },
+      { "ISBN": "9780553213690" },
+      { "ISBN": "9780062315007" },
+      { "ISBN": "9780446365383" },
+      { "ISBN": "9780007491568" },
+      { "ISBN": "9780553588484" }
+    ]
+  },
+  {
+    "title": "Book Picks 10",
+    "bookCodes": [
+      { "ISBN": "9780439358064" },
+      { "ISBN": "9780439655484" },
+      { "ISBN": "9780451525260" },
+      { "ASIN": "0451529308" },
+      { "ISBN": "9780142437179" },
+      { "ISBN": "9780192833594" },
+      { "ISBN": "9780141439600" },
+      { "ISBN": "9780345803924" }
+    ]
+  },
+  {
+    "title": "Book Picks 11",
+    "bookCodes": [
+      { "ASIN": "B0DV2Y66LK" },
+      { "ISBN": "9780143131847" },
+      { "ISBN": "9780451525260" },
+      { "ISBN": "9780143039563" },
+      { "ISBN": "9780142437179" },
+      { "ISBN": "9781561797462" },
+      { "ISBN": "9780141439600" },
+      { "ISBN": "9780140449266" }
+    ]
   }
 ]
