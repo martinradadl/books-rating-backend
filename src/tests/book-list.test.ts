@@ -9,7 +9,10 @@ import { BookList } from "../models/book-list";
 import { addBookList, getAll, getByTitle } from "../controllers/book-list";
 import {
   fakeBookList,
+  fakeBooksCountAggregateResult,
+  fakeBooksCountMap,
   fakeListOfAllBookListsWithURL,
+  fakeListOfAllBookListsWithURLAndToObject,
   getBookListsPageWithToObject,
 } from "./fake-data/book-list";
 
@@ -83,13 +86,62 @@ describe("Book List Controller", () => {
       const result = getBookListsPageWithToObject();
       //@ts-expect-error Unsolved error with mockImplementation function
       vi.mocked(BookList.find, true).mockImplementation(() => {
-        return defaultGetAllQueryObjectAndPopulate(result, 2);
+        return defaultGetAllQueryObjectAndPopulate(result);
+      });
+
+      console.log("result: ", result);
+
+      await getAll(req, res);
+
+      expect(res.statusCode).toBe(200);
+      expect(res._getJSONData()).toEqual(
+        fakeListOfAllBookListsWithURLAndToObject,
+      );
+    });
+
+    it("should return 200 all the lists with itemLimit", async () => {
+      const { req, res } = initializeReqResMocks();
+      req.query = { itemLimit: "2" };
+
+      const result = getBookListsPageWithToObject();
+      //@ts-expect-error Unsolved error with mockImplementation function
+      vi.mocked(BookList.find, true).mockImplementation(() => {
+        return defaultGetAllQueryObjectAndPopulate(result);
       });
 
       await getAll(req, res);
 
       expect(res.statusCode).toBe(200);
       expect(res._getJSONData()).toEqual(fakeListOfAllBookListsWithURL);
+    });
+
+    it("should return 200 all the lists with books count", async () => {
+      const { req, res } = initializeReqResMocks();
+      req.query = { booksCount: "true" };
+
+      const result = getBookListsPageWithToObject();
+
+      //@ts-expect-error Unsolved error with mockImplementation function
+      vi.mocked(BookList.find, true).mockImplementation(() => {
+        return defaultGetAllQueryObjectAndPopulate(result);
+      });
+
+      vi.mocked(BookList.aggregate, true).mockResolvedValue(
+        fakeBooksCountAggregateResult,
+      );
+
+      await getAll(req, res);
+
+      const fakeListOfAllBookListsWithBooksCount =
+        fakeListOfAllBookListsWithURLAndToObject.map((list) => {
+          return {
+            ...list,
+            booksCount: fakeBooksCountMap.get(String(list._id)) ?? 0,
+          };
+        });
+
+      expect(res.statusCode).toBe(200);
+      expect(res._getJSONData()).toEqual(fakeListOfAllBookListsWithBooksCount);
     });
   });
 

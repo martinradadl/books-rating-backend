@@ -1,19 +1,20 @@
 import { Request, Response } from "express";
 import * as bookListModel from "../models/book-list";
+import * as ratingModel from "../models/rating";
 import { MONGO_ERRORS } from "../helpers/constants";
 import {
   RATING_DATA_LOOKUP_QUERY,
   UNWIND_PRESERVE_NULL_AND_EMPTY_ARRAYS_QUERY,
 } from "../helpers/queries";
+import mongoose from "mongoose";
 
 export const addBookList = async (req: Request, res: Response) => {
   try {
-    const { title, description, books, bookLists } = req.body;
+    const { title, description, books } = req.body;
 
     const newBookList = await bookListModel.BookList.create({
       title,
       books,
-      bookLists,
       description,
     });
 
@@ -37,17 +38,128 @@ export const getAll = async (req: Request, res: Response) => {
   try {
     const page = parseInt(req.query?.page as string) || 1;
     const limit = parseInt(req.query?.limit as string) || 0;
+    const itemLimit = parseInt(req.query?.itemLimit as string) || 0;
+    const withCarouselData = req.query?.carouselData === "true";
+    const withBooksCount = req.query?.booksCount === "true";
 
-    const bookLists = await bookListModel.BookList.find()
+    const query = bookListModel.BookList.find()
       .limit(limit)
       .skip((page - 1) * limit)
-      .populate("books")
-      .populate("bookLists");
+      .populate({
+        path: "books",
+        ...(itemLimit > 0 && {
+          perDocumentLimit: itemLimit,
+        }),
+        ...(withCarouselData && {
+          populate: {
+            path: "book",
+            populate: {
+              path: "author",
+              select: "name",
+            },
+          },
+        }),
+      });
 
-    const result = bookLists.map((list) => {
+    const bookLists = await query;
+
+    let booksCountMap = new Map<string, number>();
+    let bookListsEditionsWithRatingData = [] as unknown[];
+
+    if (withBooksCount) {
+      const bookListIds = bookLists.map((list) => list._id);
+
+      const booksCounts = await bookListModel.BookList.aggregate<{
+        _id: mongoose.Types.ObjectId;
+        booksCount: number;
+      }>([
+        {
+          $match: {
+            _id: { $in: bookListIds },
+          },
+        },
+        {
+          $project: {
+            booksCount: { $size: "$books" },
+          },
+        },
+      ]);
+
+      booksCountMap = new Map(
+        booksCounts.map((item) => [String(item._id), item.booksCount]),
+      );
+    }
+
+    if (withCarouselData) {
+      type PopulatedEdition = {
+        book: {
+          _id: mongoose.Types.ObjectId;
+        };
+        toObject: () => Record<string, unknown>;
+      };
+
+      const bookIds = bookLists.flatMap((list) =>
+        (list.books as unknown as PopulatedEdition[]).map(
+          (edition) => edition.book._id,
+        ),
+      );
+
+      const ratingData = await ratingModel.Rating.aggregate<{
+        _id: mongoose.Types.ObjectId;
+        averageRating: number;
+        ratingCount: number;
+      }>([
+        {
+          $match: {
+            book: { $in: bookIds },
+          },
+        },
+        {
+          $group: {
+            _id: "$book",
+            averageRating: { $avg: "$score" },
+            ratingCount: { $sum: 1 },
+          },
+        },
+      ]);
+
+      const ratingsMap = new Map(
+        ratingData.map((rating) => [
+          String(rating._id),
+          {
+            averageRating: rating.averageRating ?? 0,
+            ratingCount: rating.ratingCount ?? 0,
+          },
+        ]),
+      );
+
+      bookListsEditionsWithRatingData = bookLists.map((list) => {
+        const editions = list.books as unknown as PopulatedEdition[];
+
+        return editions.map((edition) => {
+          const rating = ratingsMap.get(String(edition.book?._id));
+
+          return {
+            ...edition.toObject(),
+            averageRating: rating?.averageRating ?? 0,
+            ratingCount: rating?.ratingCount ?? 0,
+          };
+        });
+      });
+    }
+
+    const result = bookLists.map((list, index) => {
       return {
         ...list.toObject(),
-        urlPath: String(list.title).toLowerCase().replace(/\s+/g, "-"),
+        ...(withCarouselData && {
+          books: bookListsEditionsWithRatingData[index],
+        }),
+        urlPath: String(list.toObject().title)
+          .toLowerCase()
+          .replace(/\s+/g, "-"),
+        ...(withBooksCount && {
+          booksCount: booksCountMap.get(String(list.toObject()._id)) ?? 0,
+        }),
       };
     });
 
