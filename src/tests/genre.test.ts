@@ -160,7 +160,7 @@ describe("Genre Controller", () => {
       await getAll(req, res);
 
       expect(res.statusCode).toBe(200);
-      expect(res._getJSONData()).toEqual(fakeGenresListWithURL);
+      expect(res._getJSONData()).toEqual(fakeGenresListWithURL());
     });
 
     it("should return 500 when error is thrown getting all genres sorted by occurrence", async () => {
@@ -181,12 +181,14 @@ describe("Genre Controller", () => {
       const { req, res } = initializeReqResMocks();
       req.query = { sortBy: "occurrence" };
 
-      vi.mocked(Book.aggregate, true).mockResolvedValue(fakeGenresListWithURL);
+      vi.mocked(Book.aggregate, true).mockResolvedValue(
+        fakeGenresListWithURL(),
+      );
 
       await getAll(req, res);
 
       expect(res.statusCode).toBe(200);
-      expect(res._getJSONData()).toEqual(fakeGenresListWithURL);
+      expect(res._getJSONData()).toEqual(fakeGenresListWithURL());
     });
   });
 
@@ -244,7 +246,7 @@ describe("Genre Controller", () => {
       const { req, res } = initializeReqResMocks();
 
       vi.mocked(Genre.aggregate, true).mockResolvedValue(
-        fakeRandomGenresListWithEditions
+        fakeRandomGenresListWithEditions,
       );
 
       await getRandomGenresWithRandomEditions(req, res);
@@ -277,7 +279,7 @@ describe("Genre Controller", () => {
       const fakeCount = 2;
       const fakeAggregationResult = [
         {
-          results: fakeGenresListWithURL,
+          results: fakeGenresListWithURL(),
           totalCount: [{ count: fakeCount }],
         },
       ];
@@ -286,7 +288,7 @@ describe("Genre Controller", () => {
       await searchByName(req, res);
 
       const fakeResponseData = {
-        results: fakeGenresListWithURL,
+        results: fakeGenresListWithURL(),
         totalCount: fakeCount,
       };
       expect(res.statusCode).toBe(200);
