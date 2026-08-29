@@ -134,6 +134,23 @@ const getSortedEditionIds = async (bookCodes: BookCode[]) => {
   return sortedEditionsIds;
 };
 
+const getGenresIds = async (genresNames: string[]) => {
+  const genres = await genreModel.Genre.find({
+    name: { $in: genresNames },
+  });
+
+  const genreMap = new Map();
+  genres.forEach((genre) => {
+    genreMap.set(genre.name, genre._id);
+  });
+
+  const genresIds = genresNames.map((genreName) => {
+    return genreMap.get(genreName);
+  });
+
+  return genresIds;
+};
+
 export const addBookLists = async () => {
   console.info("Initializing connection with Mongo");
   await initMongo().catch(console.dir);
@@ -141,8 +158,16 @@ export const addBookLists = async () => {
   const parsedBookLists = await Promise.all(
     bookLists.map(async (bookList) => {
       const editionsIds = await getSortedEditionIds(bookList.bookCodes);
-      return { ...bookList, books: editionsIds, bookCodes: undefined };
-    })
+      const genresIds = await getGenresIds(bookList.relatedGenresNames);
+
+      return {
+        ...bookList,
+        books: editionsIds,
+        relatedGenres: genresIds,
+        bookCodes: undefined,
+        relatedGenresNames: undefined,
+      };
+    }),
   );
 
   const addedBookLists =
@@ -172,7 +197,7 @@ export const addRatings = async () => {
       acc[key] = book.toString();
       return acc;
     },
-    {}
+    {},
   );
 
   const newRatings = ratings.map((rating) => {
