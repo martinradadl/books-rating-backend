@@ -5,6 +5,7 @@ const schema = new mongoose.Schema({
   title: { type: String, required: true, unique: true },
   description: { type: String },
   books: [{ type: mongoose.Types.ObjectId, ref: "Edition" }],
+  relatedGenres: [{ type: mongoose.Types.ObjectId, ref: "Genre" }],
 });
 
 schema.pre("validate", async function (next) {
