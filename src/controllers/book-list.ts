@@ -7,6 +7,10 @@ import {
   UNWIND_PRESERVE_NULL_AND_EMPTY_ARRAYS_QUERY,
 } from "../helpers/queries";
 import mongoose from "mongoose";
+import {
+  parseUrlSlugsToGenresList,
+  parseUrlSlugToCapitalizedString,
+} from "../helpers/utils";
 
 export const addBookList = async (req: Request, res: Response) => {
   try {
@@ -288,6 +292,166 @@ export const getByTitle = async (req: Request, res: Response) => {
     ]);
 
     res.status(200).json(bookList);
+  } catch (err: unknown) {
+    if (err instanceof Error) {
+      res.status(500).json({ message: err.message });
+    }
+  }
+};
+
+export const getByRelatedGenre = async (req: Request, res: Response) => {
+  try {
+    const genreNameSlug = req.params.name;
+    const genreName = parseUrlSlugToCapitalizedString(genreNameSlug);
+
+    const page = parseInt(req.query?.page as string) || 1;
+    const limit = parseInt(req.query?.limit as string) || 8;
+    const itemLimit = parseInt(req.query?.itemLimit as string) || 0;
+    const skip = (page - 1) * limit;
+
+    const result = await bookListModel.BookList.aggregate([
+      {
+        $lookup: {
+          from: "genres",
+          localField: "relatedGenres",
+          foreignField: "_id",
+          as: "matchedGenres",
+        },
+      },
+
+      {
+        $match: {
+          "matchedGenres.name": genreName,
+        },
+      },
+
+      {
+        $facet: {
+          bookLists: [
+            {
+              $set: {
+                booksCount: { $size: "$books" },
+              },
+            },
+
+            {
+              $skip: skip,
+            },
+
+            {
+              $limit: limit,
+            },
+
+            ...(itemLimit > 0
+              ? [
+                  {
+                    $set: {
+                      books: { $slice: ["$books", itemLimit] },
+                    },
+                  },
+                ]
+              : []),
+
+            {
+              $lookup: {
+                from: "editions",
+                localField: "books",
+                foreignField: "_id",
+                as: "books",
+              },
+            },
+
+            {
+              $project: {
+                matchedGenres: 0,
+              },
+            },
+          ],
+
+          bookListsCount: [
+            {
+              $count: "count",
+            },
+          ],
+        },
+      },
+
+      {
+        $project: {
+          bookLists: 1,
+          bookListsCount: {
+            $ifNull: [{ $arrayElemAt: ["$bookListsCount.count", 0] }, 0],
+          },
+        },
+      },
+    ]);
+
+    const { bookLists, bookListsCount } = result[0];
+
+    res.status(200).json({
+      bookLists,
+      bookListsCount,
+    });
+  } catch (err: unknown) {
+    if (err instanceof Error) {
+      res.status(500).json({ message: err.message });
+    }
+  }
+};
+
+export const getMostCommonRelatedGenres = async (
+  req: Request,
+  res: Response,
+) => {
+  try {
+    const limit = parseInt(req.query?.limit as string) || 8;
+
+    const relatedGenres = await bookListModel.BookList.aggregate([
+      {
+        $unwind: "$relatedGenres",
+      },
+      {
+        $group: {
+          _id: "$relatedGenres",
+          bookListsCount: { $sum: 1 },
+        },
+      },
+      {
+        $sort: {
+          bookListsCount: -1,
+        },
+      },
+      {
+        $limit: limit,
+      },
+      {
+        $lookup: {
+          from: "genres",
+          localField: "_id",
+          foreignField: "_id",
+          as: "genre",
+        },
+      },
+      {
+        $unwind: "$genre",
+      },
+      {
+        $replaceRoot: {
+          newRoot: {
+            $mergeObjects: [
+              "$genre",
+              {
+                bookListsCount: "$bookListsCount",
+              },
+            ],
+          },
+        },
+      },
+    ]);
+
+    const relatedGenresWithSlugs = parseUrlSlugsToGenresList(relatedGenres);
+
+    res.status(200).json(relatedGenresWithSlugs);
   } catch (err: unknown) {
     if (err instanceof Error) {
       res.status(500).json({ message: err.message });
