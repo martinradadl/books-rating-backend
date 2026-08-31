@@ -6,7 +6,13 @@ import {
   mockedCatchError,
 } from "./utils";
 import { BookList } from "../models/book-list";
-import { addBookList, getAll, getByTitle } from "../controllers/book-list";
+import {
+  addBookList,
+  getAll,
+  getByRelatedGenre,
+  getByTitle,
+  getMostCommonRelatedGenres,
+} from "../controllers/book-list";
 import {
   fakeBookList,
   fakeBooksCountAggregateResult,
@@ -15,6 +21,7 @@ import {
   fakeListOfAllBookListsWithURLAndToObject,
   getBookListsPageWithToObject,
 } from "./fake-data/book-list";
+import { fakeGenresList, fakeGenresListWithURL } from "./fake-data/genre";
 
 vi.mock("../models/book-list.ts");
 
@@ -150,7 +157,7 @@ describe("Book List Controller", () => {
       vi.resetAllMocks();
     });
 
-    it("should return 500 when error is thrown getting an book list by title", async () => {
+    it("should return 500 when error is thrown getting a book list by title", async () => {
       const { req, res } = initializeReqResMocks();
       req.params.title = "fake-title";
 
@@ -176,6 +183,76 @@ describe("Book List Controller", () => {
 
       expect(res.statusCode).toBe(200);
       expect(res._getJSONData()).toEqual(fakeBookList);
+    });
+  });
+
+  describe("Get Book List by Related Genre", async () => {
+    afterEach(() => {
+      vi.resetAllMocks();
+    });
+
+    it("should return 500 when error is thrown getting the book lists with selected related genre", async () => {
+      const { req, res } = initializeReqResMocks();
+      req.params.name = "fake-genre";
+
+      vi.mocked(BookList.aggregate, true).mockImplementation(() => {
+        throw mockedCatchError;
+      });
+
+      await getByRelatedGenre(req, res);
+
+      expect(res.statusCode).toBe(500);
+      expect(res._getJSONData()).toEqual({ message: mockedCatchError.message });
+    });
+
+    it("should return 200 and the matched book lists", async () => {
+      const { req, res } = initializeReqResMocks();
+      req.params.name = "fake-genre";
+      const bookListsCount = 2;
+
+      vi.mocked(BookList.aggregate, true).mockResolvedValue([
+        { bookLists: fakeBookList as any, bookListsCount },
+      ]);
+
+      await getByRelatedGenre(req, res);
+
+      expect(res.statusCode).toBe(200);
+      expect(res._getJSONData()).toEqual({
+        bookLists: fakeBookList as any,
+        bookListsCount,
+      });
+    });
+  });
+
+  describe("Get Most Common Related Genres", async () => {
+    afterEach(() => {
+      vi.resetAllMocks();
+    });
+
+    it("should return 500 when error is thrown getting the related genres lists", async () => {
+      const { req, res } = initializeReqResMocks();
+
+      vi.mocked(BookList.aggregate, true).mockImplementation(() => {
+        throw mockedCatchError;
+      });
+
+      await getMostCommonRelatedGenres(req, res);
+
+      expect(res.statusCode).toBe(500);
+      expect(res._getJSONData()).toEqual({ message: mockedCatchError.message });
+    });
+
+    it("should return 200 and the most common related genres lists", async () => {
+      const { req, res } = initializeReqResMocks();
+
+      vi.mocked(BookList.aggregate, true).mockResolvedValue(
+        fakeGenresList as any,
+      );
+
+      await getMostCommonRelatedGenres(req, res);
+
+      expect(res.statusCode).toBe(200);
+      expect(res._getJSONData()).toEqual(fakeGenresListWithURL(true));
     });
   });
 });

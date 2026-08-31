@@ -22,6 +22,17 @@
       { "ISBN": "9780937832387" },
       { "ISBN": "9780807014295" },
       { "ISBN": "9781451648539" }
+    ],
+    "relatedGenresNames": [
+      "Classics",
+      "Fiction",
+      "Fantasy",
+      "Historical Fiction",
+      "School",
+      "Mystery",
+      "Thriller",
+      "Crime",
+      "Science Fiction"
     ]
   },
   {
@@ -45,6 +56,14 @@
       { "ISBN": "9780307592736" },
       { "ISBN": "9780812988413" },
       { "ASIN": "B09WVKQ4G4" }
+    ],
+    "relatedGenresNames": [
+      "Classics",
+      "Fiction",
+      "Fantasy",
+      "Children",
+      "Memoir",
+      "Biography"
     ]
   },
   {
@@ -66,6 +85,14 @@
       { "ISBN": "9781837901319" },
       { "ISBN": "9780679745587" },
       { "ISBN": "9780143038412" }
+    ],
+    "relatedGenresNames": [
+      "Classics",
+      "Fiction",
+      "Historical Fiction",
+      "Fantasy",
+      "Mystery",
+      "Thriller"
     ]
   },
   {
@@ -87,6 +114,17 @@
       { "ISBN": "9781250301697" },
       { "ISBN": "9781416524793" },
       { "ISBN": "9781400052172" }
+    ],
+    "relatedGenresNames": [
+      "Classics",
+      "Fiction",
+      "Historical Fiction",
+      "Fantasy",
+      "Mystery",
+      "Thriller",
+      "Young Adult",
+      "Crime",
+      "Science Fiction"
     ]
   },
   {
@@ -108,6 +146,15 @@
       { "ASIN": "B0DVH1BKQC" },
       { "ASIN": "0062316117" },
       { "ASIN": "B0GTTRZM7N" }
+    ],
+    "relatedGenresNames": [
+      "Classics",
+      "Fiction",
+      "Historical Fiction",
+      "Fantasy",
+      "Mystery",
+      "Thriller",
+      "Horror"
     ]
   },
   {
@@ -127,6 +174,15 @@
       { "ISBN": "9780593099322" },
       { "ISBN": "9781803144375" },
       { "ISBN": "9781400064168" }
+    ],
+    "relatedGenresNames": [
+      "Classics",
+      "Fiction",
+      "Historical Fiction",
+      "Fantasy",
+      "Mystery",
+      "Thriller",
+      "Horror"
     ]
   },
   {
@@ -149,6 +205,17 @@
       { "ASIN": "B0DLST8SW8" },
       { "ISBN": "9780007491568" },
       { "ASIN": "B0FSL3LDR2" }
+    ],
+    "relatedGenresNames": [
+      "Classics",
+      "Fiction",
+      "Fantasy",
+      "Mystery",
+      "Thriller",
+      "Memoir",
+      "Biography",
+      "Self Help",
+      "Nonfiction"
     ]
   },
   {
@@ -171,6 +238,15 @@
       { "ISBN": "9780446365383" },
       { "ISBN": "9780451526342" },
       { "ASIN": "B0FSL3LDR2" }
+    ],
+    "relatedGenresNames": [
+      "Classics",
+      "Fiction",
+      "Mystery",
+      "Thriller",
+      "Self Help",
+      "Nonfiction",
+      "Philosophy"
     ]
   },
   {
@@ -193,6 +269,14 @@
       { "ASIN": "B0DLST8SW8" },
       { "ISBN": "9780451526342" },
       { "ISBN": "9780553588484" }
+    ],
+    "relatedGenresNames": [
+      "Classics",
+      "Fiction",
+      "Mystery",
+      "Thriller",
+      "Self Help",
+      "Nonfiction"
     ]
   },
   {
@@ -215,6 +299,15 @@
       { "ISBN": "9780446365383" },
       { "ISBN": "9780007491568" },
       { "ISBN": "9780553588484" }
+    ],
+    "relatedGenresNames": [
+      "Classics",
+      "Fiction",
+      "Mystery",
+      "Thriller",
+      "Self Help",
+      "Nonfiction",
+      "Philosophy"
     ]
   },
   {
@@ -228,7 +321,8 @@
       { "ISBN": "9780192833594" },
       { "ISBN": "9780141439600" },
       { "ISBN": "9780345803924" }
-    ]
+    ],
+    "relatedGenresNames": ["Classics", "Fiction", "Fantasy", "Young Adult"]
   },
   {
     "title": "Book Picks 11",
@@ -241,6 +335,7 @@
       { "ISBN": "9781561797462" },
       { "ISBN": "9780141439600" },
       { "ISBN": "9780140449266" }
-    ]
+    ],
+    "relatedGenresNames": ["Classics", "Fiction", "Fantasy", "Young Adult"]
   }
 ]

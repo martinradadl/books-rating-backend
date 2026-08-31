@@ -19,11 +19,13 @@ export const fakeRelatedGenres = [
   { _id: "fakeId2", name: "fakeGenre2", slug: "fakegenre2" },
 ];
 
-export const fakeGenresListWithURL = fakeGenresList.map((genre) => ({
-  _id: genre._id,
-  name: genre.name,
-  slug: genre.name.toLowerCase().replace(/\s+/g, "-"),
-}));
+export const fakeGenresListWithURL = (withDescription?: boolean) =>
+  fakeGenresList.map((genre) => ({
+    _id: genre._id,
+    name: genre.name,
+    slug: genre.name.toLowerCase().replace(/\s+/g, "-"),
+    ...(withDescription && { description: genre.description }),
+  }));
 
 export const fakeRandomGenresListWithEditions = [
   { genre: fakeGenre, editions: [fakeEdition] },
