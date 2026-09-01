@@ -6,6 +6,10 @@ const router = express.Router();
 router.post("/", genreController.add);
 router.get("/discover", genreController.getRandomGenresWithRandomEditions);
 router.get("/search", genreController.searchByName);
+router.get(
+  "/book-list-genres",
+  genreController.getMostCommonRelatedGenresOnBookLists,
+);
 router.get("/related-genres/:slug", genreController.getRelatedGenres);
 router.get("/slug/:slug", genreController.getByUrlSlug);
 router.get("/", genreController.getAll);

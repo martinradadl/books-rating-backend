@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { MONGO_ERRORS } from "../helpers/constants";
 import * as genreModel from "../models/genre";
 import * as bookModel from "../models/book";
+import * as bookListModel from "../models/book-list";
 import {
   parseUrlSlugsToGenresList,
   parseUrlSlugToCapitalizedString,
@@ -185,7 +186,7 @@ export const getRelatedGenres = async (req: Request, res: Response) => {
 
 export const getRandomGenresWithRandomEditions = async (
   req: Request,
-  res: Response
+  res: Response,
 ) => {
   try {
     const genresLimit = Number(req.query.genresLimit) || 4;
@@ -294,6 +295,66 @@ export const searchByName = async (req: Request, res: Response) => {
       results: parsedResults,
       totalCount,
     });
+  } catch (err: unknown) {
+    if (err instanceof Error) {
+      res.status(500).json({ message: err.message });
+    }
+  }
+};
+
+export const getMostCommonRelatedGenresOnBookLists = async (
+  req: Request,
+  res: Response,
+) => {
+  try {
+    const limit = parseInt(req.query?.limit as string) || 8;
+
+    const relatedGenres = await bookListModel.BookList.aggregate([
+      {
+        $unwind: "$relatedGenres",
+      },
+      {
+        $group: {
+          _id: "$relatedGenres",
+          bookListsCount: { $sum: 1 },
+        },
+      },
+      {
+        $sort: {
+          bookListsCount: -1,
+        },
+      },
+      {
+        $limit: limit,
+      },
+      {
+        $lookup: {
+          from: "genres",
+          localField: "_id",
+          foreignField: "_id",
+          as: "genre",
+        },
+      },
+      {
+        $unwind: "$genre",
+      },
+      {
+        $replaceRoot: {
+          newRoot: {
+            $mergeObjects: [
+              "$genre",
+              {
+                bookListsCount: "$bookListsCount",
+              },
+            ],
+          },
+        },
+      },
+    ]);
+
+    const relatedGenresWithSlugs = parseUrlSlugsToGenresList(relatedGenres);
+
+    res.status(200).json(relatedGenresWithSlugs);
   } catch (err: unknown) {
     if (err instanceof Error) {
       res.status(500).json({ message: err.message });
