@@ -7,10 +7,7 @@ import {
   UNWIND_PRESERVE_NULL_AND_EMPTY_ARRAYS_QUERY,
 } from "../helpers/queries";
 import mongoose from "mongoose";
-import {
-  parseUrlSlugsToGenresList,
-  parseUrlSlugToCapitalizedString,
-} from "../helpers/utils";
+import { parseUrlSlugToCapitalizedString } from "../helpers/utils";
 
 export const addBookList = async (req: Request, res: Response) => {
   try {
@@ -392,66 +389,6 @@ export const getByRelatedGenre = async (req: Request, res: Response) => {
       bookLists,
       bookListsCount,
     });
-  } catch (err: unknown) {
-    if (err instanceof Error) {
-      res.status(500).json({ message: err.message });
-    }
-  }
-};
-
-export const getMostCommonRelatedGenres = async (
-  req: Request,
-  res: Response,
-) => {
-  try {
-    const limit = parseInt(req.query?.limit as string) || 8;
-
-    const relatedGenres = await bookListModel.BookList.aggregate([
-      {
-        $unwind: "$relatedGenres",
-      },
-      {
-        $group: {
-          _id: "$relatedGenres",
-          bookListsCount: { $sum: 1 },
-        },
-      },
-      {
-        $sort: {
-          bookListsCount: -1,
-        },
-      },
-      {
-        $limit: limit,
-      },
-      {
-        $lookup: {
-          from: "genres",
-          localField: "_id",
-          foreignField: "_id",
-          as: "genre",
-        },
-      },
-      {
-        $unwind: "$genre",
-      },
-      {
-        $replaceRoot: {
-          newRoot: {
-            $mergeObjects: [
-              "$genre",
-              {
-                bookListsCount: "$bookListsCount",
-              },
-            ],
-          },
-        },
-      },
-    ]);
-
-    const relatedGenresWithSlugs = parseUrlSlugsToGenresList(relatedGenres);
-
-    res.status(200).json(relatedGenresWithSlugs);
   } catch (err: unknown) {
     if (err instanceof Error) {
       res.status(500).json({ message: err.message });
