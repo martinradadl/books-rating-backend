@@ -261,6 +261,7 @@ export const searchByName = async (req: Request, res: Response) => {
     const limit = parseInt(req.query?.limit as string) || 4;
     const page = parseInt(req.query?.page as string) || 1;
     const skip = (page - 1) * limit;
+    const isGenresOnBookLists = (req.query?.onBookLists as string) === "true";
 
     const [aggregationResult] = await genreModel.Genre.aggregate([
       {
@@ -271,6 +272,37 @@ export const searchByName = async (req: Request, res: Response) => {
           },
         },
       },
+
+      ...(isGenresOnBookLists
+        ? [
+            {
+              $lookup: {
+                from: "booklists",
+                localField: "_id",
+                foreignField: "relatedGenres",
+                as: "bookLists",
+              },
+            },
+            {
+              $addFields: {
+                bookListsCount: {
+                  $size: "$bookLists",
+                },
+              },
+            },
+            {
+              $match: {
+                bookListsCount: { $gt: 0 },
+              },
+            },
+            {
+              $sort: {
+                bookListsCount: -1 as const,
+              },
+            },
+          ]
+        : []),
+
       {
         $facet: {
           results: [
@@ -280,6 +312,7 @@ export const searchByName = async (req: Request, res: Response) => {
               $project: {
                 _id: 1,
                 name: 1,
+                ...(isGenresOnBookLists ? { bookListsCount: 1 } : {}),
               },
             },
           ],
