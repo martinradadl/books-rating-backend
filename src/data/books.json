@@ -217,7 +217,7 @@
   },
   {
     "originalTitle": "Harry Potter and the Sorcerer's Stone",
-    "authorName": "J.K. Rowling",
+    "authorName": "J. K. Rowling",
     "relatedGenresNames": [
       "Fantasy",
       "Fiction",
@@ -268,7 +268,7 @@
   },
   {
     "originalTitle": "Harry Potter and the Chamber of Secrets",
-    "authorName": "J.K. Rowling",
+    "authorName": "J. K. Rowling",
     "relatedGenresNames": [
       "Fantasy",
       "Fiction",
@@ -442,7 +442,7 @@
   },
   {
     "originalTitle": "The Hobbit",
-    "authorName": "J.R.R. Tolkien",
+    "authorName": "J. R. R. Tolkien",
     "relatedGenresNames": [
       "Fantasy",
       "Classics",
@@ -464,7 +464,7 @@
   },
   {
     "originalTitle": "The Lord of the Rings: The Fellowship of the Ring",
-    "authorName": "J.R.R. Tolkien",
+    "authorName": "J. R. R. Tolkien",
     "relatedGenresNames": ["Fantasy", "Classics", "Fiction", "Adventure"],
     "firstPublished": "July 29, 1954",
     "charactersNames": [
@@ -481,7 +481,7 @@
   },
   {
     "originalTitle": "The Lord of the Rings: The Two Towers",
-    "authorName": "J.R.R. Tolkien",
+    "authorName": "J. R. R. Tolkien",
     "relatedGenresNames": ["Fantasy", "Fiction", "Classics", "Adventure"],
     "firstPublished": "November 11, 1954",
     "charactersNames": [
@@ -501,7 +501,7 @@
   },
   {
     "originalTitle": "The Lord of the Rings: The Return of the King",
-    "authorName": "J.R.R. Tolkien",
+    "authorName": "J. R. R. Tolkien",
     "relatedGenresNames": ["Fantasy", "Fiction", "Classics", "Adventure"],
     "firstPublished": "October 20, 1955",
     "charactersNames": [
@@ -991,7 +991,7 @@
   },
   {
     "originalTitle": "Harry Potter and the Prisoner of Azkaban",
-    "authorName": "J.K. Rowling",
+    "authorName": "J. K. Rowling",
     "relatedGenresNames": [
       "Fantasy",
       "Fiction",
@@ -1017,7 +1017,7 @@
   },
   {
     "originalTitle": "Harry Potter and the Goblet of Fire",
-    "authorName": "J.K. Rowling",
+    "authorName": "J. K. Rowling",
     "relatedGenresNames": [
       "Fantasy",
       "Fiction",
@@ -1043,7 +1043,7 @@
   },
   {
     "originalTitle": "Harry Potter and the Order of the Phoenix",
-    "authorName": "J.K. Rowling",
+    "authorName": "J. K. Rowling",
     "relatedGenresNames": [
       "Fantasy",
       "Fiction",
@@ -1068,7 +1068,7 @@
   },
   {
     "originalTitle": "A Game of Thrones",
-    "authorName": "George R.R. Martin",
+    "authorName": "George R. R. Martin",
     "relatedGenresNames": ["Fantasy", "Fiction", "Adventure"],
     "firstPublished": "August 6, 1996",
     "charactersNames": [
@@ -1084,7 +1084,7 @@
   },
   {
     "originalTitle": "A Clash of Kings",
-    "authorName": "George R.R. Martin",
+    "authorName": "George R. R. Martin",
     "relatedGenresNames": ["Fantasy", "Fiction", "Adventure"],
     "firstPublished": "November 16, 1998",
     "charactersNames": [
