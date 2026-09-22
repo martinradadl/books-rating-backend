@@ -6,7 +6,8 @@ import {
   mockedCatchError,
 } from "./utils";
 import { Author } from "../models/author";
-import { add, getAll, getById } from "../controllers/author";
+import { Rating } from "../models/rating";
+import { add, getAll, getById, getByUrlSlug } from "../controllers/author";
 import {
   fakeAuthor,
   fakeAuthorsList,
@@ -14,6 +15,7 @@ import {
 } from "./fake-data/author";
 
 vi.mock("../models/author.ts");
+vi.mock("../models/rating.ts");
 
 describe("Author Controller", () => {
   describe("Add Author Controller", async () => {
@@ -85,6 +87,52 @@ describe("Author Controller", () => {
 
       expect(res.statusCode).toBe(200);
       expect(res._getJSONData()).toEqual(fakeAuthor);
+    });
+  });
+
+  describe("Get by URL Slug", async () => {
+    afterEach(() => {
+      vi.resetAllMocks();
+    });
+
+    it("should return 500 when url is not set", async () => {
+      const { req, res } = initializeReqResMocks();
+      req.params = { slug: "undefined" };
+      vi.mocked(Author.findOne, true).mockImplementation(() => {
+        throw mockedCatchError;
+      });
+
+      await getByUrlSlug(req, res);
+
+      expect(res.statusCode).toBe(500);
+      expect(res._getJSONData()).toEqual({ message: mockedCatchError.message });
+    });
+
+    it("should return 200 and the selected author", async () => {
+      const { req, res } = initializeReqResMocks();
+      req.params = { slug: "fake-author" };
+      const fakeAuthorWithToObject = {
+        toObject: vi.fn().mockReturnValue({
+          ...fakeAuthor,
+        }),
+      };
+
+      vi.mocked(Author.findOne, true).mockResolvedValue(fakeAuthorWithToObject as any);
+
+      vi.mocked(Rating.aggregate, true).mockResolvedValue([
+        { ratingCount: 10, averageRating: 4.24 },
+      ]);
+
+      await getByUrlSlug(req, res);
+
+      const result = {
+        ...fakeAuthorWithToObject.toObject(),
+        ratingCount: 10,
+        averageRating: 4.24,
+      };
+
+      expect(res.statusCode).toBe(200);
+      expect(res._getJSONData()).toEqual(result);
     });
   });
 
