@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import * as editionModel from "../models/edition";
 import * as bookModel from "../models/book";
 import * as ratingModel from "../models/rating";
+import * as authorModel from "../models/author";
 import { CAROUSEL_LENGTH_LIMIT, MONGO_ERRORS } from "../helpers/constants";
 import {
   getRelatedBookSuggestion,
@@ -329,7 +330,7 @@ export const getLatestReleases = async (req: Request, res: Response) => {
   try {
     const limit = parseInt(req.query?.limit as string) || 0;
     const genreName = parseUrlSlugToCapitalizedString(
-      req.query?.genre as string
+      req.query?.genre as string,
     );
 
     const latestReleasesList = await editionModel.Edition.aggregate([
@@ -381,7 +382,7 @@ export const getMostRatedBooks = async (req: Request, res: Response) => {
     const enableSuggestion = req.query?.enableSuggestion === "true" || false;
     let suggestion;
     const genreName = parseUrlSlugToCapitalizedString(
-      req.query?.genre as string
+      req.query?.genre as string,
     );
 
     const topBooks = await ratingModel.Rating.aggregate([
@@ -440,7 +441,7 @@ export const getMostRatedBooks = async (req: Request, res: Response) => {
     ]);
 
     const editionsMap = new Map(
-      editions.map((edition) => [edition.book._id.toString(), edition])
+      editions.map((edition) => [edition.book._id.toString(), edition]),
     );
 
     const orderedEditions = bookIds.map((id) => editionsMap.get(id.toString()));
@@ -460,7 +461,7 @@ export const getBestRatedBooks = async (req: Request, res: Response) => {
     const enableSuggestion = req.query?.enableSuggestion === "true" || false;
     let suggestion;
     const genreName = parseUrlSlugToCapitalizedString(
-      req.query?.genre as string
+      req.query?.genre as string,
     );
 
     const topBooks = await ratingModel.Rating.aggregate([
@@ -520,11 +521,11 @@ export const getBestRatedBooks = async (req: Request, res: Response) => {
     ]);
 
     const editionsMap = new Map(
-      editions.map((edition) => [edition.book._id.toString(), edition])
+      editions.map((edition) => [edition.book._id.toString(), edition]),
     );
 
     const orderedEditions = topBooks.map((item) =>
-      editionsMap.get(item._id.toString())
+      editionsMap.get(item._id.toString()),
     );
 
     const response = { list: orderedEditions, suggestion };
@@ -610,6 +611,169 @@ export const searchByTitleOrAuthor = async (req: Request, res: Response) => {
       results: aggregationResult?.results ?? [],
       totalCount: aggregationResult?.totalCount ?? 0,
     });
+  } catch (err: unknown) {
+    if (err instanceof Error) {
+      res.status(500).json({ message: err.message });
+    }
+  }
+};
+
+export const getByAuthor = async (req: Request, res: Response) => {
+  try {
+    const authorName = parseUrlSlugToCapitalizedString(req.params.name);
+    const page = parseInt(req.query?.page as string) || 1;
+    const limit = parseInt(req.query?.limit as string) || 10;
+    const skip = (page - 1) * limit;
+
+    const author = await authorModel.Author.findOne({
+      name: { $regex: `^${authorName}$`, $options: "i" },
+    });
+
+    if (!author) {
+      return res.status(404).json({ message: "Author not found" });
+    }
+
+    const result = await bookModel.Book.aggregate([
+      {
+        $match: {
+          author: author._id,
+        },
+      },
+      {
+        $lookup: {
+          from: "ratings",
+          localField: "_id",
+          foreignField: "book",
+          as: "ratings",
+        },
+      },
+      {
+        $addFields: {
+          ratingCount: {
+            $size: "$ratings",
+          },
+
+          averageRating: {
+            $cond: [
+              { $gt: [{ $size: "$ratings" }, 0] },
+              {
+                $round: [{ $avg: "$ratings.score" }, 2],
+              },
+              0,
+            ],
+          },
+        },
+      },
+      {
+        $sort: {
+          ratingCount: -1,
+          _id: 1,
+        },
+      },
+
+      {
+        $lookup: {
+          from: "editions",
+          let: {
+            bookId: "$_id",
+          },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $eq: ["$book", "$$bookId"],
+                },
+              },
+            },
+            {
+              $lookup: {
+                from: "books",
+                localField: "book",
+                foreignField: "_id",
+                pipeline: [
+                  {
+                    $project: {
+                      _id: 0,
+                      firstPublished: 1,
+                    },
+                  },
+                ],
+                as: "book",
+              },
+            },
+
+            // Convert book array into the Book object
+            {
+              $unwind: "$book",
+            },
+            {
+              $sort: {
+                _id: 1,
+              },
+            },
+            {
+              $limit: 1,
+            },
+          ],
+          as: "edition",
+        },
+      },
+      {
+        $unwind: "$edition",
+      },
+      {
+        $facet: {
+          editions: [
+            {
+              $skip: skip,
+            },
+            {
+              $limit: limit,
+            },
+            {
+              $replaceRoot: {
+                newRoot: {
+                  $mergeObjects: [
+                    "$edition",
+                    {
+                      ratingCount: "$ratingCount",
+                      averageRating: "$averageRating",
+                    },
+                  ],
+                },
+              },
+            },
+          ],
+
+          totalCount: [
+            {
+              $count: "count",
+            },
+          ],
+        },
+      },
+
+      {
+        $project: {
+          editions: 1,
+          totalCount: {
+            $ifNull: [
+              {
+                $arrayElemAt: ["$totalCount.count", 0],
+              },
+              0,
+            ],
+          },
+        },
+      },
+    ]);
+
+    const response = result[0] || {
+      editions: [],
+      totalCount: 0,
+    };
+
+    res.status(200).json(response);
   } catch (err: unknown) {
     if (err instanceof Error) {
       res.status(500).json({ message: err.message });
