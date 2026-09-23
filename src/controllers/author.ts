@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
 import * as authorModel from "../models/author";
-import * as ratingModel from "../models/rating";
 import { MONGO_ERRORS } from "../helpers/constants";
 import { parseUrlSlugToCapitalizedString } from "../helpers/utils";
 
@@ -44,54 +43,52 @@ export const getByUrlSlug = async (req: Request, res: Response) => {
   try {
     const authorName = parseUrlSlugToCapitalizedString(req.params.slug);
 
-    const author = await authorModel.Author.findOne({
-      name: { $regex: `^${authorName}$`, $options: "i" },
-    });
-
-    if (!author) {
-      return res.status(404).json({ message: "Author not found" });
-    }
-    console.log("author: ", author);
-
-    const stats = await ratingModel.Rating.aggregate([
+    const result = await authorModel.Author.aggregate([
+      {
+        $match: {
+          name: { $regex: `^${authorName}$`, $options: "i" },
+        },
+      },
       {
         $lookup: {
           from: "books",
-          localField: "book",
-          foreignField: "_id",
-          as: "book",
+          localField: "_id",
+          foreignField: "author",
+          as: "books",
         },
       },
       {
-        $unwind: "$book",
-      },
-      {
-        $match: {
-          "book.author": author._id,
+        $lookup: {
+          from: "ratings",
+          localField: "books._id",
+          foreignField: "book",
+          as: "ratings",
         },
       },
       {
-        $group: {
-          _id: null,
-          ratingCount: { $sum: 1 },
-          averageRating: { $avg: "$score" },
+        $addFields: {
+          ratingCount: { $size: "$ratings" },
+          averageRating: {
+            $round: [{ $ifNull: [{ $avg: "$ratings.score" }, 0] }, 2],
+          },
         },
+      },
+      {
+        $project: {
+          books: 0,
+          ratings: 0,
+        },
+      },
+      {
+        $limit: 1,
       },
     ]);
-    console.log("after aggregate: ", stats);
 
-    const averageRating = stats[0]?.averageRating ?? 0;
-    console.log("rating count: ", stats[0]?.ratingCount ?? 0);
-    console.log("average rating: ", averageRating);
+    if (!result.length) {
+      return res.status(404).json({ message: "Author not found" });
+    }
 
-    const result = {
-      ...author.toObject(),
-      ratingCount: stats[0]?.ratingCount ?? 0,
-      averageRating: Number(averageRating.toFixed(2)),
-    };
-
-
-    res.status(200).json(result);
+    return res.status(200).json(result[0]);
   } catch (err: unknown) {
     if (err instanceof Error) {
       res.status(500).json({ message: err.message });

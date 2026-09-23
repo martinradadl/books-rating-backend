@@ -625,34 +625,39 @@ export const getByAuthor = async (req: Request, res: Response) => {
     const limit = parseInt(req.query?.limit as string) || 10;
     const skip = (page - 1) * limit;
 
-    const author = await authorModel.Author.findOne({
-      name: { $regex: `^${authorName}$`, $options: "i" },
-    });
-
-    if (!author) {
-      return res.status(404).json({ message: "Author not found" });
-    }
-
-    const result = await bookModel.Book.aggregate([
+    const result = await authorModel.Author.aggregate([
       {
         $match: {
-          author: author._id,
+          name: { $regex: `^${authorName}$`, $options: "i" },
+        },
+      },
+
+      {
+        $lookup: {
+          from: "books",
+          localField: "_id",
+          foreignField: "author",
+          as: "books",
         },
       },
       {
+        $unwind: "$books",
+      },
+
+      {
         $lookup: {
           from: "ratings",
-          localField: "_id",
+          localField: "books._id",
           foreignField: "book",
           as: "ratings",
         },
       },
+
       {
         $addFields: {
           ratingCount: {
             $size: "$ratings",
           },
-
           averageRating: {
             $cond: [
               { $gt: [{ $size: "$ratings" }, 0] },
@@ -664,10 +669,11 @@ export const getByAuthor = async (req: Request, res: Response) => {
           },
         },
       },
+
       {
         $sort: {
           ratingCount: -1,
-          _id: 1,
+          "books._id": 1,
         },
       },
 
@@ -675,7 +681,7 @@ export const getByAuthor = async (req: Request, res: Response) => {
         $lookup: {
           from: "editions",
           let: {
-            bookId: "$_id",
+            bookId: "$books._id",
           },
           pipeline: [
             {
@@ -701,8 +707,6 @@ export const getByAuthor = async (req: Request, res: Response) => {
                 as: "book",
               },
             },
-
-            // Convert book array into the Book object
             {
               $unwind: "$book",
             },
@@ -718,9 +722,11 @@ export const getByAuthor = async (req: Request, res: Response) => {
           as: "edition",
         },
       },
+
       {
         $unwind: "$edition",
       },
+
       {
         $facet: {
           editions: [
@@ -768,12 +774,13 @@ export const getByAuthor = async (req: Request, res: Response) => {
       },
     ]);
 
-    const response = result[0] || {
-      editions: [],
-      totalCount: 0,
-    };
+    if (!result.length) {
+      return res.status(404).json({
+        message: "Author not found",
+      });
+    }
 
-    res.status(200).json(response);
+    return res.status(200).json(result[0]);
   } catch (err: unknown) {
     if (err instanceof Error) {
       res.status(500).json({ message: err.message });

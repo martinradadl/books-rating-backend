@@ -190,26 +190,29 @@ export const getGenresByAuthor = async (req: Request, res: Response) => {
     const authorName = parseUrlSlugToCapitalizedString(req.params.slug);
     const limit = Number(req.query.limit) || 3;
 
-    const author = await authorModel.Author.findOne({
-      name: { $regex: `^${authorName}$`, $options: "i" },
-    });
-
-    if (!author) {
-      return res.status(404).json({ message: "Author not found" });
-    }
-
-    const genres = await bookModel.Book.aggregate([
+    const genres = await authorModel.Author.aggregate([
       {
         $match: {
-          author: author._id,
+          name: { $regex: `^${authorName}$`, $options: "i" },
         },
       },
       {
-        $unwind: "$relatedGenres",
+        $lookup: {
+          from: "books",
+          localField: "_id",
+          foreignField: "author",
+          as: "books",
+        },
+      },
+      {
+        $unwind: "$books",
+      },
+      {
+        $unwind: "$books.relatedGenres",
       },
       {
         $group: {
-          _id: "$relatedGenres",
+          _id: "$books.relatedGenres",
           count: { $sum: 1 },
         },
       },
