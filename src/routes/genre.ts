@@ -11,6 +11,7 @@ router.get(
   genreController.getMostCommonRelatedGenresOnBookLists,
 );
 router.get("/related-genres/:slug", genreController.getRelatedGenres);
+router.get("/author/:slug", genreController.getGenresByAuthor);
 router.get("/slug/:slug", genreController.getByUrlSlug);
 router.get("/", genreController.getAll);
 router.get("/:id", genreController.getById);

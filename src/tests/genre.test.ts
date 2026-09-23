@@ -7,12 +7,14 @@ import {
 } from "./utils";
 import { Genre } from "../models/genre";
 import { Book } from "../models/book";
+import { Author } from "../models/author";
 import { BookList } from "../models/book-list";
 import {
   add,
   getAll,
   getById,
   getByUrlSlug,
+  getGenresByAuthor,
   getMostCommonRelatedGenresOnBookLists,
   getRandomGenresWithRandomEditions,
   getRelatedGenres,
@@ -29,6 +31,7 @@ import {
 
 vi.mock("../models/genre.ts");
 vi.mock("../models/book.ts");
+vi.mock("../models/author.ts");
 vi.mock("../models/book-list.ts");
 
 describe("Genre Controller", () => {
@@ -225,6 +228,38 @@ describe("Genre Controller", () => {
 
       expect(res.statusCode).toBe(200);
       expect(res._getJSONData()).toEqual(fakeRelatedGenres);
+    });
+  });
+
+  describe("Get Genres by Author", async () => {
+    afterEach(() => {
+      vi.resetAllMocks();
+    });
+
+    it("should return 500 when error is thrown getting author genres", async () => {
+      const { req, res } = initializeReqResMocks();
+      req.params = { slug: "undefined" };
+
+      vi.mocked(Author.aggregate, true).mockImplementation(() => {
+        throw mockedCatchError;
+      });
+
+      await getGenresByAuthor(req, res);
+
+      expect(res.statusCode).toBe(500);
+      expect(res._getJSONData()).toEqual({ message: mockedCatchError.message });
+    });
+
+    it("should return 200 and genres by author list", async () => {
+      const { req, res } = initializeReqResMocks();
+      req.params = { slug: "fake-author" };
+
+      vi.mocked(Author.aggregate, true).mockResolvedValue(fakeGenresList);
+
+      await getGenresByAuthor(req, res);
+
+      expect(res.statusCode).toBe(200);
+      expect(res._getJSONData()).toEqual(fakeGenresListWithURL(true));
     });
   });
 

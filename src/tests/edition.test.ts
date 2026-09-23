@@ -8,12 +8,14 @@ import {
 } from "./utils";
 import { Edition } from "../models/edition";
 import { Book } from "../models/book";
+import { Author } from "../models/author";
 import { Rating } from "../models/rating";
 import {
   add,
   getAll,
   getBestRatedBooks,
   getBooksBySameAuthor,
+  getByAuthor,
   getById,
   getLatestReleases,
   getMoreEditions,
@@ -34,6 +36,7 @@ import { getRelatedBookSuggestion } from "../helpers/utils";
 
 vi.mock("../models/edition.ts");
 vi.mock("../models/book.ts");
+vi.mock("../models/author.ts");
 vi.mock("../models/rating.ts");
 vi.mock("../helpers/utils");
 
@@ -216,7 +219,7 @@ describe("Edition Controller", () => {
 
       vi.mocked(Edition.aggregate, true).mockResolvedValue(
         //@ts-expect-error Unsolved error with mockImplementation function
-        fakeEditionWithRatingsData
+        fakeEditionWithRatingsData,
       );
 
       await getBooksBySameAuthor(req, res);
@@ -260,7 +263,7 @@ describe("Edition Controller", () => {
       }));
       vi.mocked(Edition.aggregate, true).mockResolvedValue(
         //@ts-expect-error Unsolved error with mockImplementation function
-        fakeEditionWithRatingsData
+        fakeEditionWithRatingsData,
       );
 
       await getRelatedBooks(req, res);
@@ -322,7 +325,7 @@ describe("Edition Controller", () => {
 
       vi.mocked(Rating.aggregate, true).mockResolvedValue(fakeMostRatedBooks);
       vi.mocked(Edition.aggregate, true).mockResolvedValue(
-        fakePopulatedEditionsList
+        fakePopulatedEditionsList,
       );
 
       await getMostRatedBooks(req, res);
@@ -343,7 +346,7 @@ describe("Edition Controller", () => {
       vi.mocked(Rating.aggregate, true).mockResolvedValue(fakeMostRatedBooks);
       vi.mocked(getRelatedBookSuggestion).mockResolvedValue(fakeEdition);
       vi.mocked(Edition.aggregate).mockResolvedValueOnce(
-        fakePopulatedEditionsList
+        fakePopulatedEditionsList,
       );
 
       await getMostRatedBooks(req, res);
@@ -380,7 +383,7 @@ describe("Edition Controller", () => {
 
       vi.mocked(Rating.aggregate, true).mockResolvedValue(fakeMostRatedBooks);
       vi.mocked(Edition.aggregate, true).mockResolvedValue(
-        fakePopulatedEditionsList
+        fakePopulatedEditionsList,
       );
 
       await getBestRatedBooks(req, res);
@@ -401,7 +404,7 @@ describe("Edition Controller", () => {
       vi.mocked(Rating.aggregate, true).mockResolvedValue(fakeMostRatedBooks);
       vi.mocked(getRelatedBookSuggestion).mockResolvedValue(fakeEdition);
       vi.mocked(Edition.aggregate).mockResolvedValueOnce(
-        fakePopulatedEditionsList
+        fakePopulatedEditionsList,
       );
 
       await getBestRatedBooks(req, res);
@@ -444,7 +447,7 @@ describe("Edition Controller", () => {
         },
       ];
       vi.mocked(Edition.aggregate, true).mockResolvedValue(
-        fakeAggregationResult
+        fakeAggregationResult,
       );
 
       await searchByTitleOrAuthor(req, res);
@@ -455,6 +458,43 @@ describe("Edition Controller", () => {
       };
       expect(res.statusCode).toBe(200);
       expect(res._getJSONData()).toEqual(fakeResponseData);
+    });
+  });
+
+  describe("Get Editions by Author", async () => {
+    afterEach(() => {
+      vi.resetAllMocks();
+    });
+
+    it("should return 500 when error is thrown getting editions by author", async () => {
+      const { req, res } = initializeReqResMocks();
+      req.params.name = "fake-name";
+
+      vi.mocked(Author.aggregate, true).mockImplementation(() => {
+        throw mockedCatchError;
+      });
+
+      await getByAuthor(req, res);
+
+      expect(res.statusCode).toBe(500);
+      expect(res._getJSONData()).toEqual({ message: mockedCatchError.message });
+    });
+
+    it("should return 200 and the editions list", async () => {
+      const { req, res } = initializeReqResMocks();
+      req.params.name = "fake-name";
+
+      vi.mocked(Author.aggregate, true).mockResolvedValue([
+        { editions: fakeEditionsList, totalCount: 10 },
+      ]);
+
+      await getByAuthor(req, res);
+
+      expect(res.statusCode).toBe(200);
+      expect(res._getJSONData()).toEqual({
+        editions: fakeEditionsList,
+        totalCount: 10,
+      });
     });
   });
 });
