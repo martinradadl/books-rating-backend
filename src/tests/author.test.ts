@@ -6,7 +6,6 @@ import {
   mockedCatchError,
 } from "./utils";
 import { Author } from "../models/author";
-import { Rating } from "../models/rating";
 import { add, getAll, getById, getByUrlSlug } from "../controllers/author";
 import {
   fakeAuthor,
@@ -98,7 +97,7 @@ describe("Author Controller", () => {
     it("should return 500 when url is not set", async () => {
       const { req, res } = initializeReqResMocks();
       req.params = { slug: "undefined" };
-      vi.mocked(Author.findOne, true).mockImplementation(() => {
+      vi.mocked(Author.aggregate, true).mockImplementation(() => {
         throw mockedCatchError;
       });
 
@@ -111,25 +110,16 @@ describe("Author Controller", () => {
     it("should return 200 and the selected author", async () => {
       const { req, res } = initializeReqResMocks();
       req.params = { slug: "fake-author" };
-      const fakeAuthorWithToObject = {
-        toObject: vi.fn().mockReturnValue({
-          ...fakeAuthor,
-        }),
-      };
-
-      vi.mocked(Author.findOne, true).mockResolvedValue(fakeAuthorWithToObject as any);
-
-      vi.mocked(Rating.aggregate, true).mockResolvedValue([
-        { ratingCount: 10, averageRating: 4.24 },
-      ]);
-
-      await getByUrlSlug(req, res);
 
       const result = {
-        ...fakeAuthorWithToObject.toObject(),
+        ...fakeAuthor,
         ratingCount: 10,
         averageRating: 4.24,
       };
+
+      vi.mocked(Author.aggregate, true).mockResolvedValue([result]);
+
+      await getByUrlSlug(req, res);
 
       expect(res.statusCode).toBe(200);
       expect(res._getJSONData()).toEqual(result);

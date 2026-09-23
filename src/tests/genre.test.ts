@@ -28,7 +28,6 @@ import {
   fakeRelatedGenres,
   getGenresPage,
 } from "./fake-data/genre";
-import { fakeAuthor } from "./fake-data/author";
 
 vi.mock("../models/genre.ts");
 vi.mock("../models/book.ts");
@@ -241,7 +240,7 @@ describe("Genre Controller", () => {
       const { req, res } = initializeReqResMocks();
       req.params = { slug: "undefined" };
 
-      vi.mocked(Author.findOne, true).mockImplementation(() => {
+      vi.mocked(Author.aggregate, true).mockImplementation(() => {
         throw mockedCatchError;
       });
 
@@ -255,8 +254,7 @@ describe("Genre Controller", () => {
       const { req, res } = initializeReqResMocks();
       req.params = { slug: "fake-author" };
 
-      vi.mocked(Author.findOne, true).mockResolvedValue(fakeAuthor);
-      vi.mocked(Book.aggregate, true).mockResolvedValue(fakeGenresList);
+      vi.mocked(Author.aggregate, true).mockResolvedValue(fakeGenresList);
 
       await getGenresByAuthor(req, res);
 

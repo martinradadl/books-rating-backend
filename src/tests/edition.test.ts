@@ -33,7 +33,6 @@ import {
 } from "./fake-data/edition";
 import { fakeBook } from "./fake-data/book";
 import { getRelatedBookSuggestion } from "../helpers/utils";
-import { fakeAuthor } from "./fake-data/author";
 
 vi.mock("../models/edition.ts");
 vi.mock("../models/book.ts");
@@ -471,7 +470,7 @@ describe("Edition Controller", () => {
       const { req, res } = initializeReqResMocks();
       req.params.name = "fake-name";
 
-      vi.mocked(Author.findOne, true).mockImplementation(() => {
+      vi.mocked(Author.aggregate, true).mockImplementation(() => {
         throw mockedCatchError;
       });
 
@@ -485,8 +484,7 @@ describe("Edition Controller", () => {
       const { req, res } = initializeReqResMocks();
       req.params.name = "fake-name";
 
-      vi.mocked(Author.findOne, true).mockResolvedValue(fakeAuthor);
-      vi.mocked(Book.aggregate, true).mockResolvedValue([
+      vi.mocked(Author.aggregate, true).mockResolvedValue([
         { editions: fakeEditionsList, totalCount: 10 },
       ]);
 

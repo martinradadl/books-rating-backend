@@ -94,8 +94,6 @@ describe("Book List Controller", () => {
         return defaultGetAllQueryObjectAndPopulate(result);
       });
 
-      console.log("result: ", result);
-
       await getAll(req, res);
 
       expect(res.statusCode).toBe(200);
