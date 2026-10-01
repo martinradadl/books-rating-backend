@@ -2,12 +2,12 @@ import { Request, Response } from "express";
 import * as authorModel from "../models/author";
 import { MONGO_ERRORS } from "../helpers/constants";
 import { parseUrlSlugToCapitalizedString } from "../helpers/utils";
-import { AUTHOR_NAME_REGEX_QUERY } from "../queries/author";
 import {
-  ADD_RATINGS_DATA_FIELDS_QUERY,
+  AUTHOR_NAME_REGEX_QUERY,
   LOOKUP_AUTHOR_BOOKS_QUERY,
   LOOKUP_AUTHOR_BOOKS_RATINGS_QUERY,
-} from "../queries/global";
+} from "../queries/author";
+import { ADD_RATINGS_DATA_FIELDS_QUERY } from "../queries/global";
 
 export const add = async (req: Request, res: Response) => {
   try {

@@ -17,12 +17,12 @@ import {
   RATING_DATA_LOOKUP_QUERY,
   UNWIND_PRESERVE_NULL_AND_EMPTY_ARRAYS_QUERY,
 } from "../helpers/queries";
-import { AUTHOR_NAME_REGEX_QUERY } from "../queries/author";
 import {
-  ADD_RATINGS_DATA_FIELDS_QUERY,
+  AUTHOR_NAME_REGEX_QUERY,
   LOOKUP_AUTHOR_BOOKS_QUERY,
   LOOKUP_AUTHOR_BOOKS_RATINGS_QUERY,
-} from "../queries/global";
+} from "../queries/author";
+import { ADD_RATINGS_DATA_FIELDS_QUERY } from "../queries/global";
 
 export const add = async (req: Request, res: Response) => {
   try {

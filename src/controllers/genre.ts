@@ -8,8 +8,10 @@ import {
   parseUrlSlugsToGenresList,
   parseUrlSlugToCapitalizedString,
 } from "../helpers/utils";
-import { AUTHOR_NAME_REGEX_QUERY } from "../queries/author";
-import { LOOKUP_AUTHOR_BOOKS_QUERY } from "../queries/global";
+import {
+  AUTHOR_NAME_REGEX_QUERY,
+  LOOKUP_AUTHOR_BOOKS_QUERY,
+} from "../queries/author";
 
 export const add = async (req: Request, res: Response) => {
   try {
