@@ -14,10 +14,15 @@ import {
   GROUP_FIRST_EDITION_BY_BOOK_QUERY,
   LOOKUP_AUTHOR,
   LOOKUP_BOOK,
-  RATING_ADD_FIELDS_QUERY,
   RATING_DATA_LOOKUP_QUERY,
   UNWIND_PRESERVE_NULL_AND_EMPTY_ARRAYS_QUERY,
 } from "../helpers/queries";
+import {
+  AUTHOR_NAME_REGEX_QUERY,
+  LOOKUP_AUTHOR_BOOKS_QUERY,
+  LOOKUP_AUTHOR_BOOKS_RATINGS_QUERY,
+} from "../queries/author";
+import { ADD_RATINGS_DATA_FIELDS_QUERY } from "../queries/global";
 
 export const add = async (req: Request, res: Response) => {
   try {
@@ -226,9 +231,7 @@ export const getBooksBySameAuthor = async (req: Request, res: Response) => {
           as: "ratings",
         },
       },
-      {
-        $addFields: RATING_ADD_FIELDS_QUERY,
-      },
+      ADD_RATINGS_DATA_FIELDS_QUERY,
       {
         $project: {
           ratings: 0,
@@ -307,9 +310,7 @@ export const getRelatedBooks = async (req: Request, res: Response) => {
           as: "ratings",
         },
       },
-      {
-        $addFields: RATING_ADD_FIELDS_QUERY,
-      },
+      ADD_RATINGS_DATA_FIELDS_QUERY,
       {
         $project: {
           ratings: 0,
@@ -627,48 +628,17 @@ export const getByAuthor = async (req: Request, res: Response) => {
 
     const result = await authorModel.Author.aggregate([
       {
-        $match: {
-          name: { $regex: `^${authorName}$`, $options: "i" },
-        },
+        $match: AUTHOR_NAME_REGEX_QUERY(authorName),
       },
 
-      {
-        $lookup: {
-          from: "books",
-          localField: "_id",
-          foreignField: "author",
-          as: "books",
-        },
-      },
+      LOOKUP_AUTHOR_BOOKS_QUERY,
       {
         $unwind: "$books",
       },
 
-      {
-        $lookup: {
-          from: "ratings",
-          localField: "books._id",
-          foreignField: "book",
-          as: "ratings",
-        },
-      },
+      LOOKUP_AUTHOR_BOOKS_RATINGS_QUERY,
 
-      {
-        $addFields: {
-          ratingCount: {
-            $size: "$ratings",
-          },
-          averageRating: {
-            $cond: [
-              { $gt: [{ $size: "$ratings" }, 0] },
-              {
-                $round: [{ $avg: "$ratings.score" }, 2],
-              },
-              0,
-            ],
-          },
-        },
-      },
+      ADD_RATINGS_DATA_FIELDS_QUERY,
 
       {
         $sort: {

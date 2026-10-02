@@ -2,6 +2,12 @@ import { Request, Response } from "express";
 import * as authorModel from "../models/author";
 import { MONGO_ERRORS } from "../helpers/constants";
 import { parseUrlSlugToCapitalizedString } from "../helpers/utils";
+import {
+  AUTHOR_NAME_REGEX_QUERY,
+  LOOKUP_AUTHOR_BOOKS_QUERY,
+  LOOKUP_AUTHOR_BOOKS_RATINGS_QUERY,
+} from "../queries/author";
+import { ADD_RATINGS_DATA_FIELDS_QUERY } from "../queries/global";
 
 export const add = async (req: Request, res: Response) => {
   try {
@@ -45,34 +51,12 @@ export const getByUrlSlug = async (req: Request, res: Response) => {
 
     const result = await authorModel.Author.aggregate([
       {
-        $match: {
-          name: { $regex: `^${authorName}$`, $options: "i" },
-        },
+        $match: AUTHOR_NAME_REGEX_QUERY(authorName),
       },
-      {
-        $lookup: {
-          from: "books",
-          localField: "_id",
-          foreignField: "author",
-          as: "books",
-        },
-      },
-      {
-        $lookup: {
-          from: "ratings",
-          localField: "books._id",
-          foreignField: "book",
-          as: "ratings",
-        },
-      },
-      {
-        $addFields: {
-          ratingCount: { $size: "$ratings" },
-          averageRating: {
-            $round: [{ $ifNull: [{ $avg: "$ratings.score" }, 0] }, 2],
-          },
-        },
-      },
+
+      LOOKUP_AUTHOR_BOOKS_QUERY,
+      LOOKUP_AUTHOR_BOOKS_RATINGS_QUERY,
+      ADD_RATINGS_DATA_FIELDS_QUERY,
       {
         $project: {
           books: 0,

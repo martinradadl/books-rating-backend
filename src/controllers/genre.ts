@@ -8,6 +8,10 @@ import {
   parseUrlSlugsToGenresList,
   parseUrlSlugToCapitalizedString,
 } from "../helpers/utils";
+import {
+  AUTHOR_NAME_REGEX_QUERY,
+  LOOKUP_AUTHOR_BOOKS_QUERY,
+} from "../queries/author";
 
 export const add = async (req: Request, res: Response) => {
   try {
@@ -192,18 +196,10 @@ export const getGenresByAuthor = async (req: Request, res: Response) => {
 
     const genres = await authorModel.Author.aggregate([
       {
-        $match: {
-          name: { $regex: `^${authorName}$`, $options: "i" },
-        },
+        $match: AUTHOR_NAME_REGEX_QUERY(authorName),
       },
-      {
-        $lookup: {
-          from: "books",
-          localField: "_id",
-          foreignField: "author",
-          as: "books",
-        },
-      },
+
+      LOOKUP_AUTHOR_BOOKS_QUERY,
       {
         $unwind: "$books",
       },
