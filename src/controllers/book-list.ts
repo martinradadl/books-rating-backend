@@ -2,12 +2,19 @@ import { Request, Response } from "express";
 import * as bookListModel from "../models/book-list";
 import * as ratingModel from "../models/rating";
 import { MONGO_ERRORS } from "../helpers/constants";
-import {
-  RATING_DATA_LOOKUP_QUERY,
-  UNWIND_PRESERVE_NULL_AND_EMPTY_ARRAYS_QUERY,
-} from "../helpers/queries";
+import {} from "../helpers/queries";
 import mongoose from "mongoose";
 import { parseUrlSlugToCapitalizedString } from "../helpers/utils";
+import {
+  MATCH_BOOK_IDS_QUERY,
+  UNWIND_PRESERVE_NULL_AND_EMPTY_ARRAYS_QUERY,
+} from "../queries/global";
+import { LOOKUP_RATING_DATA_QUERY } from "../queries/ratings";
+import {
+  LOOKUP_AUTHOR_FROM_EDITIONS_QUERY,
+  LOOKUP_BOOK_QUERY,
+} from "../queries/editions";
+import { BOOK_LIST_COUNT_QUERY } from "../queries/book-lists";
 
 export const addBookList = async (req: Request, res: Response) => {
   try {
@@ -80,9 +87,7 @@ export const getAll = async (req: Request, res: Response) => {
           },
         },
         {
-          $project: {
-            booksCount: { $size: "$books" },
-          },
+          $project: BOOK_LIST_COUNT_QUERY,
         },
       ]);
 
@@ -110,11 +115,7 @@ export const getAll = async (req: Request, res: Response) => {
         averageRating: number;
         ratingCount: number;
       }>([
-        {
-          $match: {
-            book: { $in: bookIds },
-          },
-        },
+        MATCH_BOOK_IDS_QUERY(bookIds),
         {
           $group: {
             _id: "$book",
@@ -200,45 +201,14 @@ export const getByTitle = async (req: Request, res: Response) => {
                   { $skip: skip },
                   { $limit: limit },
 
-                  {
-                    $lookup: {
-                      from: "books",
-                      localField: "book",
-                      foreignField: "_id",
-                      as: "book",
-                    },
-                  },
-                  {
-                    $unwind: {
-                      path: "$book",
-                      preserveNullAndEmptyArrays: true,
-                    },
-                  },
+                  LOOKUP_BOOK_QUERY,
+                  UNWIND_PRESERVE_NULL_AND_EMPTY_ARRAYS_QUERY("$book"),
 
-                  {
-                    $lookup: {
-                      from: "authors",
-                      localField: "book.author",
-                      foreignField: "_id",
-                      as: "book.author",
-                    },
-                  },
-                  {
-                    $unwind: {
-                      path: "$book.author",
-                      preserveNullAndEmptyArrays: true,
-                    },
-                  },
+                  LOOKUP_AUTHOR_FROM_EDITIONS_QUERY,
+                  UNWIND_PRESERVE_NULL_AND_EMPTY_ARRAYS_QUERY("$book.author"),
 
-                  {
-                    $lookup: RATING_DATA_LOOKUP_QUERY("$book._id"),
-                  },
-                  {
-                    $unwind:
-                      UNWIND_PRESERVE_NULL_AND_EMPTY_ARRAYS_QUERY(
-                        "$ratingData",
-                      ),
-                  },
+                  LOOKUP_RATING_DATA_QUERY("$book._id"),
+                  UNWIND_PRESERVE_NULL_AND_EMPTY_ARRAYS_QUERY("$ratingData"),
                   {
                     $addFields: {
                       averageRating: {
@@ -255,12 +225,8 @@ export const getByTitle = async (req: Request, res: Response) => {
                 totalCount: [{ $count: "count" }],
               },
             },
-            {
-              $unwind: {
-                path: "$totalCount",
-                preserveNullAndEmptyArrays: true,
-              },
-            },
+            UNWIND_PRESERVE_NULL_AND_EMPTY_ARRAYS_QUERY("$totalCount"),
+
             {
               $addFields: {
                 booksCount: { $ifNull: ["$totalCount.count", 0] },
@@ -274,12 +240,8 @@ export const getByTitle = async (req: Request, res: Response) => {
           ],
         },
       },
-      {
-        $unwind: {
-          path: "$books",
-          preserveNullAndEmptyArrays: true,
-        },
-      },
+      UNWIND_PRESERVE_NULL_AND_EMPTY_ARRAYS_QUERY("$books"),
+
       {
         $addFields: {
           booksCount: { $ifNull: ["$books.booksCount", 0] },
@@ -326,9 +288,7 @@ export const getByRelatedGenre = async (req: Request, res: Response) => {
         $facet: {
           bookLists: [
             {
-              $set: {
-                booksCount: { $size: "$books" },
-              },
+              $set: BOOK_LIST_COUNT_QUERY,
             },
 
             {

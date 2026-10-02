@@ -1,7 +1,8 @@
 import mongoose from "mongoose";
 import * as bookModel from "../models/book";
 import * as editionModel from "../models/edition";
-import { GROUP_FIRST_EDITION_BY_BOOK_QUERY, LOOKUP_BOOK } from "./queries";
+import { GROUP_FIRST_EDITION_BY_BOOK_QUERY } from "./queries";
+import { LOOKUP_BOOK_QUERY } from "../queries/editions";
 
 export const parseToObjectId = (id: string) => {
   return new mongoose.Types.ObjectId(id);
@@ -14,7 +15,8 @@ export const getRelatedBookSuggestion = async (bookId: string) => {
   const relatedGenres = book?.relatedGenres;
 
   const [suggestion] = await editionModel.Edition.aggregate([
-    ...LOOKUP_BOOK(),
+    LOOKUP_BOOK_QUERY,
+    { $unwind: "$book" },
     {
       $match: {
         "book._id": {
