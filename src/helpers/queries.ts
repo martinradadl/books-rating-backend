@@ -1,46 +1,9 @@
 import { PipelineStage } from "mongoose";
 
-export const RATING_DATA_LOOKUP_QUERY = (bookId: string) => ({
-  from: "ratings",
-  let: { bookId },
-  pipeline: [
-    {
-      $match: {
-        $expr: { $eq: ["$book", "$$bookId"] },
-      },
-    },
-    {
-      $group: {
-        _id: null,
-        averageRating: { $avg: "$score" },
-        ratingCount: { $sum: 1 },
-      },
-    },
-  ],
-  as: "ratingData",
-});
-
-export const UNWIND_PRESERVE_NULL_AND_EMPTY_ARRAYS_QUERY = (path: string) => ({
-  path,
-  preserveNullAndEmptyArrays: true,
-});
-
 export const GROUP_FIRST_EDITION_BY_BOOK_QUERY = {
   _id: "$book",
   edition: { $first: "$$ROOT" },
 };
-
-export const LOOKUP_BOOK = (): PipelineStage[] => [
-  {
-    $lookup: {
-      from: "books",
-      localField: "book",
-      foreignField: "_id",
-      as: "book",
-    },
-  },
-  { $unwind: "$book" },
-];
 
 export const FILTER_BY_GENRE = (genreName: string): PipelineStage[] =>
   genreName
@@ -60,15 +23,3 @@ export const FILTER_BY_GENRE = (genreName: string): PipelineStage[] =>
         },
       ]
     : [];
-
-export const LOOKUP_AUTHOR = (): PipelineStage[] => [
-  {
-    $lookup: {
-      from: "authors",
-      localField: "book.author",
-      foreignField: "_id",
-      as: "book.author",
-    },
-  },
-  { $unwind: "$book.author" },
-];
