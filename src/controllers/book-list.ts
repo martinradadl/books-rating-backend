@@ -2,17 +2,19 @@ import { Request, Response } from "express";
 import * as bookListModel from "../models/book-list";
 import * as ratingModel from "../models/rating";
 import { MONGO_ERRORS } from "../helpers/constants";
-import {} from "../helpers/queries";
 import mongoose from "mongoose";
 import { parseUrlSlugToCapitalizedString } from "../helpers/utils";
 import {
+  COUNT_RESULTS_QUERY,
   MATCH_BOOK_IDS_QUERY,
   UNWIND_PRESERVE_NULL_AND_EMPTY_ARRAYS_QUERY,
 } from "../queries/global";
 import { LOOKUP_RATING_DATA_QUERY } from "../queries/ratings";
 import {
+  ADD_RATING_DATA_QUERY,
   LOOKUP_AUTHOR_FROM_EDITIONS_QUERY,
   LOOKUP_BOOK_QUERY,
+  REMOVE_TEMPORARY_RATING_DATA_QUERY,
 } from "../queries/editions";
 import { BOOK_LIST_COUNT_QUERY } from "../queries/book-lists";
 
@@ -209,20 +211,11 @@ export const getByTitle = async (req: Request, res: Response) => {
 
                   LOOKUP_RATING_DATA_QUERY("$book._id"),
                   UNWIND_PRESERVE_NULL_AND_EMPTY_ARRAYS_QUERY("$ratingData"),
-                  {
-                    $addFields: {
-                      averageRating: {
-                        $ifNull: ["$ratingData.averageRating", 0],
-                      },
-                      ratingCount: { $ifNull: ["$ratingData.ratingCount", 0] },
-                    },
-                  },
-                  {
-                    $project: { ratingData: 0 },
-                  },
+                  ADD_RATING_DATA_QUERY,
+                  REMOVE_TEMPORARY_RATING_DATA_QUERY,
                 ],
 
-                totalCount: [{ $count: "count" }],
+                totalCount: COUNT_RESULTS_QUERY,
               },
             },
             UNWIND_PRESERVE_NULL_AND_EMPTY_ARRAYS_QUERY("$totalCount"),
@@ -325,11 +318,7 @@ export const getByRelatedGenre = async (req: Request, res: Response) => {
             },
           ],
 
-          bookListsCount: [
-            {
-              $count: "count",
-            },
-          ],
+          bookListsCount: COUNT_RESULTS_QUERY,
         },
       },
 
