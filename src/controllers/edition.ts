@@ -12,18 +12,22 @@ import {
 import {
   FILTER_BY_GENRE,
   GROUP_FIRST_EDITION_BY_BOOK_QUERY,
-  LOOKUP_AUTHOR,
-  LOOKUP_BOOK,
-  RATING_DATA_LOOKUP_QUERY,
-  UNWIND_PRESERVE_NULL_AND_EMPTY_ARRAYS_QUERY,
 } from "../helpers/queries";
 import {
   AUTHOR_NAME_REGEX_QUERY,
   LOOKUP_AUTHOR_BOOKS_QUERY,
   LOOKUP_AUTHOR_BOOKS_RATINGS_QUERY,
 } from "../queries/author";
-import { ADD_RATINGS_DATA_FIELDS_QUERY } from "../queries/global";
-
+import {
+  ADD_RATINGS_DATA_FIELDS_QUERY,
+  MATCH_BOOK_IDS_QUERY,
+  UNWIND_PRESERVE_NULL_AND_EMPTY_ARRAYS_QUERY,
+} from "../queries/global";
+import { LOOKUP_RATING_DATA_QUERY } from "../queries/ratings";
+import {
+  LOOKUP_AUTHOR_FROM_EDITIONS_QUERY,
+  LOOKUP_BOOK_QUERY,
+} from "../queries/editions";
 export const add = async (req: Request, res: Response) => {
   try {
     const book = await bookModel.Book.findById(req.body.bookId);
@@ -62,25 +66,11 @@ export const getById = async (req: Request, res: Response) => {
     const [edition] = await editionModel.Edition.aggregate([
       { $match: { _id: editionId } },
 
-      {
-        $lookup: {
-          from: "books",
-          localField: "book",
-          foreignField: "_id",
-          as: "book",
-        },
-      },
+      LOOKUP_BOOK_QUERY,
       { $unwind: "$book" },
 
-      {
-        $lookup: {
-          from: "authors",
-          localField: "book.author",
-          foreignField: "_id",
-          as: "book.author",
-        },
-      },
-      { $unwind: UNWIND_PRESERVE_NULL_AND_EMPTY_ARRAYS_QUERY("$book.author") },
+      LOOKUP_AUTHOR_FROM_EDITIONS_QUERY,
+      UNWIND_PRESERVE_NULL_AND_EMPTY_ARRAYS_QUERY("$book.author"),
 
       {
         $lookup: {
@@ -107,12 +97,8 @@ export const getById = async (req: Request, res: Response) => {
         },
       },
 
-      {
-        $lookup: RATING_DATA_LOOKUP_QUERY("$book._id"),
-      },
-      {
-        $unwind: UNWIND_PRESERVE_NULL_AND_EMPTY_ARRAYS_QUERY("$ratingData"),
-      },
+      LOOKUP_RATING_DATA_QUERY("$book._id"),
+      UNWIND_PRESERVE_NULL_AND_EMPTY_ARRAYS_QUERY("$ratingData"),
 
       {
         $addFields: {
@@ -193,23 +179,10 @@ export const getBooksBySameAuthor = async (req: Request, res: Response) => {
     const limit = parseInt(req.query?.limit as string) || CAROUSEL_LENGTH_LIMIT;
 
     const editionsList = await editionModel.Edition.aggregate([
-      {
-        $lookup: {
-          from: "books",
-          localField: "book",
-          foreignField: "_id",
-          as: "book",
-        },
-      },
+      LOOKUP_BOOK_QUERY,
       { $unwind: "$book" },
-      {
-        $lookup: {
-          from: "authors",
-          localField: "book.author",
-          foreignField: "_id",
-          as: "book.author",
-        },
-      },
+
+      LOOKUP_AUTHOR_FROM_EDITIONS_QUERY,
       { $unwind: "$book.author" },
       {
         $match: {
@@ -260,23 +233,10 @@ export const getRelatedBooks = async (req: Request, res: Response) => {
     const relatedGenres = baseBook?.relatedGenres;
 
     const editionsList = await editionModel.Edition.aggregate([
-      {
-        $lookup: {
-          from: "books",
-          localField: "book",
-          foreignField: "_id",
-          as: "book",
-        },
-      },
+      LOOKUP_BOOK_QUERY,
       { $unwind: "$book" },
-      {
-        $lookup: {
-          from: "authors",
-          localField: "book.author",
-          foreignField: "_id",
-          as: "book.author",
-        },
-      },
+
+      LOOKUP_AUTHOR_FROM_EDITIONS_QUERY,
       { $unwind: "$book.author" },
       {
         $match: {
@@ -335,9 +295,11 @@ export const getLatestReleases = async (req: Request, res: Response) => {
     );
 
     const latestReleasesList = await editionModel.Edition.aggregate([
-      ...LOOKUP_BOOK(),
+      LOOKUP_BOOK_QUERY,
+      { $unwind: "$book" },
       ...FILTER_BY_GENRE(genreName),
-      ...LOOKUP_AUTHOR(),
+      LOOKUP_AUTHOR_FROM_EDITIONS_QUERY,
+      { $unwind: "$book.author" },
 
       { $sort: { published: -1 } },
       {
@@ -345,12 +307,9 @@ export const getLatestReleases = async (req: Request, res: Response) => {
       },
       { $replaceRoot: { newRoot: "$edition" } },
 
-      {
-        $lookup: RATING_DATA_LOOKUP_QUERY("$book._id"),
-      },
-      {
-        $unwind: UNWIND_PRESERVE_NULL_AND_EMPTY_ARRAYS_QUERY("$ratingData"),
-      },
+      LOOKUP_RATING_DATA_QUERY("$book._id"),
+      UNWIND_PRESERVE_NULL_AND_EMPTY_ARRAYS_QUERY("$ratingData"),
+
       {
         $addFields: {
           averageRating: {
@@ -387,7 +346,8 @@ export const getMostRatedBooks = async (req: Request, res: Response) => {
     );
 
     const topBooks = await ratingModel.Rating.aggregate([
-      ...LOOKUP_BOOK(),
+      LOOKUP_BOOK_QUERY,
+      { $unwind: "$book" },
       ...FILTER_BY_GENRE(genreName),
       {
         $group: {
@@ -412,20 +372,19 @@ export const getMostRatedBooks = async (req: Request, res: Response) => {
     }
 
     const editions = await editionModel.Edition.aggregate([
-      { $match: { book: { $in: bookIds } } },
-      ...LOOKUP_BOOK(),
-      ...LOOKUP_AUTHOR(),
+      MATCH_BOOK_IDS_QUERY(bookIds),
+      LOOKUP_BOOK_QUERY,
+      { $unwind: "$book" },
+      LOOKUP_AUTHOR_FROM_EDITIONS_QUERY,
+      { $unwind: "$book.author" },
+
       {
         $group: GROUP_FIRST_EDITION_BY_BOOK_QUERY,
       },
       { $replaceRoot: { newRoot: "$edition" } },
 
-      {
-        $lookup: RATING_DATA_LOOKUP_QUERY("$book._id"),
-      },
-      {
-        $unwind: UNWIND_PRESERVE_NULL_AND_EMPTY_ARRAYS_QUERY("$ratingData"),
-      },
+      LOOKUP_RATING_DATA_QUERY("$book._id"),
+      UNWIND_PRESERVE_NULL_AND_EMPTY_ARRAYS_QUERY("$ratingData"),
       {
         $addFields: {
           averageRating: {
@@ -466,7 +425,8 @@ export const getBestRatedBooks = async (req: Request, res: Response) => {
     );
 
     const topBooks = await ratingModel.Rating.aggregate([
-      ...LOOKUP_BOOK(),
+      LOOKUP_BOOK_QUERY,
+      { $unwind: "$book" },
       ...FILTER_BY_GENRE(genreName),
 
       {
@@ -492,20 +452,19 @@ export const getBestRatedBooks = async (req: Request, res: Response) => {
     }
 
     const editions = await editionModel.Edition.aggregate([
-      { $match: { book: { $in: bookIds } } },
-      ...LOOKUP_BOOK(),
-      ...LOOKUP_AUTHOR(),
+      MATCH_BOOK_IDS_QUERY(bookIds),
+      LOOKUP_BOOK_QUERY,
+      { $unwind: "$book" },
+
+      LOOKUP_AUTHOR_FROM_EDITIONS_QUERY,
+      { $unwind: "$book.author" },
       {
         $group: GROUP_FIRST_EDITION_BY_BOOK_QUERY,
       },
       { $replaceRoot: { newRoot: "$edition" } },
 
-      {
-        $lookup: RATING_DATA_LOOKUP_QUERY("$book._id"),
-      },
-      {
-        $unwind: UNWIND_PRESERVE_NULL_AND_EMPTY_ARRAYS_QUERY("$ratingData"),
-      },
+      LOOKUP_RATING_DATA_QUERY("$book._id"),
+      UNWIND_PRESERVE_NULL_AND_EMPTY_ARRAYS_QUERY("$ratingData"),
       {
         $addFields: {
           averageRating: {
@@ -546,8 +505,11 @@ export const searchByTitleOrAuthor = async (req: Request, res: Response) => {
     const skip = (page - 1) * limit;
 
     const [aggregationResult] = await editionModel.Edition.aggregate([
-      ...LOOKUP_BOOK(),
-      ...LOOKUP_AUTHOR(),
+      LOOKUP_BOOK_QUERY,
+      { $unwind: "$book" },
+
+      LOOKUP_AUTHOR_FROM_EDITIONS_QUERY,
+      { $unwind: "$book.author" },
 
       {
         $match: {
