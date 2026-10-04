@@ -1,8 +1,13 @@
 import mongoose from "mongoose";
 import * as bookModel from "../models/book";
 import * as editionModel from "../models/edition";
-import { GROUP_FIRST_EDITION_BY_BOOK_QUERY } from "./queries";
-import { LOOKUP_BOOK_QUERY } from "../queries/editions";
+import {
+  GROUP_FIRST_EDITION_BY_BOOK_QUERY,
+  LOOKUP_BOOK_QUERY,
+  LOOKUP_GENRES_FROM_EDITIONS_QUERY,
+  REPLACE_ROOT_WITH_EDITION_QUERY,
+} from "../queries/editions";
+import { RANK_BY_GENRE_OVERLAP_QUERY } from "../queries/genres";
 
 export const parseToObjectId = (id: string) => {
   return new mongoose.Types.ObjectId(id);
@@ -11,8 +16,9 @@ export const parseToObjectId = (id: string) => {
 export const getRelatedBookSuggestion = async (bookId: string) => {
   const book = await bookModel.Book.findById(bookId)
     .select("relatedGenres")
-    .lean();
-  const relatedGenres = book?.relatedGenres;
+    .lean<{ relatedGenres: mongoose.Types.ObjectId[] }>();
+
+  const relatedGenres = book?.relatedGenres ?? [];
 
   const [suggestion] = await editionModel.Edition.aggregate([
     LOOKUP_BOOK_QUERY,
@@ -24,33 +30,13 @@ export const getRelatedBookSuggestion = async (bookId: string) => {
         },
       },
     },
-    {
-      $addFields: {
-        genreOverlap: {
-          $size: {
-            $setIntersection: ["$book.relatedGenres", relatedGenres],
-          },
-        },
-      },
-    },
-    { $match: { genreOverlap: { $gt: 0 } } },
-    {
-      $sort: { genreOverlap: -1 },
-    },
-    {
-      $group: GROUP_FIRST_EDITION_BY_BOOK_QUERY,
-    },
-    {
-      $replaceRoot: { newRoot: "$edition" },
-    },
-    {
-      $lookup: {
-        from: "genres",
-        localField: "book.relatedGenres",
-        foreignField: "_id",
-        as: "book.relatedGenres",
-      },
-    },
+
+    ...RANK_BY_GENRE_OVERLAP_QUERY(relatedGenres),
+
+    GROUP_FIRST_EDITION_BY_BOOK_QUERY,
+    REPLACE_ROOT_WITH_EDITION_QUERY,
+
+    LOOKUP_GENRES_FROM_EDITIONS_QUERY("book.relatedGenres"),
     { $project: { genreOverlap: 0 } },
     { $limit: 1 },
   ]);
