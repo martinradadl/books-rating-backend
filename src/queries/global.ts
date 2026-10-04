@@ -7,7 +7,7 @@ export const REGEX_QUERY = (regex: string, option?: RegexOption) => ({
   ...(option && { $options: option }),
 });
 
-export const ADD_RATINGS_DATA_FIELDS_QUERY = {
+export const CALCULATE_AND_ADD_RATING_DATA_QUERY = {
   $addFields: {
     ratingCount: { $size: "$ratings" },
     averageRating: {
@@ -28,3 +28,17 @@ export const MATCH_BOOK_IDS_QUERY = (bookIds: Types.ObjectId[]) => ({
     book: { $in: bookIds },
   },
 });
+
+export const MATCH_BY_BOOK_ID_QUERY = {
+  $match: {
+    $expr: {
+      $eq: ["$book", "$$bookId"],
+    },
+  },
+};
+
+export const COUNT_RESULTS_QUERY = [
+  {
+    $count: "count",
+  },
+];
