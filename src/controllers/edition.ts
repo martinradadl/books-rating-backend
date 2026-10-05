@@ -10,24 +10,34 @@ import {
   parseUrlSlugToCapitalizedString,
 } from "../helpers/utils";
 import {
-  FILTER_BY_GENRE,
-  GROUP_FIRST_EDITION_BY_BOOK_QUERY,
-} from "../helpers/queries";
-import {
   AUTHOR_NAME_REGEX_QUERY,
   LOOKUP_AUTHOR_BOOKS_QUERY,
   LOOKUP_AUTHOR_BOOKS_RATINGS_QUERY,
 } from "../queries/author";
 import {
-  ADD_RATINGS_DATA_FIELDS_QUERY,
+  CALCULATE_AND_ADD_RATING_DATA_QUERY,
+  COUNT_RESULTS_QUERY,
   MATCH_BOOK_IDS_QUERY,
+  MATCH_BY_BOOK_ID_QUERY,
   UNWIND_PRESERVE_NULL_AND_EMPTY_ARRAYS_QUERY,
 } from "../queries/global";
 import { LOOKUP_RATING_DATA_QUERY } from "../queries/ratings";
 import {
+  ADD_RATING_DATA_QUERY,
+  FILTER_BY_GENRE_NAME_QUERY,
+  GROUP_FIRST_EDITION_BY_BOOK_QUERY,
   LOOKUP_AUTHOR_FROM_EDITIONS_QUERY,
   LOOKUP_BOOK_QUERY,
+  LOOKUP_GENRES_FROM_EDITIONS_QUERY,
+  LOOKUP_RATINGS_FROM_EDITIONS_QUERY,
+  PROJECT_TOTAL_COUNT_QUERY,
+  REMOVE_TEMPORARY_RATING_DATA_QUERY,
+  REMOVE_TEMPORARY_RATINGS_QUERY,
+  REPLACE_ROOT_WITH_EDITION_QUERY,
 } from "../queries/editions";
+import { RANK_BY_GENRE_OVERLAP_QUERY } from "../queries/genres";
+import { Types } from "mongoose";
+
 export const add = async (req: Request, res: Response) => {
   try {
     const book = await bookModel.Book.findById(req.body.bookId);
@@ -72,14 +82,7 @@ export const getById = async (req: Request, res: Response) => {
       LOOKUP_AUTHOR_FROM_EDITIONS_QUERY,
       UNWIND_PRESERVE_NULL_AND_EMPTY_ARRAYS_QUERY("$book.author"),
 
-      {
-        $lookup: {
-          from: "genres",
-          localField: "book.relatedGenres",
-          foreignField: "_id",
-          as: "book.relatedGenres",
-        },
-      },
+      LOOKUP_GENRES_FROM_EDITIONS_QUERY("book.relatedGenres"),
       {
         $lookup: {
           from: "characters",
@@ -99,19 +102,8 @@ export const getById = async (req: Request, res: Response) => {
 
       LOOKUP_RATING_DATA_QUERY("$book._id"),
       UNWIND_PRESERVE_NULL_AND_EMPTY_ARRAYS_QUERY("$ratingData"),
-
-      {
-        $addFields: {
-          averageRating: { $ifNull: ["$ratingData.averageRating", 0] },
-          ratingCount: { $ifNull: ["$ratingData.ratingCount", 0] },
-        },
-      },
-
-      {
-        $project: {
-          ratingData: 0,
-        },
-      },
+      ADD_RATING_DATA_QUERY,
+      REMOVE_TEMPORARY_RATING_DATA_QUERY,
     ]);
 
     res.status(200).json(edition);
@@ -184,32 +176,20 @@ export const getBooksBySameAuthor = async (req: Request, res: Response) => {
 
       LOOKUP_AUTHOR_FROM_EDITIONS_QUERY,
       { $unwind: "$book.author" },
+
       {
         $match: {
           "book.author._id": parseToObjectId(authorId),
           "book._id": { $ne: parseToObjectId(bookId) },
         },
       },
-      {
-        $group: GROUP_FIRST_EDITION_BY_BOOK_QUERY,
-      },
-      {
-        $replaceRoot: { newRoot: "$edition" },
-      },
-      {
-        $lookup: {
-          from: "ratings",
-          localField: "book._id",
-          foreignField: "book",
-          as: "ratings",
-        },
-      },
-      ADD_RATINGS_DATA_FIELDS_QUERY,
-      {
-        $project: {
-          ratings: 0,
-        },
-      },
+
+      GROUP_FIRST_EDITION_BY_BOOK_QUERY,
+      REPLACE_ROOT_WITH_EDITION_QUERY,
+
+      LOOKUP_RATINGS_FROM_EDITIONS_QUERY,
+      CALCULATE_AND_ADD_RATING_DATA_QUERY,
+      REMOVE_TEMPORARY_RATINGS_QUERY,
       { $limit: limit },
     ]);
 
@@ -229,8 +209,8 @@ export const getRelatedBooks = async (req: Request, res: Response) => {
 
     const baseBook = await bookModel.Book.findById(bookId)
       .select("relatedGenres")
-      .lean();
-    const relatedGenres = baseBook?.relatedGenres;
+      .lean<{ relatedGenres: Types.ObjectId[] }>();
+    const relatedGenres = baseBook?.relatedGenres ?? [];
 
     const editionsList = await editionModel.Edition.aggregate([
       LOOKUP_BOOK_QUERY,
@@ -245,37 +225,15 @@ export const getRelatedBooks = async (req: Request, res: Response) => {
           },
         },
       },
-      {
-        $addFields: {
-          genreOverlap: {
-            $size: { $setIntersection: ["$book.relatedGenres", relatedGenres] },
-          },
-        },
-      },
-      { $match: { genreOverlap: { $gt: 0 } } },
-      {
-        $sort: { genreOverlap: -1 },
-      },
-      {
-        $group: GROUP_FIRST_EDITION_BY_BOOK_QUERY,
-      },
-      {
-        $replaceRoot: { newRoot: "$edition" },
-      },
-      {
-        $lookup: {
-          from: "ratings",
-          localField: "book._id",
-          foreignField: "book",
-          as: "ratings",
-        },
-      },
-      ADD_RATINGS_DATA_FIELDS_QUERY,
-      {
-        $project: {
-          ratings: 0,
-        },
-      },
+
+      ...RANK_BY_GENRE_OVERLAP_QUERY(relatedGenres),
+
+      GROUP_FIRST_EDITION_BY_BOOK_QUERY,
+      REPLACE_ROOT_WITH_EDITION_QUERY,
+
+      LOOKUP_RATINGS_FROM_EDITIONS_QUERY,
+      CALCULATE_AND_ADD_RATING_DATA_QUERY,
+      REMOVE_TEMPORARY_RATINGS_QUERY,
       { $limit: limit },
     ]);
 
@@ -297,32 +255,22 @@ export const getLatestReleases = async (req: Request, res: Response) => {
     const latestReleasesList = await editionModel.Edition.aggregate([
       LOOKUP_BOOK_QUERY,
       { $unwind: "$book" },
-      ...FILTER_BY_GENRE(genreName),
+
+      LOOKUP_GENRES_FROM_EDITIONS_QUERY(),
+      FILTER_BY_GENRE_NAME_QUERY(genreName),
+
       LOOKUP_AUTHOR_FROM_EDITIONS_QUERY,
       { $unwind: "$book.author" },
 
       { $sort: { published: -1 } },
-      {
-        $group: GROUP_FIRST_EDITION_BY_BOOK_QUERY,
-      },
-      { $replaceRoot: { newRoot: "$edition" } },
+
+      GROUP_FIRST_EDITION_BY_BOOK_QUERY,
+      REPLACE_ROOT_WITH_EDITION_QUERY,
 
       LOOKUP_RATING_DATA_QUERY("$book._id"),
       UNWIND_PRESERVE_NULL_AND_EMPTY_ARRAYS_QUERY("$ratingData"),
-
-      {
-        $addFields: {
-          averageRating: {
-            $ifNull: ["$ratingData.averageRating", 0],
-          },
-          ratingCount: {
-            $ifNull: ["$ratingData.ratingCount", 0],
-          },
-        },
-      },
-      {
-        $project: { ratingData: 0 },
-      },
+      ADD_RATING_DATA_QUERY,
+      REMOVE_TEMPORARY_RATING_DATA_QUERY,
 
       { $sort: { published: -1 } },
       { $limit: limit },
@@ -348,7 +296,10 @@ export const getMostRatedBooks = async (req: Request, res: Response) => {
     const topBooks = await ratingModel.Rating.aggregate([
       LOOKUP_BOOK_QUERY,
       { $unwind: "$book" },
-      ...FILTER_BY_GENRE(genreName),
+
+      LOOKUP_GENRES_FROM_EDITIONS_QUERY(),
+      FILTER_BY_GENRE_NAME_QUERY(genreName),
+
       {
         $group: {
           _id: "$book._id",
@@ -378,26 +329,13 @@ export const getMostRatedBooks = async (req: Request, res: Response) => {
       LOOKUP_AUTHOR_FROM_EDITIONS_QUERY,
       { $unwind: "$book.author" },
 
-      {
-        $group: GROUP_FIRST_EDITION_BY_BOOK_QUERY,
-      },
-      { $replaceRoot: { newRoot: "$edition" } },
+      GROUP_FIRST_EDITION_BY_BOOK_QUERY,
+      REPLACE_ROOT_WITH_EDITION_QUERY,
 
       LOOKUP_RATING_DATA_QUERY("$book._id"),
       UNWIND_PRESERVE_NULL_AND_EMPTY_ARRAYS_QUERY("$ratingData"),
-      {
-        $addFields: {
-          averageRating: {
-            $ifNull: ["$ratingData.averageRating", 0],
-          },
-          ratingCount: {
-            $ifNull: ["$ratingData.ratingCount", 0],
-          },
-        },
-      },
-      {
-        $project: { ratingData: 0 },
-      },
+      ADD_RATING_DATA_QUERY,
+      REMOVE_TEMPORARY_RATING_DATA_QUERY,
     ]);
 
     const editionsMap = new Map(
@@ -427,7 +365,9 @@ export const getBestRatedBooks = async (req: Request, res: Response) => {
     const topBooks = await ratingModel.Rating.aggregate([
       LOOKUP_BOOK_QUERY,
       { $unwind: "$book" },
-      ...FILTER_BY_GENRE(genreName),
+
+      LOOKUP_GENRES_FROM_EDITIONS_QUERY(),
+      FILTER_BY_GENRE_NAME_QUERY(genreName),
 
       {
         $group: {
@@ -458,26 +398,14 @@ export const getBestRatedBooks = async (req: Request, res: Response) => {
 
       LOOKUP_AUTHOR_FROM_EDITIONS_QUERY,
       { $unwind: "$book.author" },
-      {
-        $group: GROUP_FIRST_EDITION_BY_BOOK_QUERY,
-      },
-      { $replaceRoot: { newRoot: "$edition" } },
+
+      GROUP_FIRST_EDITION_BY_BOOK_QUERY,
+      REPLACE_ROOT_WITH_EDITION_QUERY,
 
       LOOKUP_RATING_DATA_QUERY("$book._id"),
       UNWIND_PRESERVE_NULL_AND_EMPTY_ARRAYS_QUERY("$ratingData"),
-      {
-        $addFields: {
-          averageRating: {
-            $ifNull: ["$ratingData.averageRating", 0],
-          },
-          ratingCount: {
-            $ifNull: ["$ratingData.ratingCount", 0],
-          },
-        },
-      },
-      {
-        $project: { ratingData: 0 },
-      },
+      ADD_RATING_DATA_QUERY,
+      REMOVE_TEMPORARY_RATING_DATA_QUERY,
     ]);
 
     const editionsMap = new Map(
@@ -536,11 +464,8 @@ export const searchByTitleOrAuthor = async (req: Request, res: Response) => {
           edition: { $first: "$$ROOT" },
         },
       },
-      {
-        $replaceRoot: {
-          newRoot: "$edition",
-        },
-      },
+      REPLACE_ROOT_WITH_EDITION_QUERY,
+
       {
         $project: {
           _id: 1,
@@ -557,15 +482,13 @@ export const searchByTitleOrAuthor = async (req: Request, res: Response) => {
       {
         $facet: {
           results: [{ $skip: skip }, { $limit: limit }],
-          totalCount: [{ $count: "count" }],
+          totalCount: COUNT_RESULTS_QUERY,
         },
       },
       {
         $project: {
           results: 1,
-          totalCount: {
-            $ifNull: [{ $arrayElemAt: ["$totalCount.count", 0] }, 0],
-          },
+          totalCount: PROJECT_TOTAL_COUNT_QUERY,
         },
       },
     ]);
@@ -600,7 +523,7 @@ export const getByAuthor = async (req: Request, res: Response) => {
 
       LOOKUP_AUTHOR_BOOKS_RATINGS_QUERY,
 
-      ADD_RATINGS_DATA_FIELDS_QUERY,
+      CALCULATE_AND_ADD_RATING_DATA_QUERY,
 
       {
         $sort: {
@@ -616,13 +539,7 @@ export const getByAuthor = async (req: Request, res: Response) => {
             bookId: "$books._id",
           },
           pipeline: [
-            {
-              $match: {
-                $expr: {
-                  $eq: ["$book", "$$bookId"],
-                },
-              },
-            },
+            MATCH_BY_BOOK_ID_QUERY,
             {
               $lookup: {
                 from: "books",
@@ -683,25 +600,14 @@ export const getByAuthor = async (req: Request, res: Response) => {
             },
           ],
 
-          totalCount: [
-            {
-              $count: "count",
-            },
-          ],
+          totalCount: COUNT_RESULTS_QUERY,
         },
       },
 
       {
         $project: {
           editions: 1,
-          totalCount: {
-            $ifNull: [
-              {
-                $arrayElemAt: ["$totalCount.count", 0],
-              },
-              0,
-            ],
-          },
+          totalCount: PROJECT_TOTAL_COUNT_QUERY,
         },
       },
     ]);

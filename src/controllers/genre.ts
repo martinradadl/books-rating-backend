@@ -12,6 +12,8 @@ import {
   AUTHOR_NAME_REGEX_QUERY,
   LOOKUP_AUTHOR_BOOKS_QUERY,
 } from "../queries/author";
+import { REPLACE_ROOT_WITH_EDITION_QUERY } from "../queries/editions";
+import { COUNT_RESULTS_QUERY, MATCH_BY_BOOK_ID_QUERY } from "../queries/global";
 
 export const add = async (req: Request, res: Response) => {
   try {
@@ -291,22 +293,13 @@ export const getRandomGenresWithRandomEditions = async (
               $lookup: {
                 from: "editions",
                 let: { bookId: "$_id" },
-                pipeline: [
-                  {
-                    $match: {
-                      $expr: {
-                        $eq: ["$book", "$$bookId"],
-                      },
-                    },
-                  },
-                  { $limit: 1 },
-                ],
+                pipeline: [MATCH_BY_BOOK_ID_QUERY, { $limit: 1 }],
                 as: "edition",
               },
             },
 
             { $unwind: "$edition" },
-            { $replaceRoot: { newRoot: "$edition" } },
+            REPLACE_ROOT_WITH_EDITION_QUERY,
           ],
           as: "editions",
         },
@@ -382,7 +375,7 @@ export const searchByName = async (req: Request, res: Response) => {
               },
             },
           ],
-          totalCount: [{ $count: "count" }],
+          totalCount: COUNT_RESULTS_QUERY,
         },
       },
     ]);

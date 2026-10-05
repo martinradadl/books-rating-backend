@@ -7,7 +7,7 @@ import {
   LOOKUP_AUTHOR_BOOKS_QUERY,
   LOOKUP_AUTHOR_BOOKS_RATINGS_QUERY,
 } from "../queries/author";
-import { ADD_RATINGS_DATA_FIELDS_QUERY } from "../queries/global";
+import { CALCULATE_AND_ADD_RATING_DATA_QUERY } from "../queries/global";
 
 export const add = async (req: Request, res: Response) => {
   try {
@@ -56,7 +56,7 @@ export const getByUrlSlug = async (req: Request, res: Response) => {
 
       LOOKUP_AUTHOR_BOOKS_QUERY,
       LOOKUP_AUTHOR_BOOKS_RATINGS_QUERY,
-      ADD_RATINGS_DATA_FIELDS_QUERY,
+      CALCULATE_AND_ADD_RATING_DATA_QUERY,
       {
         $project: {
           books: 0,
