@@ -42,3 +42,12 @@ export const COUNT_RESULTS_QUERY = [
     $count: "count",
   },
 ];
+
+export const SORT_BY_COUNT_DESCENDING_QUERY = {
+  $sort: { count: -1 },
+} as const;
+
+export const CASE_INSENSITIVE_REGEX_QUERY = (query: string) => ({
+  $regex: query,
+  $options: "i",
+});
