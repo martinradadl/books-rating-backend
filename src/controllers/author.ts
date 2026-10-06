@@ -3,9 +3,9 @@ import * as authorModel from "../models/author";
 import { MONGO_ERRORS } from "../helpers/constants";
 import { parseUrlSlugToCapitalizedString } from "../helpers/utils";
 import {
-  AUTHOR_NAME_REGEX_QUERY,
   LOOKUP_AUTHOR_BOOKS_QUERY,
   LOOKUP_AUTHOR_BOOKS_RATINGS_QUERY,
+  MATCH_BY_AUTHOR_NAME_QUERY,
 } from "../queries/author";
 import { CALCULATE_AND_ADD_RATING_DATA_QUERY } from "../queries/global";
 
@@ -50,9 +50,7 @@ export const getByUrlSlug = async (req: Request, res: Response) => {
     const authorName = parseUrlSlugToCapitalizedString(req.params.slug);
 
     const result = await authorModel.Author.aggregate([
-      {
-        $match: AUTHOR_NAME_REGEX_QUERY(authorName),
-      },
+      MATCH_BY_AUTHOR_NAME_QUERY(authorName),
 
       LOOKUP_AUTHOR_BOOKS_QUERY,
       LOOKUP_AUTHOR_BOOKS_RATINGS_QUERY,

@@ -9,11 +9,22 @@ import {
   parseUrlSlugToCapitalizedString,
 } from "../helpers/utils";
 import {
-  AUTHOR_NAME_REGEX_QUERY,
   LOOKUP_AUTHOR_BOOKS_QUERY,
+  MATCH_BY_AUTHOR_NAME_QUERY,
 } from "../queries/author";
 import { REPLACE_ROOT_WITH_EDITION_QUERY } from "../queries/editions";
-import { COUNT_RESULTS_QUERY, MATCH_BY_BOOK_ID_QUERY } from "../queries/global";
+import {
+  CASE_INSENSITIVE_REGEX_QUERY,
+  COUNT_RESULTS_QUERY,
+  MATCH_BY_BOOK_ID_QUERY,
+  SORT_BY_COUNT_DESCENDING_QUERY,
+} from "../queries/global";
+import {
+  GROUP_BY_RELATED_GENRES_AND_COUNT_QUERY,
+  LOOKUP_BOOK_GENRES_AND_UNWIND_QUERY,
+  LOOKUP_GENRES_FROM_RELATED_GENRES_QUERY,
+  MATCH_BY_GENRE_NAME_QUERY,
+} from "../queries/genres";
 
 export const add = async (req: Request, res: Response) => {
   try {
@@ -70,24 +81,10 @@ export const getAll = async (req: Request, res: Response) => {
       parsedList = await bookModel.Book.aggregate([
         { $unwind: "$relatedGenres" },
 
-        {
-          $group: {
-            _id: "$relatedGenres",
-            count: { $sum: 1 },
-          },
-        },
+        GROUP_BY_RELATED_GENRES_AND_COUNT_QUERY,
 
-        {
-          $lookup: {
-            from: "genres",
-            localField: "_id",
-            foreignField: "_id",
-            as: "genre",
-          },
-        },
-        { $unwind: "$genre" },
-
-        { $sort: { count: -1 } },
+        ...LOOKUP_BOOK_GENRES_AND_UNWIND_QUERY,
+        SORT_BY_COUNT_DESCENDING_QUERY,
 
         { $skip: (page - 1) * limit },
         { $limit: limit },
@@ -136,21 +133,8 @@ export const getRelatedGenres = async (req: Request, res: Response) => {
     const limit = parseInt(req.query?.limit as string) || 6;
 
     const relatedGenres = await bookModel.Book.aggregate([
-      {
-        $lookup: {
-          from: "genres",
-          localField: "relatedGenres",
-          foreignField: "_id",
-          as: "genres",
-        },
-      },
-
-      {
-        $match: {
-          "genres.name": genreName,
-        },
-      },
-
+      LOOKUP_GENRES_FROM_RELATED_GENRES_QUERY,
+      MATCH_BY_GENRE_NAME_QUERY(genreName),
       { $unwind: "$relatedGenres" },
 
       {
@@ -173,10 +157,10 @@ export const getRelatedGenres = async (req: Request, res: Response) => {
         $group: {
           _id: "$genre._id",
           name: { $first: "$genre.name" },
+          count: { $sum: 1 },
         },
       },
-
-      { $sort: { count: -1 } },
+      SORT_BY_COUNT_DESCENDING_QUERY,
 
       { $limit: limit },
     ]);
@@ -197,42 +181,24 @@ export const getGenresByAuthor = async (req: Request, res: Response) => {
     const limit = Number(req.query.limit) || 3;
 
     const genres = await authorModel.Author.aggregate([
-      {
-        $match: AUTHOR_NAME_REGEX_QUERY(authorName),
-      },
+      MATCH_BY_AUTHOR_NAME_QUERY(authorName),
 
       LOOKUP_AUTHOR_BOOKS_QUERY,
-      {
-        $unwind: "$books",
-      },
-      {
-        $unwind: "$books.relatedGenres",
-      },
+      { $unwind: "$books" },
+      { $unwind: "$books.relatedGenres" },
       {
         $group: {
           _id: "$books.relatedGenres",
           count: { $sum: 1 },
         },
       },
-      {
-        $sort: {
-          count: -1,
-        },
-      },
+      SORT_BY_COUNT_DESCENDING_QUERY,
+
       {
         $limit: limit,
       },
-      {
-        $lookup: {
-          from: "genres",
-          localField: "_id",
-          foreignField: "_id",
-          as: "genre",
-        },
-      },
-      {
-        $unwind: "$genre",
-      },
+
+      ...LOOKUP_BOOK_GENRES_AND_UNWIND_QUERY,
       {
         $project: {
           _id: "$genre._id",
@@ -316,7 +282,7 @@ export const getRandomGenresWithRandomEditions = async (
 
 export const searchByName = async (req: Request, res: Response) => {
   try {
-    const query = req.query.query;
+    const query = req.query.query as string;
     const limit = parseInt(req.query?.limit as string) || 4;
     const page = parseInt(req.query?.page as string) || 1;
     const skip = (page - 1) * limit;
@@ -325,10 +291,7 @@ export const searchByName = async (req: Request, res: Response) => {
     const [aggregationResult] = await genreModel.Genre.aggregate([
       {
         $match: {
-          name: {
-            $regex: query,
-            $options: "i",
-          },
+          name: CASE_INSENSITIVE_REGEX_QUERY(query),
         },
       },
 
@@ -402,41 +365,22 @@ export const getMostCommonRelatedGenresOnBookLists = async (
     const limit = parseInt(req.query?.limit as string) || 8;
 
     const relatedGenres = await bookListModel.BookList.aggregate([
-      {
-        $unwind: "$relatedGenres",
-      },
-      {
-        $group: {
-          _id: "$relatedGenres",
-          bookListsCount: { $sum: 1 },
-        },
-      },
-      {
-        $sort: {
-          bookListsCount: -1,
-        },
-      },
+      { $unwind: "$relatedGenres" },
+
+      GROUP_BY_RELATED_GENRES_AND_COUNT_QUERY,
+      SORT_BY_COUNT_DESCENDING_QUERY,
       {
         $limit: limit,
       },
-      {
-        $lookup: {
-          from: "genres",
-          localField: "_id",
-          foreignField: "_id",
-          as: "genre",
-        },
-      },
-      {
-        $unwind: "$genre",
-      },
+
+      ...LOOKUP_BOOK_GENRES_AND_UNWIND_QUERY,
       {
         $replaceRoot: {
           newRoot: {
             $mergeObjects: [
               "$genre",
               {
-                bookListsCount: "$bookListsCount",
+                bookListsCount: "$count",
               },
             ],
           },

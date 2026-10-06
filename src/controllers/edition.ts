@@ -10,21 +10,22 @@ import {
   parseUrlSlugToCapitalizedString,
 } from "../helpers/utils";
 import {
-  AUTHOR_NAME_REGEX_QUERY,
   LOOKUP_AUTHOR_BOOKS_QUERY,
   LOOKUP_AUTHOR_BOOKS_RATINGS_QUERY,
+  MATCH_BY_AUTHOR_NAME_QUERY,
 } from "../queries/author";
 import {
   CALCULATE_AND_ADD_RATING_DATA_QUERY,
+  CASE_INSENSITIVE_REGEX_QUERY,
   COUNT_RESULTS_QUERY,
   MATCH_BOOK_IDS_QUERY,
   MATCH_BY_BOOK_ID_QUERY,
+  SORT_BY_COUNT_DESCENDING_QUERY,
   UNWIND_PRESERVE_NULL_AND_EMPTY_ARRAYS_QUERY,
 } from "../queries/global";
 import { LOOKUP_RATING_DATA_QUERY } from "../queries/ratings";
 import {
   ADD_RATING_DATA_QUERY,
-  FILTER_BY_GENRE_NAME_QUERY,
   GROUP_FIRST_EDITION_BY_BOOK_QUERY,
   LOOKUP_AUTHOR_FROM_EDITIONS_QUERY,
   LOOKUP_BOOK_QUERY,
@@ -35,7 +36,10 @@ import {
   REMOVE_TEMPORARY_RATINGS_QUERY,
   REPLACE_ROOT_WITH_EDITION_QUERY,
 } from "../queries/editions";
-import { RANK_BY_GENRE_OVERLAP_QUERY } from "../queries/genres";
+import {
+  MATCH_BY_GENRE_NAME_QUERY,
+  RANK_BY_GENRE_OVERLAP_QUERY,
+} from "../queries/genres";
 import { Types } from "mongoose";
 
 export const add = async (req: Request, res: Response) => {
@@ -257,7 +261,7 @@ export const getLatestReleases = async (req: Request, res: Response) => {
       { $unwind: "$book" },
 
       LOOKUP_GENRES_FROM_EDITIONS_QUERY(),
-      FILTER_BY_GENRE_NAME_QUERY(genreName),
+      MATCH_BY_GENRE_NAME_QUERY(genreName),
 
       LOOKUP_AUTHOR_FROM_EDITIONS_QUERY,
       { $unwind: "$book.author" },
@@ -298,17 +302,16 @@ export const getMostRatedBooks = async (req: Request, res: Response) => {
       { $unwind: "$book" },
 
       LOOKUP_GENRES_FROM_EDITIONS_QUERY(),
-      FILTER_BY_GENRE_NAME_QUERY(genreName),
+      MATCH_BY_GENRE_NAME_QUERY(genreName),
 
       {
         $group: {
           _id: "$book._id",
-          ratingsCount: { $sum: 1 },
+          count: { $sum: 1 },
         },
       },
-      {
-        $sort: { ratingsCount: -1 },
-      },
+      SORT_BY_COUNT_DESCENDING_QUERY,
+
       {
         $limit: limit,
       },
@@ -367,7 +370,7 @@ export const getBestRatedBooks = async (req: Request, res: Response) => {
       { $unwind: "$book" },
 
       LOOKUP_GENRES_FROM_EDITIONS_QUERY(),
-      FILTER_BY_GENRE_NAME_QUERY(genreName),
+      MATCH_BY_GENRE_NAME_QUERY(genreName),
 
       {
         $group: {
@@ -427,7 +430,7 @@ export const getBestRatedBooks = async (req: Request, res: Response) => {
 
 export const searchByTitleOrAuthor = async (req: Request, res: Response) => {
   try {
-    const query = req.query.query;
+    const query = req.query.query as string;
     const limit = parseInt(req.query?.limit as string) || 4;
     const page = parseInt(req.query?.page as string) || 1;
     const skip = (page - 1) * limit;
@@ -443,16 +446,10 @@ export const searchByTitleOrAuthor = async (req: Request, res: Response) => {
         $match: {
           $or: [
             {
-              title: {
-                $regex: query,
-                $options: "i",
-              },
+              title: CASE_INSENSITIVE_REGEX_QUERY(query),
             },
             {
-              "book.author.name": {
-                $regex: query,
-                $options: "i",
-              },
+              "book.author.name": CASE_INSENSITIVE_REGEX_QUERY(query),
             },
           ],
         },
@@ -512,9 +509,7 @@ export const getByAuthor = async (req: Request, res: Response) => {
     const skip = (page - 1) * limit;
 
     const result = await authorModel.Author.aggregate([
-      {
-        $match: AUTHOR_NAME_REGEX_QUERY(authorName),
-      },
+      MATCH_BY_AUTHOR_NAME_QUERY(authorName),
 
       LOOKUP_AUTHOR_BOOKS_QUERY,
       {
