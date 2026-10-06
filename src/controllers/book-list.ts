@@ -17,6 +17,10 @@ import {
   REMOVE_TEMPORARY_RATING_DATA_QUERY,
 } from "../queries/editions";
 import { BOOK_LIST_COUNT_QUERY } from "../queries/book-lists";
+import {
+  LOOKUP_GENRES_FROM_RELATED_GENRES_QUERY,
+  MATCH_BY_GENRE_NAME_QUERY,
+} from "../queries/genres";
 
 export const addBookList = async (req: Request, res: Response) => {
   try {
@@ -262,20 +266,8 @@ export const getByRelatedGenre = async (req: Request, res: Response) => {
     const skip = (page - 1) * limit;
 
     const result = await bookListModel.BookList.aggregate([
-      {
-        $lookup: {
-          from: "genres",
-          localField: "relatedGenres",
-          foreignField: "_id",
-          as: "matchedGenres",
-        },
-      },
-
-      {
-        $match: {
-          "matchedGenres.name": genreName,
-        },
-      },
+      LOOKUP_GENRES_FROM_RELATED_GENRES_QUERY,
+      MATCH_BY_GENRE_NAME_QUERY(genreName),
 
       {
         $facet: {
@@ -313,7 +305,7 @@ export const getByRelatedGenre = async (req: Request, res: Response) => {
 
             {
               $project: {
-                matchedGenres: 0,
+                genres: 0,
               },
             },
           ],

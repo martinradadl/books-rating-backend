@@ -51,12 +51,6 @@ export const LOOKUP_GENRES_FROM_EDITIONS_QUERY = (as = "genres") => ({
   },
 });
 
-export const FILTER_BY_GENRE_NAME_QUERY = (genreName: string) => ({
-  $match: {
-    "genres.name": genreName,
-  },
-});
-
 export const ADD_RATING_DATA_QUERY = {
   $addFields: {
     averageRating: {
