@@ -1,4 +1,4 @@
-import { Types } from "mongoose";
+import { PipelineStage, Types } from "mongoose";
 
 type RegexOption = "i" | "m" | "x" | "s" | "u";
 
@@ -51,3 +51,13 @@ export const CASE_INSENSITIVE_REGEX_QUERY = (query: string) => ({
   $regex: query,
   $options: "i",
 });
+
+export const GET_PIPELINE_STAGE_FROM_SUCCESSFUL_CONDITION = ({
+  condition,
+  pipelineStages,
+}: {
+  condition: boolean;
+  pipelineStages: PipelineStage[];
+}) => {
+  return condition ? pipelineStages : [];
+};

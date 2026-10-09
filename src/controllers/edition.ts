@@ -18,6 +18,7 @@ import {
   CALCULATE_AND_ADD_RATING_DATA_QUERY,
   CASE_INSENSITIVE_REGEX_QUERY,
   COUNT_RESULTS_QUERY,
+  GET_PIPELINE_STAGE_FROM_SUCCESSFUL_CONDITION,
   MATCH_BOOK_IDS_QUERY,
   MATCH_BY_BOOK_ID_QUERY,
   SORT_BY_COUNT_DESCENDING_QUERY,
@@ -260,8 +261,13 @@ export const getLatestReleases = async (req: Request, res: Response) => {
       LOOKUP_BOOK_QUERY,
       { $unwind: "$book" },
 
-      LOOKUP_GENRES_FROM_EDITIONS_QUERY(),
-      MATCH_BY_GENRE_NAME_QUERY(genreName),
+      ...GET_PIPELINE_STAGE_FROM_SUCCESSFUL_CONDITION({
+        condition: !!genreName,
+        pipelineStages: [
+          LOOKUP_GENRES_FROM_EDITIONS_QUERY(),
+          MATCH_BY_GENRE_NAME_QUERY(genreName),
+        ],
+      }),
 
       LOOKUP_AUTHOR_FROM_EDITIONS_QUERY,
       { $unwind: "$book.author" },
@@ -301,8 +307,13 @@ export const getMostRatedBooks = async (req: Request, res: Response) => {
       LOOKUP_BOOK_QUERY,
       { $unwind: "$book" },
 
-      LOOKUP_GENRES_FROM_EDITIONS_QUERY(),
-      MATCH_BY_GENRE_NAME_QUERY(genreName),
+      ...GET_PIPELINE_STAGE_FROM_SUCCESSFUL_CONDITION({
+        condition: !!genreName,
+        pipelineStages: [
+          LOOKUP_GENRES_FROM_EDITIONS_QUERY(),
+          MATCH_BY_GENRE_NAME_QUERY(genreName),
+        ],
+      }),
 
       {
         $group: {
@@ -369,8 +380,13 @@ export const getBestRatedBooks = async (req: Request, res: Response) => {
       LOOKUP_BOOK_QUERY,
       { $unwind: "$book" },
 
-      LOOKUP_GENRES_FROM_EDITIONS_QUERY(),
-      MATCH_BY_GENRE_NAME_QUERY(genreName),
+      ...GET_PIPELINE_STAGE_FROM_SUCCESSFUL_CONDITION({
+        condition: !!genreName,
+        pipelineStages: [
+          LOOKUP_GENRES_FROM_EDITIONS_QUERY(),
+          MATCH_BY_GENRE_NAME_QUERY(genreName),
+        ],
+      }),
 
       {
         $group: {
