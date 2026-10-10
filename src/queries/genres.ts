@@ -1,4 +1,13 @@
 import { Types, PipelineStage } from "mongoose";
+import * as bookModel from "../models/book";
+
+export const getRelatedGenresByBookId = async (bookId: string) => {
+  const book = await bookModel.Book.findById(bookId)
+    .select("relatedGenres")
+    .lean<{ relatedGenres: Types.ObjectId[] }>();
+
+  return book?.relatedGenres ?? [];
+};
 
 export const RANK_BY_GENRE_OVERLAP_QUERY = (
   relatedGenres: Types.ObjectId[],
