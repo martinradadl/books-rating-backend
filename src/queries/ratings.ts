@@ -1,4 +1,4 @@
-import { MATCH_BY_BOOK_ID_QUERY } from "./global";
+import { MATCH_BY_BOOK_ID_QUERY } from "./books";
 
 export const LOOKUP_RATING_DATA_QUERY = (bookId: string) => ({
   $lookup: {
@@ -17,3 +17,12 @@ export const LOOKUP_RATING_DATA_QUERY = (bookId: string) => ({
     as: "ratingData",
   },
 });
+
+export const CALCULATE_AND_ADD_RATING_DATA_QUERY = {
+  $addFields: {
+    ratingCount: { $size: "$ratings" },
+    averageRating: {
+      $round: [{ $ifNull: [{ $avg: "$ratings.score" }, 0] }, 2],
+    },
+  },
+};

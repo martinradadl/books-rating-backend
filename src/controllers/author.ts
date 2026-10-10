@@ -7,7 +7,7 @@ import {
   LOOKUP_AUTHOR_BOOKS_RATINGS_QUERY,
   MATCH_BY_AUTHOR_NAME_QUERY,
 } from "../queries/author";
-import { CALCULATE_AND_ADD_RATING_DATA_QUERY } from "../queries/global";
+import { CALCULATE_AND_ADD_RATING_DATA_QUERY } from "../queries/ratings";
 
 export const add = async (req: Request, res: Response) => {
   try {

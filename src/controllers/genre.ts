@@ -14,9 +14,8 @@ import {
 } from "../queries/author";
 import { REPLACE_ROOT_WITH_EDITION_QUERY } from "../queries/editions";
 import {
-  CASE_INSENSITIVE_REGEX_QUERY,
   COUNT_RESULTS_QUERY,
-  MATCH_BY_BOOK_ID_QUERY,
+  REGEX_QUERY,
   SORT_BY_COUNT_DESCENDING_QUERY,
 } from "../queries/global";
 import {
@@ -25,6 +24,7 @@ import {
   LOOKUP_GENRES_FROM_RELATED_GENRES_QUERY,
   MATCH_BY_GENRE_NAME_QUERY,
 } from "../queries/genres";
+import { MATCH_BY_BOOK_ID_QUERY } from "../queries/books";
 
 export const add = async (req: Request, res: Response) => {
   try {
@@ -291,7 +291,7 @@ export const searchByName = async (req: Request, res: Response) => {
     const [aggregationResult] = await genreModel.Genre.aggregate([
       {
         $match: {
-          name: CASE_INSENSITIVE_REGEX_QUERY(query),
+          name: REGEX_QUERY({ regex: query, option: "i" }),
         },
       },
 
