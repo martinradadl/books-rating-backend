@@ -2,7 +2,7 @@ import { REGEX_QUERY } from "./global";
 
 export const MATCH_BY_AUTHOR_NAME_QUERY = (authorName: string) => ({
   $match: {
-    name: REGEX_QUERY(authorName, "i"),
+    name: REGEX_QUERY({ regex: authorName, option: "i", exact: true }),
   },
 });
 
