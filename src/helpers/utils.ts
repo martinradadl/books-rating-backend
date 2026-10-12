@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-import * as bookModel from "../models/book";
 import * as editionModel from "../models/edition";
 import {
   GROUP_FIRST_EDITION_BY_BOOK_QUERY,
@@ -7,18 +6,17 @@ import {
   LOOKUP_GENRES_FROM_EDITIONS_QUERY,
   REPLACE_ROOT_WITH_EDITION_QUERY,
 } from "../queries/editions";
-import { RANK_BY_GENRE_OVERLAP_QUERY } from "../queries/genres";
+import {
+  getRelatedGenresByBookId,
+  RANK_BY_GENRE_OVERLAP_QUERY,
+} from "../queries/genres";
 
 export const parseToObjectId = (id: string) => {
   return new mongoose.Types.ObjectId(id);
 };
 
 export const getRelatedBookSuggestion = async (bookId: string) => {
-  const book = await bookModel.Book.findById(bookId)
-    .select("relatedGenres")
-    .lean<{ relatedGenres: mongoose.Types.ObjectId[] }>();
-
-  const relatedGenres = book?.relatedGenres ?? [];
+  const relatedGenres = await getRelatedGenresByBookId(bookId);
 
   const [suggestion] = await editionModel.Edition.aggregate([
     LOOKUP_BOOK_QUERY,

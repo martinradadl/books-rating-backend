@@ -6,7 +6,6 @@ import mongoose from "mongoose";
 import { parseUrlSlugToCapitalizedString } from "../helpers/utils";
 import {
   COUNT_RESULTS_QUERY,
-  MATCH_BOOK_IDS_QUERY,
   UNWIND_PRESERVE_NULL_AND_EMPTY_ARRAYS_QUERY,
 } from "../queries/global";
 import { LOOKUP_RATING_DATA_QUERY } from "../queries/ratings";
@@ -21,6 +20,7 @@ import {
   LOOKUP_GENRES_FROM_RELATED_GENRES_QUERY,
   MATCH_BY_GENRE_NAME_QUERY,
 } from "../queries/genres";
+import { MATCH_BOOK_IDS_QUERY } from "../queries/books";
 
 export const addBookList = async (req: Request, res: Response) => {
   try {
