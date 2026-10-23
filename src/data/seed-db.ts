@@ -1,3 +1,4 @@
+import users from "./users.json";
 import authors from "./authors.json";
 import genres from "./genres.json";
 import characters from "./characters.json";
@@ -6,6 +7,7 @@ import books from "./books.json";
 import editions from "./editions.json";
 import bookLists from "./book-lists.json";
 import ratings from "./ratings.json";
+import * as userModel from "../models/user";
 import * as authorModel from "../models/author";
 import * as genreModel from "../models/genre";
 import * as characterModel from "../models/character";
@@ -16,6 +18,12 @@ import * as bookListModel from "../models/book-list";
 import * as ratingModel from "../models/rating";
 import { Types } from "mongoose";
 import { initMongo } from "../mongo-setup";
+
+export const addUsers = async () => {
+  const addedUsers = await userModel.User.insertMany(users);
+  console.log(`${addedUsers.length} users successfully added`);
+  return addedUsers;
+};
 
 const addAuthors = async () => {
   const addedAuthors = await authorModel.Author.insertMany(authors);
@@ -216,6 +224,7 @@ export const seedDB = async () => {
   try {
     console.info("Initializing connection with Mongo");
     await initMongo().catch(console.dir);
+    await addUsers();
     await addEditions();
     await addBookLists();
     await addRatings();
