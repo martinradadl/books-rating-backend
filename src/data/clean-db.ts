@@ -13,7 +13,11 @@ const deleteAllUsers = async () => {
   try {
     console.info("Deleting Users...");
     const wereElementsDeleted = await userModel.User.collection.drop();
-    console.info("succeed? " + wereElementsDeleted);
+    if (wereElementsDeleted) {
+      console.info("All users deleted");
+    } else {
+      console.warn("No users were deleted.");
+    }
   } catch (err: unknown) {
     if (err instanceof Error) {
       console.error(err.message);
@@ -25,7 +29,11 @@ const deleteAllAuthors = async () => {
   try {
     console.info("Deleting Authors...");
     const wereElementsDeleted = await authorModel.Author.collection.drop();
-    console.info("succeed? " + wereElementsDeleted);
+    if (wereElementsDeleted) {
+      console.info("All authors deleted");
+    } else {
+      console.warn("No authors were deleted.");
+    }
   } catch (err: unknown) {
     if (err instanceof Error) {
       console.error(err.message);
@@ -37,7 +45,11 @@ const deleteAllGenres = async () => {
   try {
     console.info("Deleting Genres...");
     const wereElementsDeleted = await genreModel.Genre.collection.drop();
-    console.info("succeed? " + wereElementsDeleted);
+    if (wereElementsDeleted) {
+      console.info("All genres deleted");
+    } else {
+      console.warn("No genres were deleted.");
+    }
   } catch (err: unknown) {
     if (err instanceof Error) {
       console.error(err.message);
@@ -50,7 +62,11 @@ const deleteAllCharacters = async () => {
     console.info("Deleting Characters...");
     const wereElementsDeleted =
       await characterModel.Character.collection.drop();
-    console.info("succeed? " + wereElementsDeleted);
+    if (wereElementsDeleted) {
+      console.info("All characters deleted");
+    } else {
+      console.warn("No characters were deleted.");
+    }
   } catch (err: unknown) {
     if (err instanceof Error) {
       console.error(err.message);
@@ -62,7 +78,11 @@ const deleteAllSettings = async () => {
   try {
     console.info("Deleting Settings...");
     const wereElementsDeleted = await settingModel.Setting.collection.drop();
-    console.info("succeed? " + wereElementsDeleted);
+    if (wereElementsDeleted) {
+      console.info("All settings deleted");
+    } else {
+      console.warn("No settings were deleted.");
+    }
   } catch (err: unknown) {
     if (err instanceof Error) {
       console.error(err.message);
@@ -74,7 +94,11 @@ const deleteAllBooks = async () => {
   try {
     console.info("Deleting Books...");
     const wereElementsDeleted = await bookModel.Book.collection.drop();
-    console.info("succeed? " + wereElementsDeleted);
+    if (wereElementsDeleted) {
+      console.info("All books deleted");
+    } else {
+      console.warn("No books were deleted.");
+    }
   } catch (err: unknown) {
     if (err instanceof Error) {
       console.error(err.message);
@@ -86,7 +110,11 @@ const deleteAllEditions = async () => {
   try {
     console.info("Deleting Editions...");
     const wereElementsDeleted = await editionModel.Edition.collection.drop();
-    console.info("succeed? " + wereElementsDeleted);
+    if (wereElementsDeleted) {
+      console.info("All editions deleted");
+    } else {
+      console.warn("No editions were deleted.");
+    }
   } catch (err: unknown) {
     if (err instanceof Error) {
       console.error(err.message);
@@ -98,7 +126,11 @@ const deleteAllBookLists = async () => {
   try {
     console.info("Deleting Book Lists...");
     const wereElementsDeleted = await bookListModel.BookList.collection.drop();
-    console.info("succeed? " + wereElementsDeleted);
+    if (wereElementsDeleted) {
+      console.info("All book lists deleted");
+    } else {
+      console.warn("No book lists were deleted.");
+    }
   } catch (err: unknown) {
     if (err instanceof Error) {
       console.error(err.message);
@@ -110,7 +142,11 @@ const deleteAllRatings = async () => {
   try {
     console.info("Deleting Ratings...");
     const wereElementsDeleted = await ratingModel.Rating.collection.drop();
-    console.info("succeed? " + wereElementsDeleted);
+    if (wereElementsDeleted) {
+      console.info("All ratings deleted");
+    } else {
+      console.warn("No ratings were deleted.");
+    }
   } catch (err: unknown) {
     if (err instanceof Error) {
       console.error(err.message);
