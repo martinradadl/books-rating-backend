@@ -15,8 +15,6 @@ const deleteAllUsers = async () => {
     const wereElementsDeleted = await userModel.User.collection.drop();
     if (wereElementsDeleted) {
       console.info("All users deleted");
-    } else {
-      console.warn("No users were deleted.");
     }
   } catch (err: unknown) {
     if (err instanceof Error) {
@@ -31,8 +29,6 @@ const deleteAllAuthors = async () => {
     const wereElementsDeleted = await authorModel.Author.collection.drop();
     if (wereElementsDeleted) {
       console.info("All authors deleted");
-    } else {
-      console.warn("No authors were deleted.");
     }
   } catch (err: unknown) {
     if (err instanceof Error) {
@@ -47,8 +43,6 @@ const deleteAllGenres = async () => {
     const wereElementsDeleted = await genreModel.Genre.collection.drop();
     if (wereElementsDeleted) {
       console.info("All genres deleted");
-    } else {
-      console.warn("No genres were deleted.");
     }
   } catch (err: unknown) {
     if (err instanceof Error) {
@@ -64,8 +58,6 @@ const deleteAllCharacters = async () => {
       await characterModel.Character.collection.drop();
     if (wereElementsDeleted) {
       console.info("All characters deleted");
-    } else {
-      console.warn("No characters were deleted.");
     }
   } catch (err: unknown) {
     if (err instanceof Error) {
@@ -80,8 +72,6 @@ const deleteAllSettings = async () => {
     const wereElementsDeleted = await settingModel.Setting.collection.drop();
     if (wereElementsDeleted) {
       console.info("All settings deleted");
-    } else {
-      console.warn("No settings were deleted.");
     }
   } catch (err: unknown) {
     if (err instanceof Error) {
@@ -96,8 +86,6 @@ const deleteAllBooks = async () => {
     const wereElementsDeleted = await bookModel.Book.collection.drop();
     if (wereElementsDeleted) {
       console.info("All books deleted");
-    } else {
-      console.warn("No books were deleted.");
     }
   } catch (err: unknown) {
     if (err instanceof Error) {
@@ -112,8 +100,6 @@ const deleteAllEditions = async () => {
     const wereElementsDeleted = await editionModel.Edition.collection.drop();
     if (wereElementsDeleted) {
       console.info("All editions deleted");
-    } else {
-      console.warn("No editions were deleted.");
     }
   } catch (err: unknown) {
     if (err instanceof Error) {
@@ -128,8 +114,6 @@ const deleteAllBookLists = async () => {
     const wereElementsDeleted = await bookListModel.BookList.collection.drop();
     if (wereElementsDeleted) {
       console.info("All book lists deleted");
-    } else {
-      console.warn("No book lists were deleted.");
     }
   } catch (err: unknown) {
     if (err instanceof Error) {
@@ -144,8 +128,6 @@ const deleteAllRatings = async () => {
     const wereElementsDeleted = await ratingModel.Rating.collection.drop();
     if (wereElementsDeleted) {
       console.info("All ratings deleted");
-    } else {
-      console.warn("No ratings were deleted.");
     }
   } catch (err: unknown) {
     if (err instanceof Error) {
