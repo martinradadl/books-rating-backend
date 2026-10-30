@@ -1,3 +1,4 @@
+import * as userModel from "../models/user";
 import * as authorModel from "../models/author";
 import * as genreModel from "../models/genre";
 import * as characterModel from "../models/character";
@@ -8,11 +9,27 @@ import * as bookListModel from "../models/book-list";
 import * as ratingModel from "../models/rating";
 import { initMongo } from "../mongo-setup";
 
-export const deleteAllAuthors = async () => {
+const deleteAllUsers = async () => {
+  try {
+    console.info("Deleting Users...");
+    const wereElementsDeleted = await userModel.User.collection.drop();
+    if (wereElementsDeleted) {
+      console.info("All users deleted");
+    }
+  } catch (err: unknown) {
+    if (err instanceof Error) {
+      console.error(err.message);
+    }
+  }
+};
+
+const deleteAllAuthors = async () => {
   try {
     console.info("Deleting Authors...");
     const wereElementsDeleted = await authorModel.Author.collection.drop();
-    console.info("succeed? " + wereElementsDeleted);
+    if (wereElementsDeleted) {
+      console.info("All authors deleted");
+    }
   } catch (err: unknown) {
     if (err instanceof Error) {
       console.error(err.message);
@@ -20,11 +37,13 @@ export const deleteAllAuthors = async () => {
   }
 };
 
-export const deleteAllGenres = async () => {
+const deleteAllGenres = async () => {
   try {
     console.info("Deleting Genres...");
     const wereElementsDeleted = await genreModel.Genre.collection.drop();
-    console.info("succeed? " + wereElementsDeleted);
+    if (wereElementsDeleted) {
+      console.info("All genres deleted");
+    }
   } catch (err: unknown) {
     if (err instanceof Error) {
       console.error(err.message);
@@ -32,12 +51,14 @@ export const deleteAllGenres = async () => {
   }
 };
 
-export const deleteAllCharacters = async () => {
+const deleteAllCharacters = async () => {
   try {
     console.info("Deleting Characters...");
     const wereElementsDeleted =
       await characterModel.Character.collection.drop();
-    console.info("succeed? " + wereElementsDeleted);
+    if (wereElementsDeleted) {
+      console.info("All characters deleted");
+    }
   } catch (err: unknown) {
     if (err instanceof Error) {
       console.error(err.message);
@@ -45,11 +66,13 @@ export const deleteAllCharacters = async () => {
   }
 };
 
-export const deleteAllSettings = async () => {
+const deleteAllSettings = async () => {
   try {
     console.info("Deleting Settings...");
     const wereElementsDeleted = await settingModel.Setting.collection.drop();
-    console.info("succeed? " + wereElementsDeleted);
+    if (wereElementsDeleted) {
+      console.info("All settings deleted");
+    }
   } catch (err: unknown) {
     if (err instanceof Error) {
       console.error(err.message);
@@ -57,11 +80,13 @@ export const deleteAllSettings = async () => {
   }
 };
 
-export const deleteAllBooks = async () => {
+const deleteAllBooks = async () => {
   try {
     console.info("Deleting Books...");
     const wereElementsDeleted = await bookModel.Book.collection.drop();
-    console.info("succeed? " + wereElementsDeleted);
+    if (wereElementsDeleted) {
+      console.info("All books deleted");
+    }
   } catch (err: unknown) {
     if (err instanceof Error) {
       console.error(err.message);
@@ -69,11 +94,13 @@ export const deleteAllBooks = async () => {
   }
 };
 
-export const deleteAllEditions = async () => {
+const deleteAllEditions = async () => {
   try {
     console.info("Deleting Editions...");
     const wereElementsDeleted = await editionModel.Edition.collection.drop();
-    console.info("succeed? " + wereElementsDeleted);
+    if (wereElementsDeleted) {
+      console.info("All editions deleted");
+    }
   } catch (err: unknown) {
     if (err instanceof Error) {
       console.error(err.message);
@@ -81,11 +108,13 @@ export const deleteAllEditions = async () => {
   }
 };
 
-export const deleteAllBookLists = async () => {
+const deleteAllBookLists = async () => {
   try {
     console.info("Deleting Book Lists...");
     const wereElementsDeleted = await bookListModel.BookList.collection.drop();
-    console.info("succeed? " + wereElementsDeleted);
+    if (wereElementsDeleted) {
+      console.info("All book lists deleted");
+    }
   } catch (err: unknown) {
     if (err instanceof Error) {
       console.error(err.message);
@@ -93,11 +122,13 @@ export const deleteAllBookLists = async () => {
   }
 };
 
-export const deleteAllRatings = async () => {
+const deleteAllRatings = async () => {
   try {
     console.info("Deleting Ratings...");
     const wereElementsDeleted = await ratingModel.Rating.collection.drop();
-    console.info("succeed? " + wereElementsDeleted);
+    if (wereElementsDeleted) {
+      console.info("All ratings deleted");
+    }
   } catch (err: unknown) {
     if (err instanceof Error) {
       console.error(err.message);
@@ -109,6 +140,7 @@ export const cleanUpDB = async () => {
   try {
     console.info("Initializing connection with Mongo");
     await initMongo().catch(console.dir);
+    await deleteAllUsers();
     await deleteAllAuthors();
     await deleteAllGenres();
     await deleteAllCharacters();
